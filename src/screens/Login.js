@@ -29,17 +29,18 @@ import {
 } from '../components/styles';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
+import Signup from './Signup';
 
 const { brand, darkLight, primary } = Colors;
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const [hidePassword, setHidePassword] = useState(true);
 
   return (
     <StyledContainer>
       <StatusBar style="dark" />
       <InnerContainer>
-        <PageLogo resizeMode="cover" source={require('../assets/undraw.png')} />
+        <PageLogo resizeMode="cover" source={require('../../assets/undraw.png')} />
         <PageTitle>Recipe to Home</PageTitle>
         <SubTitle>Account Login</SubTitle>
 
@@ -87,7 +88,9 @@ const Login = () => {
               <ExtraView>
                 <ExtraText>Don't have an account already? </ExtraText>
                 <TextLink>
-                  <TextLinkContent>Signup</TextLinkContent>
+                  <TextLinkContent onPress={() => navigation.navigate('Signup')}>
+                    Signup
+                  </TextLinkContent>
                 </TextLink>
               </ExtraView>
             </StyledFormArea>

@@ -1,10 +1,3 @@
-import React from 'react';
+import Routes from './src/Routes';
 
-// Screens
-import Login from './screens/Login';
-import Signup from './screens/Signup';
-
-export default function App() {
-  return <Login />;
-  // return <Signup />;
-}
+export default Routes;
