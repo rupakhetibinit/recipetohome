@@ -17,7 +17,7 @@ This project is made for fulfillment of Minor Project for Bachelors in Computer 
 - Clone this repository
 - Navigate to the project directory
 - Set up the Environment by following the steps above
-- Run `yarn add` or `npm i`
+- Run `yarn add`
 - Run `yarn start`
 - Scan the QR code from Expo Go app on Android
 - App is now running on Android
