@@ -4,11 +4,17 @@ import { View, Text } from 'react-native';
 import Header from '../components/Header';
 
 export default function Welcome() {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <StatusBar style="dark" />
-      <Header />
-      <Text></Text>
-    </View>
-  );
+    return ( <
+        View style = {
+            { flex: 1, alignItems: 'center', justifyContent: 'center' }
+        } >
+        <
+        StatusBar style = "dark" / >
+        <
+        Header / >
+        <
+        Text > binit don nepal ko. < Text >
+        <
+        /View>
+    );
 }
