@@ -3,14 +3,31 @@ import { Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react/cjs/react.development';
 
-const CustomInput = ({ iconName, placeholder, value, setValue, secureTextEntry }) => {
+const CustomInput = ({
+  iconName,
+  placeholder,
+  value,
+  setValue,
+  secureTextEntry,
+  setSecureTextEntry,
+  isPassword,
+}) => {
   const [isFocused, setIsFocused] = useState(false);
+  const hidePasswordToggle = () => {
+    isPassword ? setSecureTextEntry(!secureTextEntry) : null;
+  };
   return (
     <View>
       <Text style={styles.placeholder}>{placeholder}</Text>
-      <View style={[styles.container, { borderColor: isFocused ? '#5F2EEA' : 'white' }]}>
+      <View
+        style={[
+          styles.container,
+          { borderColor: isFocused ? '#5F2EEA' : 'white' },
+          { backgroundColor: isFocused ? 'white' : '#EFF0F6' },
+        ]}
+      >
         <View style={styles.inputSection}>
-          <Feather name={iconName} size={24} color="#A0A3BD" />
+          <Feather name={iconName} size={24} color="#A0A3BD" onPress={hidePasswordToggle} />
           <TextInput
             style={styles.input}
             value={value}
