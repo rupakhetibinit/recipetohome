@@ -9,25 +9,35 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const LoginScreen = () => {
-  const [user, setUser] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [message, setMessage] = useState(null);
   const onLoginPressed = () => {
-    console.warn('Login');
+    if (!email && !password) {
+      setMessage('Email and Password are required');
+    } else if (!password) {
+      setMessage('Password is required');
+    } else if (!email) {
+      setMessage('Email is required');
+    }
   };
 
   return (
     <View style={styles.container}>
       <Image source={logo} style={styles.logo} resizeMode="contain" />
       <Text style={styles.title}>Recipe To Home</Text>
-      <CustomInput iconName="mail" placeholder="Email" value={user} setValue={setUser} />
+      <CustomInput iconName="mail" placeholder="Email" value={email} setValue={setEmail} />
       <CustomInput
-        iconName="eye"
+        iconName={secureTextEntry ? 'eye-off' : 'eye'}
         placeholder="Password"
         value={password}
         setValue={setPassword}
-        secureTextEntry
+        secureTextEntry={secureTextEntry}
+        isPassword={true}
+        setSecureTextEntry={setSecureTextEntry}
       />
-      <CustomMessage></CustomMessage>
+      <CustomMessage text={message} setText={setMessage}></CustomMessage>
       <CustomButton onPress={onLoginPressed} text="Login" />
       <View style={styles.bottomText}>
         <Text
