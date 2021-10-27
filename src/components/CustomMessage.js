@@ -3,9 +3,12 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
 const CustomMessage = ({ text, setText }) => {
   useEffect(() => {
-    setTimeout(() => {
+    let timer = setTimeout(() => {
       setText('');
     }, 5000);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [text]);
   return (
     <View style={styles.container}>

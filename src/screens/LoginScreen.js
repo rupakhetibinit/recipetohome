@@ -8,7 +8,7 @@ import CustomMessage from '../components/CustomMessage';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -57,6 +57,7 @@ const LoginScreen = () => {
             fontFamily: 'Poppins_600SemiBold',
             letterSpacing: 0.75,
           }}
+          onPress={() => navigation.navigate('Signup')}
         >
           SignUp
         </Text>
