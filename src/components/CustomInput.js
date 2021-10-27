@@ -67,6 +67,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginLeft: 5,
+    fontFamily: 'Poppins_400Regular',
+    letterSpacing: 0.75,
+    color: '#14142B',
+    fontSize: 16,
   },
   placeholder: {
     fontFamily: 'Poppins_500Medium',
