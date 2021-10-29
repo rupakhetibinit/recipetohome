@@ -3,7 +3,16 @@ import { Dimensions, StyleSheet, Text, Pressable } from 'react-native';
 
 const CustomButton = ({ onPress, text }) => {
   return (
-    <Pressable onPress={onPress} style={styles.container}>
+    <Pressable
+      onPress={onPress}
+      android_ripple={{
+        color: '#2A00A2',
+        borderless: false,
+        radius: 0.4 * Dimensions.get('window').width,
+        foreground: false,
+      }}
+      style={styles.container}
+    >
       <Text style={styles.text}>{text}</Text>
     </Pressable>
   );
