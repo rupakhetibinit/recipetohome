@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet, Text, View } from 'react-native';
 const CustomMessage = ({ text, setText }) => {
   useEffect(() => {
     let timer = setTimeout(() => {
-      setText('');
+      setText(' ');
     }, 5000);
     return () => {
       clearTimeout(timer);
