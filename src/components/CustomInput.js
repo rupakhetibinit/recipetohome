@@ -10,11 +10,11 @@ const CustomInput = ({
   setValue,
   secureTextEntry,
   setSecureTextEntry,
-  isPassword,
+  isPassword = false,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const hidePasswordToggle = () => {
-    isPassword ? setSecureTextEntry(!secureTextEntry) : null;
+    setSecureTextEntry(!secureTextEntry);
   };
   return (
     <View>
@@ -27,7 +27,12 @@ const CustomInput = ({
         ]}
       >
         <View style={styles.inputSection}>
-          <Feather name={iconName} size={24} color="#A0A3BD" onPress={hidePasswordToggle} />
+          <Feather
+            name={iconName}
+            size={24}
+            color="#A0A3BD"
+            onPress={isPassword ? hidePasswordToggle : null}
+          />
           <TextInput
             style={styles.input}
             value={value}
