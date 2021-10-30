@@ -40,6 +40,7 @@ const CustomInput = ({
             secureTextEntry={secureTextEntry}
             onBlur={() => setIsFocused(false)}
             onFocus={() => setIsFocused(true)}
+            keyboardType={isPassword ? null : 'email-address'}
           ></TextInput>
         </View>
       </View>
