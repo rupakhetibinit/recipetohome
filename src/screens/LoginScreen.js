@@ -1,18 +1,20 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
-import { useState } from 'react/cjs/react.development';
 import logo from '../../assets/logo.png';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomMessage from '../components/CustomMessage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AuthContext } from '../context/AuthContext';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const LoginScreen = ({ navigation }) => {
+  const { auth, setAuth } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
-  const [message, setMessage] = useState(null);
+  const [message, setMessage] = useState(' ');
   const onLoginPressed = () => {
     if (!email && !password) {
       setMessage('Email and Password are required');
@@ -20,6 +22,40 @@ const LoginScreen = ({ navigation }) => {
       setMessage('Password is required');
     } else if (!email) {
       setMessage('Email is required');
+    } else {
+      fetch('https://heroku-recipe-api.herokuapp.com/api/auth/login', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res?.error) {
+            console.log(res.error);
+            setMessage(res.error);
+          } else if (res.success === true) {
+            setAuth({
+              email: res.email,
+              isAdmin: res.isAdmin,
+              token: res.accessToken,
+              isAuthenticated: true,
+            });
+
+            // AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
+            //   .then(console.log('success from login'))
+            //   .catch((err) => console.log(err));
+          } else {
+            console.log(res);
+          }
+        })
+        .catch((err) => console.log(err));
     }
   };
 
@@ -37,7 +73,7 @@ const LoginScreen = ({ navigation }) => {
         isPassword={true}
         setSecureTextEntry={setSecureTextEntry}
       />
-      <CustomMessage text={message} setText={setMessage}></CustomMessage>
+      <CustomMessage text={message} setText={setMessage} />
       <CustomButton onPress={onLoginPressed} text="Login" />
       <View style={styles.bottomText}>
         <Text
