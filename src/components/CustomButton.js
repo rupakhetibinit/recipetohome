@@ -1,7 +1,7 @@
 import React from 'react';
-import { Dimensions, StyleSheet, Text, Pressable } from 'react-native';
+import { Dimensions, StyleSheet, Text, Pressable, ActivityIndicator } from 'react-native';
 
-const CustomButton = ({ onPress, text }) => {
+const CustomButton = ({ onPress, text, loading }) => {
   return (
     <Pressable
       onPress={onPress}
@@ -13,7 +13,11 @@ const CustomButton = ({ onPress, text }) => {
       }}
       style={styles.container}
     >
-      <Text style={styles.text}>{text}</Text>
+      {loading ? (
+        <ActivityIndicator animating={loading} size="large" color="#fff" />
+      ) : (
+        <Text style={styles.text}>{text}</Text>
+      )}
     </Pressable>
   );
 };

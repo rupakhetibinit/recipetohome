@@ -11,6 +11,7 @@ const height = Dimensions.get('window').height;
 
 const LoginScreen = ({ navigation }) => {
   const { auth, setAuth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -23,6 +24,7 @@ const LoginScreen = ({ navigation }) => {
     } else if (!email) {
       setMessage('Email is required');
     } else {
+      setLoading(true);
       fetch('https://heroku-recipe-api.herokuapp.com/api/auth/login', {
         method: 'POST',
         mode: 'cors',
@@ -39,13 +41,13 @@ const LoginScreen = ({ navigation }) => {
         .then((res) => {
           if (res?.error) {
             console.log(res.error);
+            setLoading(false);
             setMessage(res.error);
           } else if (res.success === true) {
             setAuth({
               email: res.email,
               isAdmin: res.isAdmin,
               token: res.accessToken,
-              isAuthenticated: true,
             });
 
             // AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
@@ -74,7 +76,7 @@ const LoginScreen = ({ navigation }) => {
         setSecureTextEntry={setSecureTextEntry}
       />
       <CustomMessage text={message} setText={setMessage} />
-      <CustomButton onPress={onLoginPressed} text="Login" />
+      <CustomButton onPress={onLoginPressed} text="Login" loading={loading} />
       <View style={styles.bottomText}>
         <Text
           style={{

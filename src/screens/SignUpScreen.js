@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 import { Dimensions, Image, KeyboardAvoidingView, StyleSheet, Text, View } from 'react-native';
 import signup from '../../assets/signup.png';
 import CustomInput from '../components/CustomInput';
@@ -11,6 +12,8 @@ const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const SignUpScreen = ({ navigation }) => {
+  const { auth, setAuth } = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -20,38 +23,42 @@ const SignUpScreen = ({ navigation }) => {
   const onSignupPressed = () => {
     if (!name) {
       setMessage('Full name is required');
-      return;
     } else if (!email) {
       setMessage('Email is required');
-      return;
     } else if (!password || !confirmPassword) {
       setMessage('Password is required');
-      return;
     } else if (password !== confirmPassword) {
       setMessage(`Passwords do not match`);
-      return;
+    } else {
+      setLoading(true);
+      fetch('https://heroku-recipe-api.herokuapp.com/api/auth/register', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          password: password,
+        }),
+      })
+        .then((res) => res.json())
+        .then((res) => {
+          if (res?.error) {
+            console.log(res.error);
+            setLoading(false);
+            setMessage(res.error);
+          } else {
+            setAuth({
+              email: res.email,
+              isAdmin: res.isAdmin,
+              token: res.accessToken,
+            });
+          }
+        });
     }
-    axios
-      .post('https://heroku-recipe-api.herokuapp.com/api/auth/register', {
-        name: name,
-        emial: email,
-        password: password,
-      })
-      .then((res) => {
-        console.log(res);
-        if (res?.error) {
-          setMessage(res.error);
-        }
-      })
-      .catch((error) => {
-        if (error.response) {
-          setMessage(error.response.data.error);
-        } else if (error.request) {
-          setMessage('Something went wrong');
-        } else if (error.message) {
-          setMessage('Something went wrong');
-        }
-      });
   };
 
   return (
