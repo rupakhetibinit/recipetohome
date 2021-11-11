@@ -7,12 +7,11 @@
 		"web": "expo start --web",
 		"eject": "expo eject",
 		"format:check": "npx prettier --check \"**/*.{js,jsx}\"",
-		"format": "npx prettier --write \"**/*.{js,jsx}\"",
-		"lint": "eslint \"src/**/*.{js,jsx}"
+		"format": "npx prettier --write \"**/*.{js,jsx}\""
 	},
-	"husky":{
-		"hooks":{
-			"pre-commit":"yarn format:check && yarn lint"
+	"husky": {
+		"hooks": {
+			"pre-commit": "yarn format && yarn lint"
 		}
 	},
 	"dependencies": {
@@ -41,9 +40,6 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.9.0",
-		"eslint": "^8.2.0",
-		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-react": "^7.27.0",
 		"husky": "^7.0.4",
 		"prettier": "^2.4.1"
 	},
