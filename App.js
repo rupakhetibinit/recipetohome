@@ -47,7 +47,7 @@ export default () => {
 	});
 
 	if (!fontsLoaded) {
-		return <     AppLoading />;
+		return <AppLoading />;
 	} else {
 		return (
 			<AuthProvider>
