@@ -7,7 +7,7 @@ const RecipeScreen = (navigation) => {
 		<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
 			<Text>This is the recipe screen</Text>
 			<CustomButton
-				onPress={() => navigation.navigate('SelectedRecipeScreen')}
+				onPress={() => navigation.navigate("SelectedRecipeScreen")}
 			/>
 		</View>
 	);
