@@ -21,3 +21,10 @@ This project is made for fulfillment of Minor Project for Bachelors in Computer 
 - Run `yarn start`
 - Scan the QR code from Expo Go app on Android
 - App is now running on Android
+
+## For contributing to the project
+
+- Make some changes
+- Check if the code is formatted using `yarn format:check`. If any errors are found, run `yarn format` to fix the error.
+- Once the code is correctly formatted. Open a Pull Request.
+- Wait for it to be merged in the main codebase.
