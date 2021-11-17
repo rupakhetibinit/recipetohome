@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
 	logo: {
 		width: width * 0.9,
 		height: height * 0.2,
+		marginTop: height * 0.01,
 	},
 	title: {
 		fontFamily: 'Poppins_700Bold',

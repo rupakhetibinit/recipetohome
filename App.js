@@ -1,6 +1,7 @@
 import React from 'react';
 import AppLoading from 'expo-app-loading';
 import { AuthProvider } from './src/context/AuthContext';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import Routes from './src/Routes';
 import {
 	useFonts,
@@ -50,9 +51,11 @@ export default () => {
 		return <AppLoading />;
 	} else {
 		return (
-			<AuthProvider>
-				<Routes />
-			</AuthProvider>
+			<SafeAreaProvider>
+				<AuthProvider>
+					<Routes />
+				</AuthProvider>
+			</SafeAreaProvider>
 		);
 	}
 };

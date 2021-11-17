@@ -1,11 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const FavoriteScreen = () => {
 	return (
-		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+		<SafeAreaView
+			style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+		>
 			<Text>This is the favorite Screen</Text>
-		</View>
+		</SafeAreaView>
 	);
 };
 

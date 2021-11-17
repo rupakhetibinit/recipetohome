@@ -7,6 +7,7 @@ import CustomMessage from '../components/CustomMessage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -64,7 +65,7 @@ const LoginScreen = ({ navigation }) => {
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
-			<View style={styles.container}>
+			<SafeAreaView style={styles.container}>
 				<Image source={logo} style={styles.logo} resizeMode='contain' />
 				<Text style={styles.title}>Recipe To Home</Text>
 				<CustomInput
@@ -107,15 +108,15 @@ const LoginScreen = ({ navigation }) => {
 						SignUp
 					</Text>
 				</View>
-			</View>
+			</SafeAreaView>
 		</KeyboardAwareScrollView>
 	);
 };
 const styles = StyleSheet.create({
 	container: {
-		padding: 20,
 		flex: 1,
 		alignItems: 'center',
+		justifyContent: 'center',
 	},
 	logo: {
 		width: width * 0.9,
