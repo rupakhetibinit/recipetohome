@@ -10,9 +10,7 @@
 		"format": "npx prettier --write \"**/*.{js,jsx}\""
 	},
 	"husky": {
-		"hooks": {
-			"pre-commit": "yarn format"
-		}
+		"hooks": {}
 	},
 	"dependencies": {
 		"@expo-google-fonts/poppins": "^0.2.0",
