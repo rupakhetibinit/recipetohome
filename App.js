@@ -1,4 +1,5 @@
 import React from 'react';
+import { LogBox } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import { AuthProvider } from './src/context/AuthContext';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -46,7 +47,7 @@ export default () => {
 		Poppins_900Black,
 		Poppins_900Black_Italic,
 	});
-
+	LogBox.ignoreLogs(['Setting a timer for a long period of time']);
 	if (!fontsLoaded) {
 		return <AppLoading />;
 	} else {

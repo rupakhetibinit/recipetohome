@@ -6,6 +6,7 @@ export const AuthProvider = (props) => {
 		isAdmin: false,
 		email: '',
 		token: '',
+		displayName: '',
 	});
 
 	return (

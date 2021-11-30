@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { fbauth } from '../../firebase';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -27,39 +28,50 @@ const LoginScreen = ({ navigation }) => {
 			setMessage('Email is required');
 		} else {
 			setLoading(true);
-			fetch('https://heroku-recipe-api.herokuapp.com/api/auth/login', {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: email,
-					password: password,
-				}),
-			})
-				.then((res) => res.json())
-				.then((res) => {
-					if (res?.error) {
-						console.log(res.error);
-						setLoading(false);
-						setMessage(res.error);
-					} else if (res.success === true) {
-						setAuth({
-							email: res.email,
-							isAdmin: res.isAdmin,
-							token: res.accessToken,
-						});
-
-						// AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
-						//   .then(console.log('success from login'))
-						//   .catch((err) => console.log(err));
-					} else {
-						console.log(res);
-					}
+			fbauth
+				.signInWithEmailAndPassword(email, password)
+				.then((authUser) => {
+					setAuth({
+						email: authUser.user.email,
+						token: authUser.user.refreshToken,
+						displayName: authUser.user.displayName,
+					});
+					setLoading(false);
 				})
 				.catch((err) => console.log(err));
+			// fetch('https://heroku-recipe-api.herokuapp.com/api/auth/login', {
+			// 	method: 'POST',
+			// 	mode: 'cors',
+			// 	headers: {
+			// 		Accept: 'application/json',
+			// 		'Content-Type': 'application/json',
+			// 	},
+			// 	body: JSON.stringify({
+			// 		email: email,
+			// 		password: password,
+			// 	}),
+			// })
+			// 	.then((res) => res.json())
+			// 	.then((res) => {
+			// 		if (res?.error) {
+			// 			console.log(res.error);
+			// 			setLoading(false);
+			// 			setMessage(res.error);
+			// 		} else if (res.success === true) {
+			// 			setAuth({
+			// 				email: res.email,
+			// 				isAdmin: res.isAdmin,
+			// 				token: res.accessToken,
+			// 			});
+
+			// 			// AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
+			// 			//   .then(console.log('success from login'))
+			// 			//   .catch((err) => console.log(err));
+			// 		} else {
+			// 			console.log(res);
+			// 		}
+			// 	})
+			// 	.catch((err) => console.log(err));
 		}
 	};
 
