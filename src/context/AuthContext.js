@@ -1,7 +1,7 @@
 import React, { createContext, useState } from 'react';
 export const AuthContext = createContext({});
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = (props) => {
 	const [auth, setAuth] = useState({
 		isAdmin: false,
 		email: '',
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<AuthContext.Provider value={{ auth, setAuth }}>
-			{children}
+			{props.children}
 		</AuthContext.Provider>
 	);
 };

@@ -5,8 +5,8 @@ import { AuthContext } from './context/AuthContext';
 
 const Routes = () => {
 	const { auth, setAuth } = useContext(AuthContext);
-	// return auth.token !== null ? <MainStack /> : <AuthStack />;
-	return <AuthStack />;
+	return auth.token ? <MainStack /> : <AuthStack />;
+	// return <AuthStack />;
 };
 
 export default Routes;

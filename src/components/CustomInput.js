@@ -1,7 +1,8 @@
 import React from 'react';
 import { Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { useState } from 'react/cjs/react.development';
+import { useState } from 'react';
+width = Dimensions.get('window').width;
 
 const CustomInput = ({
 	iconName,
@@ -37,7 +38,7 @@ const CustomInput = ({
 					<TextInput
 						style={styles.input}
 						value={value}
-						onChangeText={setValue}
+						onChangeText={(value) => setValue(value)}
 						secureTextEntry={secureTextEntry}
 						onBlur={() => setIsFocused(false)}
 						onFocus={() => setIsFocused(true)}
@@ -55,7 +56,7 @@ export default CustomInput;
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: '#EFF0F6',
-		width: 0.9 * Dimensions.get('window').width,
+		width: 0.9 * width,
 		height: 64,
 
 		paddingHorizontal: 10,

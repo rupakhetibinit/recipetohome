@@ -6,17 +6,16 @@ import CustomButton from '../components/CustomButton';
 import CustomMessage from '../components/CustomMessage';
 import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
 const LoginScreen = ({ navigation }) => {
 	const { setAuth } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
-	const [message, setMessage] = useState(' ');
+	const [message, setMessage] = useState('');
 	const onLoginPressed = () => {
 		if (!email && !password) {
 			setMessage('Email and Password are required');
@@ -58,13 +57,13 @@ const LoginScreen = ({ navigation }) => {
 						console.log(res);
 					}
 				})
-				.catch((err) => console.log(err));
+				.catch(() => setLoading(false));
 		}
 	};
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
-			<SafeAreaView style={styles.container}>
+			<View style={styles.container}>
 				<Image source={logo} style={styles.logo} resizeMode='contain' />
 				<Text style={styles.title}>Recipe To Home</Text>
 				<CustomInput
@@ -90,7 +89,7 @@ const LoginScreen = ({ navigation }) => {
 							color: '#6E7191',
 							fontSize: 16,
 							fontFamily: 'Poppins_400Regular',
-							letterSpacing: 0.75,
+							letterSpacing: 1,
 						}}
 					>
 						Don't Have an Account?{'  '}
@@ -100,14 +99,14 @@ const LoginScreen = ({ navigation }) => {
 							color: '#5F2EEA',
 							fontSize: 16,
 							fontFamily: 'Poppins_600SemiBold',
-							letterSpacing: 0.75,
+							letterSpacing: 1,
 						}}
 						onPress={() => navigation.navigate('Signup')}
 					>
 						SignUp
 					</Text>
 				</View>
-			</SafeAreaView>
+			</View>
 		</KeyboardAwareScrollView>
 	);
 };
@@ -136,3 +135,19 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
+
+// import React from 'react';
+// import { View, Text } from 'react-native';
+// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+
+// const LoginScreen = () => {
+// 	return (
+// 		<View>
+// 			<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
+// 				<Text>LoginScreen</Text>
+// 			</KeyboardAwareScrollView>
+// 		</View>
+// 	);
+// };
+
+// export default LoginScreen;
