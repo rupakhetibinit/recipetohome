@@ -1,15 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Dimensions, StyleSheet, Text, View } from 'react-native';
 
-const CustomMessage = ({ text, setText }) => {
-	useEffect(() => {
-		let timer = setTimeout(() => {
-			setText(' ');
-		}, 5000);
-		return () => {
-			clearTimeout(timer);
-		};
-	}, [text]);
+const CustomMessage = ({ text }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.text}>{text}</Text>

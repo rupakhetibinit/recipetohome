@@ -1,8 +1,8 @@
 import React from 'react';
-import { LogBox } from 'react-native';
+import 'react-native-gesture-handler';
 import AppLoading from 'expo-app-loading';
 import { AuthProvider } from './src/context/AuthContext';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Routes from './src/Routes';
 import {
 	useFonts,
@@ -25,8 +25,9 @@ import {
 	Poppins_900Black,
 	Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
+import { Text, View } from 'react-native';
 
-export default () => {
+export default function App() {
 	let [fontsLoaded] = useFonts({
 		Poppins_100Thin,
 		Poppins_100Thin_Italic,
@@ -47,16 +48,29 @@ export default () => {
 		Poppins_900Black,
 		Poppins_900Black_Italic,
 	});
-	LogBox.ignoreLogs(['Setting a timer for a long period of time']);
 	if (!fontsLoaded) {
-		return <AppLoading />;
+		return null;
+		// 	// return <Text>Loading...</Text>;
 	} else {
+		// return (
+		// 	<SafeAreaProvider>
+		// 		<AuthProvider>
+		// 			<Routes />
+		// 		</AuthProvider>
+		// 	</SafeAreaProvider>
+		// );
+		// }
 		return (
 			<SafeAreaProvider>
 				<AuthProvider>
 					<Routes />
+					{/* <View
+						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+					>
+						<Text>Loading...</Text>
+					</View> */}
 				</AuthProvider>
 			</SafeAreaProvider>
 		);
 	}
-};
+}

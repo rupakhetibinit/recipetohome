@@ -3,7 +3,6 @@ import { AuthContext } from '../context/AuthContext';
 import {
 	Dimensions,
 	Image,
-	KeyboardAvoidingView,
 	StyleSheet,
 	Text,
 	View,
@@ -13,9 +12,7 @@ import signup from '../../assets/signup.png';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomMessage from '../components/CustomMessage';
-import axios from 'axios';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { fbauth } from '../../firebase';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -40,50 +37,36 @@ const SignUpScreen = ({ navigation }) => {
 			setMessage(`Passwords do not match`);
 		} else {
 			setLoading(true);
-			fbauth
-				.createUserWithEmailAndPassword(email, password)
-				.then((authUser) => {
-					authUser.user.updateProfile({
-						displayName: name,
-					});
-					setLoading(false);
-					setAuth({
-						email: authUser.user.email,
-						token: authUser.user.refreshToken,
-						displayName: name,
-					});
-				})
-				.then()
-				.catch((err) => console.log(err));
-			// fetch('https://heroku-recipe-api.herokuapp.com/api/auth/register', {
-			// 	method: 'POST',
-			// 	mode: 'cors',
-			// 	headers: {
-			// 		Accept: 'application/json',
-			// 		'Content-Type': 'application/json',
-			// 	},
-			// 	body: JSON.stringify({
-			// 		name: name,
-			// 		email: email,
-			// 		password: password,
-			// 	}),
-			// })
-			// 	.then((res) => res.json())
-			// 	.then((res) => {
-			// 		if (res?.error) {
-			// 			console.log(res.error);
-			// 			setLoading(false);
-			// 			setMessage(res.error);
-			// 		} else {
-			// 			console.log(res);
-			// 			setAuth({
-			// 				...auth,
-			// 				email: res.email,
-			// 				isAdmin: res.isAdmin,
-			// 				token: res.token,
-			// 			});
-			// 		}
-			// 	});
+			setMessage('');
+			fetch('https://heroku-recipe-api.herokuapp.com/api/auth/register', {
+				method: 'POST',
+				mode: 'cors',
+				headers: {
+					Accept: 'application/json',
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					name: name,
+					email: email,
+					password: password,
+				}),
+			})
+				.then((res) => res.json())
+				.then((res) => {
+					if (res?.error) {
+						// console.log(res.error);
+						setLoading(false);
+						setMessage(res.error);
+					} else {
+						// console.log(res);
+						setAuth({
+							...auth,
+							email: res.email,
+							isAdmin: res.isAdmin,
+							token: res.token,
+						});
+					}
+				});
 		}
 	};
 

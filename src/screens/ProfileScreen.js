@@ -1,28 +1,20 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { useContext } from 'react/cjs/react.development';
+import { StyleSheet, Text } from 'react-native';
+import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
-import { fbauth } from '../../firebase';
 
 const ProfileScreen = () => {
 	const { auth, setAuth } = useContext(AuthContext);
 	const [loggingOut, setLoggingOut] = useState(false);
 	const onLogoutPressed = () => {
 		setLoggingOut(true);
-		fbauth
-			.signOut()
-			.then(() => {
-				setAuth({
-					email: '',
-					token: '',
-					displayName: '',
-				});
-			})
-			.catch((err) => {
-				return;
-			});
+		setAuth({
+			token: '',
+			name: '',
+			email: '',
+		});
 	};
 	return (
 		<SafeAreaView style={styles.container}>

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { useEffect } from 'react';
 import { StyleSheet, Text, View, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
@@ -18,7 +17,8 @@ const Category = ({ name }) => {
 const category = ['All', 'Breakfast', 'Lunch'];
 
 const RecipeScreen = ({ navigation }) => {
-	const { auth, setAuth } = useContext(AuthContext);
+	const { auth } = useContext(AuthContext);
+	const token = auth.token;
 	const { data, loading, error } = useFetch(
 		'https://heroku-recipe-api.herokuapp.com/api/v1/recipes',
 		{
@@ -31,9 +31,6 @@ const RecipeScreen = ({ navigation }) => {
 		}
 	);
 
-	const token = auth.token;
-	console.log(token);
-	data && console.log(JSON.stringify(data));
 	return (
 		<SafeAreaView style={styles.container}>
 			{/* {category.map((category) => (
