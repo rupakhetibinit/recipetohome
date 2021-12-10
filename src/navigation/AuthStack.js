@@ -1,8 +1,8 @@
 import React from 'react';
 import LoginScreen from '../screens/LoginScreen';
+import SelectedRecipeScreen from '../screens/SelectedRecipeScreen';
 import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignUpScreen from '../screens/SignUpScreen';
 
@@ -21,6 +21,7 @@ const AuthStack = () => {
 				{/* <Stack.Screen name='Login' component={LoginScreen} />*/}
 				<Stack.Screen name='Signup' component={SignUpScreen} />
 				<Stack.Screen name='Login' component={LoginScreen} />
+				<Stack.Screen name='SelectedRecipe' component={SelectedRecipeScreen} />
 			</Stack.Navigator>
 		</NavigationContainer>
 		// 		// <View>

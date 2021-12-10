@@ -54,7 +54,7 @@ const SignUpScreen = ({ navigation }) => {
 				.then((res) => res.json())
 				.then((res) => {
 					if (res?.error) {
-						console.log(res.error);
+						// console.log(res.error);
 						setLoading(false);
 						setMessage(res.error);
 					} else {
