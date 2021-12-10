@@ -74,7 +74,7 @@ const RecipeScreen = ({ navigation }) => {
 				style={{ width: width * 0.9, borderRadius: 10 }}
 			/>
 
-			{loading && <ActivityIndicator />}
+			{loading && <ActivityIndicator style={{ marginTop: 25 }} size={30} />}
 			<FlatList
 				showsVerticalScrollIndicator={false}
 				data={data}
