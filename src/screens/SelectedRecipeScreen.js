@@ -31,7 +31,12 @@ const SelectedRecipeScreen = () => {
 			},
 		}
 	);
-	console.log(JSON.stringify(data));
+	let ingredientList = null;
+	if (data) {
+		ingredientList = data.ingredients.map(function (ingredient) {
+			return { ...ingredient, checked: false };
+		});
+	}
 
 	return (
 		<SafeAreaView
@@ -39,14 +44,23 @@ const SelectedRecipeScreen = () => {
 		>
 			{loading && (
 				<ActivityIndicator
+					size={'large'}
 					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 				/>
+			)}
+			{error && (
+				<Text
+					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+				>
+					Error
+				</Text>
 			)}
 			{data && (
 				<View
 					style={{
 						flex: 1,
-						marginBottom: 10,
+						marginTop: 20,
+						marginHorizontal: 0.1 * width,
 						justifyContent: 'center',
 					}}
 				>
@@ -54,6 +68,7 @@ const SelectedRecipeScreen = () => {
 						style={{
 							width: 0.9 * width,
 							height: 300,
+							marginBottom: 20,
 						}}
 					>
 						<Card.Title title={data.name} />

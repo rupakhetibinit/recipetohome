@@ -4,9 +4,9 @@ export const AuthContext = createContext({});
 export const AuthProvider = (props) => {
 	const [auth, setAuth] = useState({
 		isAdmin: false,
-		email: 'admin@admin.com',
-		token: 'ADSFSDFASD',
-		name: 'Admin',
+		email: '',
+		token: '',
+		name: '',
 	});
 
 	return (

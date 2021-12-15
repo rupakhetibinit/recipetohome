@@ -54,6 +54,8 @@ const LoginScreen = ({ navigation }) => {
 						//   .then(console.log('success from login'))
 						//   .catch((err) => console.log(err));
 					} else {
+						setMessage('Something went wrong');
+						setLoading(false);
 						console.log(res);
 					}
 				})
