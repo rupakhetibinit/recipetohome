@@ -19,7 +19,7 @@ const ProfileScreen = () => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<Text>This is the Profile screen after logging in</Text>
-			<Text>Hello {auth.displayName}</Text>
+			<Text>Hello {auth.name}</Text>
 			<CustomButton
 				onPress={onLogoutPressed}
 				text='Logout'

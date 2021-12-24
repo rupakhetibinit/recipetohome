@@ -35,7 +35,7 @@ const RecipeScreen = ({ navigation }) => {
 	const token = auth.token;
 	const name = auth.name;
 	const { data, loading, error } = useFetch(
-		'https://heroku-recipe-api.herokuapp.com/api/v1/recipes',
+		'https://recipetohome-api.herokuapp.com/api/v1/recipes',
 		{
 			method: 'GET',
 			mode: 'cors',
@@ -46,7 +46,6 @@ const RecipeScreen = ({ navigation }) => {
 		}
 	);
 
-	const sampleData = [{ title: 'Green Bean Recipe', imageUrl: 'fasdfasd' }];
 	return (
 		<SafeAreaView style={styles.container}>
 			<View
@@ -75,23 +74,25 @@ const RecipeScreen = ({ navigation }) => {
 			/>
 
 			{loading && <ActivityIndicator style={{ marginTop: 25 }} size={30} />}
-			<FlatList
-				showsVerticalScrollIndicator={false}
-				data={data}
-				renderItem={({ item }) => (
-					<RecipeCard
-						id={item.id}
-						title={item.name}
-						url={item.imageUrl}
-						onPress={() =>
-							navigation.navigate('SelectedRecipe', {
-								recipeId: item.id,
-							})
-						}
-					/>
-				)}
-				key={(item) => item.id}
-			/>
+			{data && (
+				<FlatList
+					showsVerticalScrollIndicator={false}
+					data={data.recipes}
+					renderItem={({ item }) => (
+						<RecipeCard
+							id={item.id}
+							title={item.name}
+							url={item.imageUrl}
+							onPress={() =>
+								navigation.navigate('SelectedRecipe', {
+									recipeId: item.id,
+								})
+							}
+						/>
+					)}
+					key={(item) => item.id}
+				/>
+			)}
 		</SafeAreaView>
 		//TODO Navigate to the selected recipe screen
 	);

@@ -7,8 +7,7 @@ import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import SingleIngredient from '../components/SingleIngredient';
-import CustomButton from '../components/CustomButton';
-import * as Random from 'expo-random';
+import uuid from 'react-native-uuid';
 
 const SelectedRecipeScreen = () => {
 	const navigation = useNavigation();
@@ -21,7 +20,7 @@ const SelectedRecipeScreen = () => {
 	};
 	const { recipeId } = route.params;
 	const { data, loading, error } = useFetch(
-		'https://heroku-recipe-api.herokuapp.com/api/v1/recipes/' + recipeId,
+		'https://recipetohome-api.herokuapp.com/api/v1/recipes/' + recipeId,
 		{
 			method: 'GET',
 			mode: 'cors',
@@ -32,8 +31,9 @@ const SelectedRecipeScreen = () => {
 		}
 	);
 	let ingredientList = null;
+
 	if (data) {
-		ingredientList = data.ingredients.map(function (ingredient) {
+		ingredientList = data.recipe.ingredients.map(function (ingredient) {
 			return { ...ingredient, checked: false };
 		});
 	}
@@ -71,8 +71,11 @@ const SelectedRecipeScreen = () => {
 							marginBottom: 20,
 						}}
 					>
-						<Card.Title title={data.name} />
-						<Card.Cover resizeMode='cover' source={{ uri: data.imageUrl }} />
+						<Card.Title title={data.recipe.name} />
+						<Card.Cover
+							resizeMode='cover'
+							source={{ uri: data.recipe.imageUrl }}
+						/>
 						<Card.Actions
 							style={{ flexDirection: 'row', justifyContent: 'space-between' }}
 						>
@@ -96,9 +99,9 @@ const SelectedRecipeScreen = () => {
 					</Text>
 
 					<FlatList
-						data={data.ingredients}
+						data={data.recipe.ingredients}
 						renderItem={({ item }) => <SingleIngredient item={item} />}
-						keyExtractor={(item) => item.ingredient.id}
+						keyExtractor={(item) => item.id}
 						style={{
 							height: '100%',
 						}}
@@ -115,11 +118,11 @@ const SelectedRecipeScreen = () => {
 					</Text>
 					<FlatList
 						style={{ height: '90%' }}
-						data={data.steps}
+						data={data.recipe.steps}
+						keyExtractor={() => uuid.v4()}
 						renderItem={({ item }) => (
 							<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item}</Text>
 						)}
-						keyExtractor={(item) => Random.getRandomBytesAsync(64)}
 					/>
 				</View>
 			)}

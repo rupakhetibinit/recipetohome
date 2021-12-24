@@ -64,6 +64,8 @@ const SignUpScreen = ({ navigation }) => {
 							email: res.email,
 							isAdmin: res.isAdmin,
 							token: res.token,
+							name: res.name,
+							id: res.userId,
 						});
 					}
 				});

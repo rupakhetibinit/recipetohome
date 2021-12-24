@@ -25,7 +25,7 @@ const LoginScreen = ({ navigation }) => {
 			setMessage('Email is required');
 		} else {
 			setLoading(true);
-			fetch('https://heroku-recipe-api.herokuapp.com/api/auth/login', {
+			fetch('https://recipetohome-api.herokuapp.com/api/auth/login', {
 				method: 'POST',
 				mode: 'cors',
 				headers: {
@@ -48,6 +48,8 @@ const LoginScreen = ({ navigation }) => {
 							email: res.email,
 							isAdmin: res.isAdmin,
 							token: res.accessToken,
+							name: res.name,
+							id: res.userId,
 						});
 
 						// AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
