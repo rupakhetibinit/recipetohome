@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useContext, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { RefreshControlBase, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
@@ -8,13 +8,16 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import SingleIngredient from '../components/SingleIngredient';
 import uuid from 'react-native-uuid';
+import axios from 'axios';
 
 const SelectedRecipeScreen = () => {
 	const navigation = useNavigation();
 	const route = useRoute();
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
+	const id = auth.id;
 	const [expanded, setExpanded] = useState(false);
+	const [liked, setLiked] = useState(false);
 	const handleExpand = () => {
 		setExpanded(!expanded);
 	};
@@ -30,13 +33,44 @@ const SelectedRecipeScreen = () => {
 			},
 		}
 	);
+
+	const config = {
+		headers: { Authorization: `Bearer ${token}` },
+	};
+
 	let ingredientList = null;
 
-	if (data) {
-		ingredientList = data.recipe.ingredients.map(function (ingredient) {
-			return { ...ingredient, checked: false };
-		});
-	}
+	const handleLike = () => {
+		console.log(recipeId);
+		if (liked == false) {
+			axios
+				.post(
+					`https://localhost:4000/api/v1/recipes/` + recipeId + '/like',
+					{
+						userId: 2,
+					},
+					config
+				)
+				.then((res) => {
+					console.log(JSON.stringify(res));
+					res.like !== (undefined || null) && setLiked(true);
+				})
+				.catch((err) => console.log(err));
+		} else if (liked == true) {
+			setLiked(true);
+		}
+	};
+
+	// if (data) {
+	// 	console.log(data.likedBy);
+	// 	const isLiked = data.recipe.likedBy.filter(
+	// 		(user) => user.id === auth.userId
+	// 	);
+	// 	setLiked(isLiked.length > 0);
+	// 	ingredientList = data.recipe.ingredients.map(function (ingredient) {
+	// 		return { ...ingredient, checked: false };
+	// 	});
+	// }
 
 	return (
 		<SafeAreaView
@@ -79,8 +113,8 @@ const SelectedRecipeScreen = () => {
 						<Card.Actions
 							style={{ flexDirection: 'row', justifyContent: 'space-between' }}
 						>
-							<Button>
-								<FontAwesome name='heart' size={25} />
+							<Button onPress={handleLike}>
+								<FontAwesome name={liked ? 'heart' : 'heart-o'} size={25} />
 							</Button>
 							<Button onPress={() => navigation.navigate('Cart')}>
 								Add to Cart

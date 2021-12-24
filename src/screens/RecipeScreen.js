@@ -24,8 +24,6 @@ const Category = ({ name }) => {
 	);
 };
 
-const category = ['All', 'Breakfast', 'Lunch'];
-
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const onChangeSearch = (query) => {
@@ -77,7 +75,9 @@ const RecipeScreen = ({ navigation }) => {
 			{data && (
 				<FlatList
 					showsVerticalScrollIndicator={false}
-					data={data.recipes}
+					data={data.recipes.filter((recipe) =>
+						recipe.name.includes(searchQuery)
+					)}
 					renderItem={({ item }) => (
 						<RecipeCard
 							id={item.id}

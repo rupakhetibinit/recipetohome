@@ -3,7 +3,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Checkbox, List } from 'react-native-paper';
 const SingleIngredient = ({ item }) => {
 	const [checked, setChecked] = useState(false);
-	console.log(item);
 	return (
 		<View style={styles.container}>
 			<Checkbox
