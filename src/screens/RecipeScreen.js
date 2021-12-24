@@ -75,14 +75,16 @@ const RecipeScreen = ({ navigation }) => {
 			{data && (
 				<FlatList
 					showsVerticalScrollIndicator={false}
-					data={data.recipes.filter((recipe) =>
-						recipe.name.includes(searchQuery)
-					)}
+					data={
+						data &&
+						data.recipes.filter((recipe) => recipe.name.includes(searchQuery))
+					}
 					renderItem={({ item }) => (
 						<RecipeCard
 							id={item.id}
 							title={item.name}
 							url={item.imageUrl}
+							servings={item.servings}
 							onPress={() =>
 								navigation.navigate('SelectedRecipe', {
 									recipeId: item.id,

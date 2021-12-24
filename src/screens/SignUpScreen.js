@@ -13,6 +13,7 @@ import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import CustomMessage from '../components/CustomMessage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import axios from 'axios';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -26,6 +27,11 @@ const SignUpScreen = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
 	const [message, setMessage] = useState(' ');
+	const config = {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	};
 	const onSignupPressed = () => {
 		if (!name) {
 			setMessage('Full name is required');
@@ -38,37 +44,25 @@ const SignUpScreen = ({ navigation }) => {
 		} else {
 			setLoading(true);
 			setMessage('');
-			fetch('https://heroku-recipe-api.herokuapp.com/api/auth/register', {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					name: name,
-					email: email,
-					password: password,
-				}),
-			})
-				.then((res) => res.json())
+			axios
+				.post(
+					'https://recipetohome-api.herokuapp.com/api/auth/register',
+					{ email: email, password: password, name: name, isAdmin: false },
+					config
+				)
 				.then((res) => {
-					if (res?.error) {
-						// console.log(res.error);
-						setLoading(false);
-						setMessage(res.error);
-					} else {
-						// console.log(res);
-						setAuth({
-							...auth,
-							email: res.email,
-							isAdmin: res.isAdmin,
-							token: res.token,
-							name: res.name,
-							id: res.userId,
-						});
-					}
-				});
+					setLoading(true);
+					if (res.data.error) setMessage(res.data.error);
+					setAuth({
+						token: res.data.token,
+						name: res.data.name,
+						id: res.data.userId,
+						email: res.data.email,
+						isAdmin: res.data.isAdmin,
+					});
+					setLoading(false);
+				})
+				.catch((err) => console.log(err));
 		}
 	};
 

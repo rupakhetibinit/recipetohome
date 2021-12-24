@@ -5,7 +5,7 @@ import { FontAwesome } from '@expo/vector-icons';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 import useNavigation from '@react-navigation/native';
-const RecipeCard = ({ title, url, onPress = () => {} }) => {
+const RecipeCard = ({ title, url, servings, onPress = () => {} }) => {
 	return (
 		<Card
 			style={{
@@ -18,9 +18,7 @@ const RecipeCard = ({ title, url, onPress = () => {} }) => {
 			<Card.Title title={title} />
 			<Card.Cover resizeMode='cover' source={{ uri: url }} />
 			<Card.Actions>
-				<Button>
-					<FontAwesome name='heart' size={25} />
-				</Button>
+				<Text>Servings : {servings}</Text>
 			</Card.Actions>
 		</Card>
 	);

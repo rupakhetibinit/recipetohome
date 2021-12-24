@@ -6,6 +6,7 @@ import CustomButton from '../components/CustomButton';
 import CustomMessage from '../components/CustomMessage';
 import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import axios from 'axios';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -25,43 +26,28 @@ const LoginScreen = ({ navigation }) => {
 			setMessage('Email is required');
 		} else {
 			setLoading(true);
-			fetch('https://recipetohome-api.herokuapp.com/api/auth/login', {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					Accept: 'application/json',
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
-					email: email,
-					password: password,
-				}),
-			})
-				.then((res) => res.json())
-				.then((res) => {
-					if (res?.error) {
-						console.log(res.error);
-						setLoading(false);
-						setMessage(res.error);
-					} else if (res.success === true) {
-						setAuth({
-							email: res.email,
-							isAdmin: res.isAdmin,
-							token: res.accessToken,
-							name: res.name,
-							id: res.userId,
-						});
-
-						// AsyncStorage.setItem('loggedInUser', JSON.stringify(authState))
-						//   .then(console.log('success from login'))
-						//   .catch((err) => console.log(err));
-					} else {
-						setMessage('Something went wrong');
-						setLoading(false);
-						console.log(res);
-					}
+			axios
+				.post('https://recipetohome-api.herokuapp.com/api/auth/login', {
+					email,
+					password,
 				})
-				.catch(() => setLoading(false));
+				.then((res) => {
+					console.log(res);
+					if (res.data.error) setMessage(res.data.error);
+					setAuth({
+						token: res.data.accessToken,
+						name: res.data.name,
+						isAdmin: res.data.isAdmin,
+						email: res.data.email,
+						id: res.data.userId,
+					});
+					setLoading(false);
+				})
+				.catch((err) => {
+					setLoading(false);
+					console.log(err);
+					setMessage('Invalid email or password');
+				});
 		}
 	};
 
