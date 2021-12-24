@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { RefreshControlBase, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,22 +17,29 @@ const SelectedRecipeScreen = () => {
 	const token = auth.token;
 	const id = auth.id;
 	const [expanded, setExpanded] = useState(false);
+	const [error, setError] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [recipe, setRecipe] = useState(null);
 	const [liked, setLiked] = useState(false);
-	const handleExpand = () => {
-		setExpanded(!expanded);
-	};
 	const { recipeId } = route.params;
-	const { data, loading, error } = useFetch(
-		'https://recipetohome-api.herokuapp.com/api/v1/recipes/' + recipeId,
-		{
-			method: 'GET',
-			mode: 'cors',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		}
-	);
+	useEffect(() => {
+		axios
+			.get(
+				`https://recipetohome-api.herokuapp.com/api/v1/recipes/${recipeId}`,
+				config
+			)
+			.then((res) => {
+				setLoading(true);
+				setRecipe(res.data.recipe);
+				setLoading(false);
+				setError(false);
+				res.data.recipe.likedBy.some((user) => user.id === id) &&
+					setLiked(true);
+			})
+			.catch((err) => {
+				setError('something went wrong');
+			});
+	}, []);
 
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
@@ -41,36 +48,45 @@ const SelectedRecipeScreen = () => {
 	let ingredientList = null;
 
 	const handleLike = () => {
-		console.log(recipeId);
-		if (liked == false) {
+		if (liked === false) {
 			axios
 				.post(
-					`https://localhost:4000/api/v1/recipes/` + recipeId + '/like',
+					`https://recipetohome-api.herokuapp.com/api/v1/recipes/` +
+						recipeId +
+						'/like',
 					{
-						userId: 2,
+						userId: parseInt(id),
 					},
-					config
+					{
+						headers: {
+							Authorization: `Bearer ${token}`,
+						},
+					}
 				)
 				.then((res) => {
 					console.log(JSON.stringify(res));
-					res.like !== (undefined || null) && setLiked(true);
+					if (res.data.like !== undefined) {
+						setLiked(true);
+					}
 				})
 				.catch((err) => console.log(err));
-		} else if (liked == true) {
-			setLiked(true);
+		} else if (liked === true) {
+			axios
+				.patch(
+					'https://recipetohome-api.herokuapp.com/api/v1/recipes/' +
+						recipeId +
+						'/like',
+					{ userId: parseInt(id) },
+					config
+				)
+				.then((res) => {
+					console.log(JSON.stringify('delete request', res));
+					res.data.dislike !== undefined && setLiked(false);
+					console.log(res);
+				})
+				.catch((err) => console.log(err));
 		}
 	};
-
-	// if (data) {
-	// 	console.log(data.likedBy);
-	// 	const isLiked = data.recipe.likedBy.filter(
-	// 		(user) => user.id === auth.userId
-	// 	);
-	// 	setLiked(isLiked.length > 0);
-	// 	ingredientList = data.recipe.ingredients.map(function (ingredient) {
-	// 		return { ...ingredient, checked: false };
-	// 	});
-	// }
 
 	return (
 		<SafeAreaView
@@ -82,14 +98,14 @@ const SelectedRecipeScreen = () => {
 					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 				/>
 			)}
-			{error && (
+			{error === null && (
 				<Text
 					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 				>
 					Error
 				</Text>
 			)}
-			{data && (
+			{recipe && (
 				<View
 					style={{
 						flex: 1,
@@ -105,11 +121,8 @@ const SelectedRecipeScreen = () => {
 							marginBottom: 20,
 						}}
 					>
-						<Card.Title title={data.recipe.name} />
-						<Card.Cover
-							resizeMode='cover'
-							source={{ uri: data.recipe.imageUrl }}
-						/>
+						<Card.Title title={recipe.name} />
+						<Card.Cover resizeMode='cover' source={{ uri: recipe.imageUrl }} />
 						<Card.Actions
 							style={{ flexDirection: 'row', justifyContent: 'space-between' }}
 						>
@@ -133,7 +146,7 @@ const SelectedRecipeScreen = () => {
 					</Text>
 
 					<FlatList
-						data={data.recipe.ingredients}
+						data={recipe.ingredients}
 						renderItem={({ item }) => <SingleIngredient item={item} />}
 						keyExtractor={(item) => item.id}
 						style={{
@@ -152,7 +165,7 @@ const SelectedRecipeScreen = () => {
 					</Text>
 					<FlatList
 						style={{ height: '90%' }}
-						data={data.recipe.steps}
+						data={recipe.steps}
 						keyExtractor={() => uuid.v4()}
 						renderItem={({ item }) => (
 							<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item}</Text>

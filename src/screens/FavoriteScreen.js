@@ -1,5 +1,6 @@
+import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Dimensions, StyleSheet, Text } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { ActivityIndicator } from 'react-native-paper';
@@ -10,18 +11,35 @@ import useFetch from '../hooks/useFetch';
 const FavoriteScreen = () => {
 	const { auth, setAuth } = useContext(AuthContext);
 	const token = auth.token;
-	const id = token.userId;
-	const { data, loading, error } = useFetch(
-		`https://recipetohome-api.herokuapp.com/api/v1/recipes/${id}/liked'`,
-		{
-			method: 'GET',
-			mode: 'cors',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		}
-	);
+	const id = auth.id;
+	const [error, setError] = useState(true);
+	const [loading, setLoading] = useState(true);
+	const [data, setData] = useState(null);
+	const config = {
+		headers: { Authorization: `Bearer ${token}` },
+	};
+
+	useEffect(() => {
+		axios
+			.get(
+				'https://recipetohome-api.herokuapp.com/api/v1/recipes/' +
+					'liked/' +
+					id,
+				config
+			)
+			.then((res) => {
+				console.log(res);
+				setLoading(true);
+				setData(res.data.recipe);
+				setLoading(false);
+				setError(false);
+			})
+			.catch((err) => {
+				console.log(err);
+				setLoading(false);
+				setError('something went wrong');
+			});
+	});
 
 	return (
 		<SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
@@ -42,7 +60,18 @@ const FavoriteScreen = () => {
 					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 				/>
 			)}
-			{data && console.log(data)}
+			{error && (
+				<Text
+					style={{
+						flex: 1,
+						alignItems: 'center',
+						justifyContent: 'center',
+						color: 'red',
+					}}
+				>
+					{error}
+				</Text>
+			)}
 		</SafeAreaView>
 	);
 };
