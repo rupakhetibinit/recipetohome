@@ -50,16 +50,16 @@ const SelectedRecipeScreen = () => {
 						checked: false,
 					}))
 				);
-				console.log(ingredientList);
+				// console.log(ingredientList);
 			})
 			.catch((err) => {
 				setError('something went wrong');
 			});
 	}, []);
-	useEffect(() => {
-		console.log(total);
-		console.log(cart);
-	}, [cart, total]);
+	// useEffect(() => {
+	// 	console.log(total);
+	// 	console.log(cart);
+	// }, [cart, total]);
 
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
@@ -110,7 +110,7 @@ const SelectedRecipeScreen = () => {
 					}
 				)
 				.then((res) => {
-					console.log(JSON.stringify(res));
+					// console.log(JSON.stringify(res));
 					if (res.data.like !== undefined) {
 						setLiked(true);
 					}
@@ -126,9 +126,9 @@ const SelectedRecipeScreen = () => {
 					config
 				)
 				.then((res) => {
-					console.log(JSON.stringify('delete request', res));
+					// console.log(JSON.stringify('delete request', res));
 					res.data.dislike !== undefined && setLiked(false);
-					console.log(res);
+					// console.log(res);
 				})
 				.catch((err) => console.log(err));
 		}
@@ -141,7 +141,7 @@ const SelectedRecipeScreen = () => {
 		item.checked = !item.checked;
 		items[ingredientId] = item;
 		setIngredientList(items);
-		console.log(ingredientList);
+		// console.log(ingredientList);
 	};
 
 	return (

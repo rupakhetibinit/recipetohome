@@ -12,36 +12,73 @@ const CartScreen = () => {
 	const route = useRoute();
 	const { auth, setAuth } = useContext(AuthContext);
 	const { cart, setCart, total, setTotal } = useContext(CartContext);
-	// useEffect(() => {
-	// 	console.log(cart);
-	// 	console.log(total);
-	// 	return () => {
-	// 		console.log('unmounting');
-	// 	};
-	// }, [total, cart]);
-
-	const handleOrder = (recipeId, order) => {
-		const config = {
-			headers: {
-				Authorization: `Bearer ${auth.token}`,
-				'Content-Type': 'application/json',
-			},
-		};
-		const ingredients = order.map((item) => {
-			return {
-				ingredient: {
-					id: item.id,
-				},
-			};
-		});
-		console.log(ingredients);
+	const [reload, setReload] = React.useState(false);
+	const [items, setItems] = React.useState(null);
+	const config = {
+		headers: {
+			Authorization: `Bearer ${auth.token}`,
+			'Content-Type': 'application/json',
+		},
 	};
 
-	// 	axios.post('https://recipetohome-api.herokuapp.com/api/v1/order',{
-	// 		userId:auth.id,
-	// 		total:total,
-	// 		recipeId:recipeId
-	// }
+	// useEffect(() => {
+	// 	axios
+	// 		.get(
+	// 			'http://recipetohome-api.herokuapp.com/api/v1/orders/' + auth.id,
+	// 			config
+	// 		)
+	// 		.then((res) => {
+	// 			console.log(res);
+	// 			console.log('this is the axios get request');
+	// 			setItems(res.data.orders);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 		});
+	// }, [reload]);
+
+	const handleOrder = (order) => {
+		const givenOrder = order;
+		console.log(givenOrder);
+		const ingredients = givenOrder.ingredients.map((item) => {
+			return {
+				id: item.id,
+			};
+		});
+		axios
+			.post(
+				'https://recipetohome-api.herokuapp.com/api/v1/order',
+				{
+					userId: auth.id,
+					total: total,
+					recipeId: order.recipeId,
+					id: order.id,
+					ingredients: ingredients,
+				},
+				config
+			)
+			.then((res) => {
+				console.log(res);
+				console.log(res.data);
+				if (res.data.order) {
+					alert(
+						'Order Confirmed with id: ' +
+							res.data.order.id.split('-')[0].toUpperCase()
+					);
+					const newCart = cart.filter((item) => item.id !== givenOrder.id);
+					const newTotal = total - givenOrder.total;
+					setTotal(newTotal);
+					setCart(newCart);
+					console.log(JSON.stringify(ingredients));
+				} else {
+					return;
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+		setReload(!reload);
+	};
 
 	const handleDelete = (orderId, ingredientId) => {
 		let newCart = cart.filter((order) => order.id !== orderId);
@@ -132,17 +169,15 @@ const CartScreen = () => {
 								}}
 								style={{
 									width: '100%',
-									paddingBottom: 40,
+									paddingBottom: 20,
 								}}
 								left={() => {
-									<List.Icon>
-										<Pressable
-											onPress={() => handleOrder(item.id, item)}
-											style={{ padding: 10 }}
-										>
-											Order Now
-										</Pressable>
-									</List.Icon>;
+									<Pressable
+										onPress={() => handleOrder(item.id, item)}
+										style={{ padding: 10 }}
+									>
+										Order Now
+									</Pressable>;
 								}}
 							>
 								<FlatList
@@ -173,11 +208,39 @@ const CartScreen = () => {
 										</View>
 									)}
 								/>
+								<Pressable onPress={() => handleOrder(parentData)}>
+									<Text>Order Now</Text>
+								</Pressable>
 							</List.Accordion>
 						);
 					}}
 				/>
 			)}
+
+			{/* {items?.length > 0 && (
+				<View style={{ flex: 1 }}>
+					<FlatList
+						showsVerticalScrollIndicator={false}
+						data={items}
+						renderItem={({ item }) => (
+							<View
+								style={{
+									flex: 1,
+									flexDirection: 'row',
+									alignItems: 'center',
+									justifyContent: 'center',
+									flexWrap: 'nowrap',
+								}}
+							>
+								<Checkbox status='checked' onPress={() => {}} color='#5F2EEA' />
+								<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+									{item.id.split('-')[0].toUpperCase()} costs {item.total}
+								</Text>
+							</View>
+						)}
+					/>
+				</View>
+			)} */}
 		</SafeAreaView>
 	);
 };
