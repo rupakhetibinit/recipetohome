@@ -77,7 +77,9 @@ const RecipeScreen = ({ navigation }) => {
 					showsVerticalScrollIndicator={false}
 					data={
 						data &&
-						data.recipes.filter((recipe) => recipe.name.includes(searchQuery))
+						data.recipes.filter((recipe) =>
+							recipe.name.toLowerCase().startsWith(searchQuery.toLowerCase())
+						)
 					}
 					renderItem={({ item }) => (
 						<RecipeCard
@@ -96,7 +98,6 @@ const RecipeScreen = ({ navigation }) => {
 				/>
 			)}
 		</SafeAreaView>
-		//TODO Navigate to the selected recipe screen
 	);
 };
 
