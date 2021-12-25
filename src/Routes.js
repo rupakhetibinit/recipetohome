@@ -4,9 +4,11 @@ import AuthStack from './navigation/AuthStack';
 import { AuthContext } from './context/AuthContext';
 
 const Routes = () => {
-	const { auth, setAuth } = useContext(AuthContext);
+	// Gets the auth object from the Authenticaton Context
+	const { auth, setAuth } = useContext(AuthContext); 
+	// Checks whether the jwt token exists and renders the respective stack namely Main and Auth(Login & Register)
 	return auth.token ? <MainStack /> : <AuthStack />;
-	// return <AuthStack />;
+
 };
 
 export default Routes;

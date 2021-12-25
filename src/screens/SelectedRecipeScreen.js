@@ -16,6 +16,7 @@ import SingleIngredient from '../components/SingleIngredient';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
+import { StatusBar } from 'expo-status-bar';
 
 const SelectedRecipeScreen = () => {
 	const { setCart, cart, total, setTotal } = useContext(CartContext);
@@ -148,6 +149,7 @@ const SelectedRecipeScreen = () => {
 		<SafeAreaView
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 		>
+			<StatusBar style='dark' />
 			{loading && (
 				<ActivityIndicator
 					size={'large'}

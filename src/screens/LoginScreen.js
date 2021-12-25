@@ -7,6 +7,7 @@ import CustomMessage from '../components/CustomMessage';
 import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
+import { StatusBar } from 'expo-status-bar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
@@ -53,6 +54,7 @@ const LoginScreen = ({ navigation }) => {
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
+			<StatusBar style='dark' />
 			<View style={styles.container}>
 				<Image source={logo} style={styles.logo} resizeMode='contain' />
 				<Text style={styles.title}>Recipe To Home</Text>

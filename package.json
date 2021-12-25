@@ -7,7 +7,9 @@
 		"web": "expo start --web",
 		"eject": "expo eject",
 		"format:check": "npx prettier --check \"**/*.{js,jsx}\"",
-		"format": "npx prettier --write \"**/*.{js,jsx}\""
+		"format": "npx prettier --write \"**/*.{js,jsx}\"",
+		"build": "eas build -p android --profile preview",
+		"start:prod": "expo start --no-dev --minify"
 	},
 	"husky": {
 		"hooks": {}

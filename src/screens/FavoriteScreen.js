@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import RecipeCard from '../components/RecipeCard';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
+import { StatusBar } from 'expo-status-bar';
 
 const FavoriteScreen = () => {
 	const navigation = useNavigation();
@@ -45,6 +46,7 @@ const FavoriteScreen = () => {
 
 	return (
 		<SafeAreaView style={{ flex: 1, alignItems: 'center' }}>
+			<StatusBar style='dark' />
 			<View
 				style={{
 					flexDirection: 'row',

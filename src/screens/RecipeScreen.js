@@ -14,6 +14,7 @@ import RecipeCard from '../components/RecipeCard';
 import { AuthContext } from '../context/AuthContext';
 import useFetch from '../hooks/useFetch';
 import { Searchbar, Card, ActivityIndicator } from 'react-native-paper';
+import { StatusBar } from 'expo-status-bar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const Category = ({ name }) => {
@@ -46,6 +47,7 @@ const RecipeScreen = ({ navigation }) => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			<StatusBar style='dark' />
 			<View
 				style={{
 					flexDirection: 'row',

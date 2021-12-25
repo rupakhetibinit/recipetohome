@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
+import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
@@ -115,6 +116,7 @@ const CartScreen = () => {
 
 	return (
 		<SafeAreaView style={styles.container}>
+			<StatusBar style='dark' />
 			<View
 				style={{
 					flexDirection: 'row',

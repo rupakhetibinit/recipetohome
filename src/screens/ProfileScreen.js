@@ -4,6 +4,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
+import { StatusBar } from 'expo-status-bar';
 
 const ProfileScreen = () => {
 	const { auth, setAuth } = useContext(AuthContext);
@@ -18,6 +19,7 @@ const ProfileScreen = () => {
 	};
 	return (
 		<SafeAreaView style={styles.container}>
+			<StatusBar style='dark' />
 			<Text>This is the Profile screen after logging in</Text>
 			<Text>Hello {auth.name}</Text>
 			<CustomButton
