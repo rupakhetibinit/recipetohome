@@ -1,7 +1,13 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useContext, useEffect, useState } from 'react';
 import { RefreshControlBase, StyleSheet, Text, View } from 'react-native';
-import { ActivityIndicator, Button, Card, List } from 'react-native-paper';
+import {
+	ActivityIndicator,
+	Button,
+	Card,
+	Checkbox,
+	List,
+} from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
@@ -9,13 +15,16 @@ import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import SingleIngredient from '../components/SingleIngredient';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
+import { CartContext } from '../context/CartContext';
 
 const SelectedRecipeScreen = () => {
+	const { setCart, cart, total, setTotal } = useContext(CartContext);
 	const navigation = useNavigation();
 	const route = useRoute();
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const id = auth.id;
+	const [ingredientList, setIngredientList] = useState(null);
 	const [expanded, setExpanded] = useState(false);
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
@@ -35,17 +44,54 @@ const SelectedRecipeScreen = () => {
 				setError(false);
 				res.data.recipe.likedBy.some((user) => user.id === id) &&
 					setLiked(true);
+				setIngredientList(
+					res.data.recipe.ingredients.map((ingredient) => ({
+						...ingredient,
+						checked: false,
+					}))
+				);
+				console.log(ingredientList);
 			})
 			.catch((err) => {
 				setError('something went wrong');
 			});
 	}, []);
+	useEffect(() => {
+		console.log(total);
+		console.log(cart);
+	}, [cart, total]);
 
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
 	};
 
-	let ingredientList = null;
+	const handleAddToCart = () => {
+		if (
+			ingredientList.filter((ingredient) => ingredient.checked).length === 0
+		) {
+			alert('Please select at least one ingredient');
+			return;
+		}
+		const newCart = [...cart];
+
+		const newTotal = ingredientList
+			.filter((ingredient) => ingredient.checked)
+			.reduce((acc, ingredient) => {
+				return acc + ingredient.price;
+			}, 0);
+		const grandTotal = total + newTotal;
+		newCart.push({
+			id: uuid.v4(),
+			recipeId: recipeId,
+			ingredients: ingredientList.filter(
+				(ingredient) => ingredient.checked === true
+			),
+			total: newTotal,
+		});
+		setCart(newCart);
+		setTotal(grandTotal);
+		navigation.navigate('Cart');
+	};
 
 	const handleLike = () => {
 		if (liked === false) {
@@ -88,6 +134,16 @@ const SelectedRecipeScreen = () => {
 		}
 	};
 
+	const handleChecked = (id) => {
+		let items = [...ingredientList];
+		const ingredientId = items.findIndex((item) => item.id === id);
+		let item = { ...items[ingredientId] };
+		item.checked = !item.checked;
+		items[ingredientId] = item;
+		setIngredientList(items);
+		console.log(ingredientList);
+	};
+
 	return (
 		<SafeAreaView
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
@@ -124,14 +180,15 @@ const SelectedRecipeScreen = () => {
 						<Card.Title title={recipe.name} />
 						<Card.Cover resizeMode='cover' source={{ uri: recipe.imageUrl }} />
 						<Card.Actions
-							style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+							style={{
+								flexDirection: 'row',
+								justifyContent: 'space-between',
+							}}
 						>
 							<Button onPress={handleLike}>
 								<FontAwesome name={liked ? 'heart' : 'heart-o'} size={25} />
 							</Button>
-							<Button onPress={() => navigation.navigate('Cart')}>
-								Add to Cart
-							</Button>
+							<Button onPress={handleAddToCart}>Add to Cart</Button>
 						</Card.Actions>
 					</Card>
 
@@ -146,8 +203,19 @@ const SelectedRecipeScreen = () => {
 					</Text>
 
 					<FlatList
-						data={recipe.ingredients}
-						renderItem={({ item }) => <SingleIngredient item={item} />}
+						data={ingredientList}
+						renderItem={({ item }) => (
+							<View style={styles.container}>
+								<Checkbox
+									status={item.checked ? 'checked' : 'unchecked'}
+									onPress={() => handleChecked(item.id)}
+									color='#5F2EEA'
+								/>
+								<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+									{item.amount} {item.measurement} {item.name}
+								</Text>
+							</View>
+						)}
 						keyExtractor={(item) => item.id}
 						style={{
 							height: '100%',
@@ -177,5 +245,12 @@ const SelectedRecipeScreen = () => {
 	);
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+	container: {
+		flex: 1,
+		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+});
 export default SelectedRecipeScreen;

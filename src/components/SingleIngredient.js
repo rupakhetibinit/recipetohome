@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Checkbox, List } from 'react-native-paper';
-const SingleIngredient = ({ item }) => {
-	const [checked, setChecked] = useState(false);
+import { useContext } from 'react';
+import { CartContext } from '../context/CartContext';
+const SingleIngredient = ({ item, name }) => {
+	const [checked, setChecked] = useState(item.checked);
+	const { setCart, cart, total, setTotal } = useContext(CartContext);
+
 	return (
 		<View style={styles.container}>
 			<Checkbox
 				status={checked ? 'checked' : 'unchecked'}
 				onPress={() => {
-					setChecked(!checked);
+					if (!checked) {
+						setChecked(!checked);
+					} else {
+						setChecked(!checked);
+					}
 				}}
 				color='#5F2EEA'
 			/>

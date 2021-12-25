@@ -1,6 +1,6 @@
 import React from 'react';
 import 'react-native-gesture-handler';
-import AppLoading from 'expo-app-loading';
+import { CartProvider } from './src/context/CartContext';
 import { AuthProvider } from './src/context/AuthContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Routes from './src/Routes';
@@ -25,7 +25,6 @@ import {
 	Poppins_900Black,
 	Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
-import { Text, View } from 'react-native';
 
 export default function App() {
 	let [fontsLoaded] = useFonts({
@@ -63,12 +62,14 @@ export default function App() {
 		return (
 			<SafeAreaProvider>
 				<AuthProvider>
-					<Routes />
-					{/* <View
+					<CartProvider>
+						<Routes />
+						{/* <View
 						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-					>
+						>
 						<Text>Loading...</Text>
 					</View> */}
+					</CartProvider>
 				</AuthProvider>
 			</SafeAreaProvider>
 		);

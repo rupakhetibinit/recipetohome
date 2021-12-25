@@ -75,14 +75,14 @@ const FavoriteScreen = () => {
 				/>
 			)}
 
-			{data.recipes.likedRecipes.length === 0 && (
+			{data?.recipes?.likedRecipes?.length === 0 && (
 				<View style={{ flex: 1, justifyContent: 'center' }}>
 					<Text style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}>
 						You have no favorite recipes
 					</Text>
 				</View>
 			)}
-			{data.recipes.likedRecipes && (
+			{data?.recipes?.likedRecipes && (
 				<FlatList
 					showsVerticalScrollIndicator={false}
 					data={data.recipes.likedRecipes}
