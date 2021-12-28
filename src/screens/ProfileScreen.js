@@ -5,17 +5,41 @@ import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = () => {
 	const { auth, setAuth } = useContext(AuthContext);
 	const [loggingOut, setLoggingOut] = useState(false);
 	const onLogoutPressed = () => {
 		setLoggingOut(true);
-		setAuth({
-			token: '',
-			name: '',
-			email: '',
-		});
+		const deleteData = async () => {
+			try {
+				const jsonValue = await AsyncStorage.getItem('user');
+				if (jsonValue !== null && jsonValue !== undefined) {
+					await AsyncStorage.removeItem('auth');
+					setAuth({
+						token: '',
+						name: '',
+						email: '',
+						id: '',
+						isAdmin: false,
+					});
+					console.log('deleted');
+				} else {
+					setLoggingOut(false);
+				}
+			} catch (e) {
+				console.log(e);
+				setLoggingOut(false);
+			}
+		};
+		deleteData()
+			.then(() => {
+				console.log('data finally deleted');
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 	return (
 		<SafeAreaView style={styles.container}>

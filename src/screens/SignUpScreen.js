@@ -61,6 +61,17 @@ const SignUpScreen = ({ navigation }) => {
 						email: res.data.email,
 						isAdmin: res.data.isAdmin,
 					});
+					const storeData = async (auth) => {
+						try {
+							const jsonValue = JSON.stringify(auth);
+							await AsyncStorage.setItem('auth', jsonValue);
+							const asyncAuth = await AsyncStorage.getItem('auth');
+							console.log(asyncAuth);
+						} catch (e) {
+							// saving error
+						}
+					};
+					storeData(auth);
 					setLoading(false);
 				})
 				.catch((err) => console.log(err));

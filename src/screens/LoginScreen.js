@@ -8,11 +8,12 @@ import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 const LoginScreen = ({ navigation }) => {
-	const { setAuth } = useContext(AuthContext);
+	const { setAuth, auth } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -35,13 +36,41 @@ const LoginScreen = ({ navigation }) => {
 				.then((res) => {
 					console.log(res);
 					if (res.data.error) setMessage(res.data.error);
-					setAuth({
+
+					const user = {
 						token: res.data.accessToken,
 						name: res.data.name,
 						isAdmin: res.data.isAdmin,
 						email: res.data.email,
 						id: res.data.userId,
-					});
+					};
+					const storeData = async (user) => {
+						try {
+							const jsonValue = JSON.stringify(user);
+							await AsyncStorage.setItem('user', jsonValue);
+							const asyncUser = await AsyncStorage.getItem('user');
+							console.log(asyncUser);
+							console.log('stored');
+						} catch (e) {
+							// saving error
+							console.log('Error saving token');
+						}
+					};
+					storeData(user)
+						.then(() => {
+							setAuth({
+								token: res.data.accessToken,
+								name: res.data.name,
+								isAdmin: res.data.isAdmin,
+								email: res.data.email,
+								id: res.data.userId,
+							});
+							// console.log(user);
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+
 					setLoading(false);
 				})
 				.catch((err) => {

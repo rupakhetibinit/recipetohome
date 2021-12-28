@@ -16,7 +16,7 @@ const MainStack = () => {
 	return (
 		<NavigationContainer>
 			<Tab.Navigator
-				initialRouteName='Profile'
+				initialRouteName='RecipeStack'
 				screenOptions={({ route }) => ({
 					tabBarIcon: ({ focused, color, size }) => {
 						let iconName;
