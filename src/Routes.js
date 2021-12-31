@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import MainStack from './navigation/MainStack';
 import AuthStack from './navigation/AuthStack';
 import { AuthContext } from './context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const Routes = () => {
+	const [loading, setLoading] = useState(true);
 	// Try to get the auth from async storage using useeffect
 	useEffect(() => {
 		const getData = async () => {
@@ -21,6 +21,7 @@ const Routes = () => {
 						id: user.id,
 					});
 				}
+				setLoading(false);
 			} catch (e) {
 				console.log(e);
 				// error reading value
@@ -32,6 +33,9 @@ const Routes = () => {
 	const { auth, setAuth } = useContext(AuthContext);
 
 	// Checks whether the jwt token exists and renders the respective stack namely Main and Auth(Login & Register)
+	if (loading) {
+		return null;
+	}
 	return auth.token ? <MainStack /> : <AuthStack />;
 };
 

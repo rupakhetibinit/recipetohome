@@ -10,31 +10,22 @@ const Stack = createNativeStackNavigator();
 
 const AuthStack = () => {
 	return (
-		<NavigationContainer>
-			<Stack.Navigator
-				initialRouteName='Login'
-				screenOptions={{
-					headerShown: false,
-					contentStyle: { backgroundColor: '#fff' },
-				}}
-			>
-				{/* <Stack.Screen name='Login' component={LoginScreen} />*/}
-				<Stack.Screen name='Signup' component={SignUpScreen} />
-				<Stack.Screen name='Login' component={LoginScreen} />
-				<Stack.Screen name='SelectedRecipe' component={SelectedRecipeScreen} />
-			</Stack.Navigator>
-		</NavigationContainer>
+		<Stack.Navigator
+			initialRouteName='Login'
+			screenOptions={{
+				headerShown: false,
+				contentStyle: { backgroundColor: '#fff' },
+			}}
+		>
+			{/* <Stack.Screen name='Login' component={LoginScreen} />*/}
+			<Stack.Screen name='Signup' component={SignUpScreen} />
+			<Stack.Screen name='Login' component={LoginScreen} />
+			<Stack.Screen name='SelectedRecipe' component={SelectedRecipeScreen} />
+		</Stack.Navigator>
+
 		// 		// <View>
 		// 		// 	<Text>hello world</Text>
 		// 		// </View>
-	);
-};
-
-const HomeScreen = () => {
-	return (
-		<View>
-			<Text>Hello</Text>
-		</View>
 	);
 };
 

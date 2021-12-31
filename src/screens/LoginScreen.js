@@ -156,19 +156,3 @@ const styles = StyleSheet.create({
 });
 
 export default LoginScreen;
-
-// import React from 'react';
-// import { View, Text } from 'react-native';
-// import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-
-// const LoginScreen = () => {
-// 	return (
-// 		<View>
-// 			<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
-// 				<Text>LoginScreen</Text>
-// 			</KeyboardAwareScrollView>
-// 		</View>
-// 	);
-// };
-
-// export default LoginScreen;

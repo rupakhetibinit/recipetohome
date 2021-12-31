@@ -13,26 +13,33 @@ import CustomButton from '../components/CustomButton';
 import RecipeCard from '../components/RecipeCard';
 import { AuthContext } from '../context/AuthContext';
 import useFetch from '../hooks/useFetch';
-import { Searchbar, Card, ActivityIndicator } from 'react-native-paper';
+import {
+	Searchbar,
+	Card,
+	ActivityIndicator,
+	Avatar,
+	Caption,
+	Title,
+	Headline,
+} from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-const Category = ({ name }) => {
-	return (
-		<View style={styles.categoryContainer}>
-			<Text>{name}</Text>
-		</View>
-	);
-};
 
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const onChangeSearch = (query) => {
+	function onChangeSearch(query) {
 		setSearchQuery(query);
-	};
+	}
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const name = auth.name;
+	const initials = name
+		.match(/(^\S\S?|\b\S)?/g)
+		.join('')
+		.match(/(^\S|\S$)?/g)
+		.join('')
+		.toUpperCase();
 	const { data, loading, error } = useFetch(
 		'https://recipetohome-api.herokuapp.com/api/v1/recipes',
 		{
@@ -56,14 +63,16 @@ const RecipeScreen = ({ navigation }) => {
 				}}
 			>
 				<View style={styles.headerContainer}>
-					<Text style={styles.header}>Hello {name}</Text>
-					<Text>What do you want to cook today?</Text>
+					<Headline style={styles.header}>Hello {auth.name}</Headline>
+					<Caption style={{ fontSize: 16 }}>
+						What do you want to cook today?
+					</Caption>
 				</View>
 
-				<Image
-					source={require('../../assets/avatar.png')}
-					resizeMode='center'
-					style={styles.avatar}
+				<Avatar.Text
+					label={initials}
+					size={60}
+					style={{ marginLeft: 'auto' }}
 				/>
 			</View>
 			<Searchbar
