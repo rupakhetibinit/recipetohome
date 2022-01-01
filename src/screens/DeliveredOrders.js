@@ -25,9 +25,9 @@ const PendingOrders = () => {
 				config
 			)
 			.then((res) => {
-				console.log(res);
+				// console.log(res);
 				setData(res.data.orders);
-				console.log(res.data.orders);
+				// console.log(res.data.orders);
 			})
 			.catch((err) => console.log(err))
 			.finally(() => setLoading(false));

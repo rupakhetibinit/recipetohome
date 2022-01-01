@@ -45,13 +45,13 @@ const CartScreen = () => {
 			return;
 		} else {
 			const givenOrder = order;
-			console.log(givenOrder);
+			// console.log(givenOrder);
 			const ingredients = givenOrder.ingredients.map((item) => {
 				return {
 					id: item.id,
 				};
 			});
-			console.log(ingredients);
+			// console.log(ingredients);
 			axios
 				.post(
 					'https://recipetohome-api.herokuapp.com/api/v1/order',
@@ -65,15 +65,15 @@ const CartScreen = () => {
 					config
 				)
 				.then((res) => {
-					console.log(res);
-					console.log(res.data);
+					// console.log(res);
+					// console.log(res.data);
 					if (res.data.success === true) {
 						const newCart = cart.filter((item) => item.id !== givenOrder.id);
 						const newTotal = total - givenOrder.total;
 						setTotal(newTotal);
 						setCart(newCart);
-						console.log(JSON.stringify(ingredients));
-						console.log(res.data.order);
+						// console.log(JSON.stringify(ingredients));
+						// console.log(res.data.order);
 						navigation.navigate('OrderConfirmation', {
 							order: res.data.transaction[1],
 						});
@@ -84,7 +84,7 @@ const CartScreen = () => {
 					}
 				})
 				.catch((err) => {
-					console.log(err);
+					// console.log(err);
 				});
 			setReload(!reload);
 		}

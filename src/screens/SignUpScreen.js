@@ -68,8 +68,8 @@ const SignUpScreen = ({ navigation }) => {
 						try {
 							const jsonValue = JSON.stringify(auth);
 							await AsyncStorage.setItem('user', jsonValue);
-							const asyncAuth = await AsyncStorage.getItem('user');
-							console.log(asyncAuth);
+							// const asyncAuth = await AsyncStorage.getItem('user');
+							// console.log(asyncAuth);
 						} catch (e) {
 							// saving error
 						}

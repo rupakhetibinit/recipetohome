@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
 					password,
 				})
 				.then((res) => {
-					console.log(res);
+					// console.log(res);
 					if (res.data.error) setMessage(res.data.error);
 
 					const user = {
@@ -52,8 +52,8 @@ const LoginScreen = ({ navigation }) => {
 							const jsonValue = JSON.stringify(user);
 							await AsyncStorage.setItem('user', jsonValue);
 							const asyncUser = await AsyncStorage.getItem('user');
-							console.log(asyncUser);
-							console.log('stored');
+							// console.log(asyncUser);
+							// console.log('stored');
 						} catch (e) {
 							// saving error
 							console.log('Error saving token');

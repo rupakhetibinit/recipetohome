@@ -10,7 +10,7 @@ const OrderConfirmationScreen = () => {
 	const navigation = useNavigation();
 	const { order } = route.params;
 	const { auth, setAuth } = useContext(AuthContext);
-	console.log(order);
+	// console.log(order);
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={{ marginHorizontal: 30 }}>
@@ -30,13 +30,14 @@ const OrderConfirmationScreen = () => {
 					})}
 				</Text>
 			</View>
-			<View>
+			<View style={{ alignItems: 'center' }}>
 				<Button
 					mode='contained'
 					style={{
 						fontSize: 14,
 						fontFamily: 'Poppins_700Bold',
 						color: '#694fad',
+						width: 200,
 					}}
 					onPress={() => navigation.goBack()}
 				>

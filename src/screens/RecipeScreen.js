@@ -5,23 +5,17 @@ import {
 	View,
 	Image,
 	FlatList,
-	ScrollView,
 	Dimensions,
 	RefreshControl,
 	Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '../components/CustomButton';
-import RecipeCard from '../components/RecipeCard';
 import { AuthContext } from '../context/AuthContext';
-import useFetch from '../hooks/useFetch';
 import {
 	Searchbar,
-	Card,
 	ActivityIndicator,
 	Avatar,
 	Caption,
-	Title,
 	Headline,
 } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
@@ -66,7 +60,7 @@ const RecipeScreen = ({ navigation }) => {
 				},
 			})
 			.then((res) => {
-				console.log(res);
+				// console.log(res);
 				setData(res.data);
 				setLoading(false);
 				setRefreshing(false);

@@ -58,14 +58,14 @@ const FavoriteScreen = () => {
 				config,
 			})
 			.then((res) => {
-				console.log(res);
+				// console.log(res);
 				setData(res.data);
 				setLoading(false);
 				setRefreshing(false);
 				setError(null);
 			})
 			.catch((err) => {
-				console.log(err);
+				// console.log(err);
 				setError('something went wrong');
 			});
 	};

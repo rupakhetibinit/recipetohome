@@ -24,9 +24,9 @@ const ProfileScreen = ({ navigation }) => {
 		try {
 			const jsonValue = JSON.stringify(user);
 			await AsyncStorage.setItem('user', jsonValue);
-			const asyncUser = await AsyncStorage.getItem('user');
-			console.log(asyncUser);
-			console.log('stored');
+			// const asyncUser = await AsyncStorage.getItem('user');
+			// console.log(asyncUser);
+			// console.log('stored');
 		} catch (e) {
 			// saving error
 			console.log('Error saving token');
@@ -67,7 +67,7 @@ const ProfileScreen = ({ navigation }) => {
 					});
 					storeData(auth)
 						.then(() => {
-							console.log('stored');
+							// console.log('stored');
 						})
 						.catch((err) => console.log(error));
 				}
@@ -93,7 +93,7 @@ const ProfileScreen = ({ navigation }) => {
 					});
 					storeData(auth)
 						.then(() => {
-							console.log('stored');
+							// console.log('stored');
 						})
 						.catch((err) => console.log(error));
 				}
@@ -114,7 +114,7 @@ const ProfileScreen = ({ navigation }) => {
 				config
 			)
 			.then((res) => {
-				console.log(res.data.user);
+				// console.log(res.data.user);
 				setData(res.data.user);
 				setAuth({
 					isAdmin: res.data.user.isAdmin,
@@ -128,7 +128,7 @@ const ProfileScreen = ({ navigation }) => {
 				});
 				storeData(auth)
 					.then(() => {
-						console.log('stored');
+						// console.log('stored');
 					})
 					.catch((err) => console.log(err));
 			})
@@ -168,7 +168,7 @@ const ProfileScreen = ({ navigation }) => {
 						phone: null,
 						wallet: 0,
 					});
-					console.log('deleted');
+					// console.log('deleted');
 				} else {
 					setLoggingOut(false);
 				}
@@ -179,7 +179,7 @@ const ProfileScreen = ({ navigation }) => {
 		};
 		deleteData()
 			.then(() => {
-				console.log('data finally deleted');
+				// console.log('data finally deleted');
 			})
 			.catch((err) => {
 				console.log(err);
