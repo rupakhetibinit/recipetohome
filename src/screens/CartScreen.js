@@ -57,7 +57,7 @@ const CartScreen = () => {
 					'https://recipetohome-api.herokuapp.com/api/v1/order',
 					{
 						userId: auth.id,
-						total: total,
+						total: order.total,
 						recipeId: order.recipeId,
 						id: order.id,
 						ingredients: ingredients,
@@ -91,37 +91,28 @@ const CartScreen = () => {
 	};
 
 	const handleDelete = (orderId, ingredientId) => {
-		let newCart = cart.filter((order) => order.id !== orderId);
-		const deletedOrder = cart.find((order) => order.id === orderId);
-		const orderTotal = deletedOrder.total;
-		const remainingIngredient = cart
-			.find((order) => order.id === orderId)
-			.ingredients.filter((ingredient) => ingredient.id !== ingredientId);
-		console.log(remainingIngredient);
-		// console.log(newCart);
-		const newTotal =
-			orderTotal -
-			cart
-				.find((order) => order.id === orderId)
-				.ingredients.filter((ingredient) => ingredient.id === ingredientId)
-				.reduce((acc, curr) => acc + curr.price, 0);
-		newCart.push({
-			id: deletedOrder.id,
-			ingredients: [...remainingIngredient],
-			total: newTotal,
-			recipeId: deletedOrder.recipeId,
-		});
-		let grandTotal;
-		newCart = newCart.filter((order) => order.total !== 0);
-		if (newCart.length === 0) {
-			grandTotal = 0;
-		} else {
-			grandTotal = total - orderTotal + newTotal;
-		}
-		setTotal(grandTotal);
+		// Make a shallow copy
+		const newCart = [...cart];
+		// Find the index of item to remove
+		const index = newCart.findIndex((item) => item.id === orderId);
+		// Remove the ingredient that was unchecked
+		let ingredients = newCart[index].ingredients.filter(
+			(item) => item.id !== ingredientId
+		);
+		// Calculate the reduced total
+		let newTotal =
+			newCart[index].total -
+			newCart[index].ingredients.find((item) => item.id === ingredientId).price;
+		// Remove the item from the array if it is the last ingredient
+		ingredients.length === 0 && newCart.splice(index, 1);
+		ingredients.length > 0 &&
+			newCart.splice(index, 1, {
+				...newCart[index],
+				ingredients: ingredients,
+				total: newTotal,
+			});
+		// Update the state with the new array
 		setCart(newCart);
-		console.log(newCart);
-		console.log(grandTotal);
 	};
 
 	return (
@@ -169,7 +160,8 @@ const CartScreen = () => {
 						width: '100%',
 					}}
 					showsVerticalScrollIndicator={false}
-					data={cart.filter((order) => order.ingredients.length > 0)}
+					data={cart}
+					extraData={cart}
 					renderItem={({ item }) => {
 						let parentData = item;
 						return (

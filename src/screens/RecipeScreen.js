@@ -81,7 +81,7 @@ const RecipeScreen = ({ navigation }) => {
 				style={{
 					flexDirection: 'row',
 					marginHorizontal: 20,
-					marginBottom: 20,
+					marginVertical: 10,
 				}}
 			>
 				<View style={styles.headerContainer}>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
 	header: {
 		color: '#5F2EEA',
 		fontFamily: 'Poppins_700Bold',
-		fontSize: 32,
+		fontSize: 28,
 		letterSpacing: 1,
 	},
 	headerContainer: {

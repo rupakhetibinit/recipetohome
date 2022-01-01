@@ -64,6 +64,7 @@ const SelectedRecipeScreen = () => {
 
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
+		'Content-Type': 'application/json',
 	};
 
 	const handleAddToCart = () => {
@@ -72,30 +73,30 @@ const SelectedRecipeScreen = () => {
 		) {
 			alert('Please select at least one ingredient');
 			return;
-		}
-		const newCart = [...cart];
+		} else {
+			const newCart = [...cart];
 
-		const newTotal = ingredientList
-			.filter((ingredient) => ingredient.checked)
-			.reduce((acc, ingredient) => {
-				return acc + ingredient.price;
-			}, 0);
-		const grandTotal = total + newTotal;
-		newCart.push({
-			id: uuid.v4(),
-			recipeId: recipeId,
-			ingredients: ingredientList.filter(
-				(ingredient) => ingredient.checked === true
-			),
-			total: newTotal,
-		});
-		setCart(newCart);
-		setTotal(grandTotal);
-		navigation.navigate('Shopping', {
-			params: {
-				screen: 'Cart',
-			},
-		});
+			const newTotal = ingredientList
+				.filter((ingredient) => ingredient.checked)
+				.reduce((acc, ingredient) => {
+					return acc + ingredient.price;
+				}, 0);
+
+			newCart.push({
+				id: uuid.v4(),
+				recipeId: recipeId,
+				ingredients: ingredientList.filter(
+					(ingredient) => ingredient.checked === true
+				),
+				total: newTotal,
+			});
+			setCart(newCart);
+			navigation.navigate('Shopping', {
+				params: {
+					screen: 'Cart',
+				},
+			});
+		}
 	};
 
 	const handleLike = () => {
@@ -139,12 +140,18 @@ const SelectedRecipeScreen = () => {
 		}
 	};
 
+	// Checks and uncheck functionality for the ingredients
 	const handleChecked = (id) => {
+		// Make a shallow copy of the items
 		let items = [...ingredientList];
+		// Find the item index in original array
 		const ingredientId = items.findIndex((item) => item.id === id);
+		// set item checked status to opposite of its current value
 		let item = { ...items[ingredientId] };
 		item.checked = !item.checked;
+		// Replace the item in the copied array
 		items[ingredientId] = item;
+		// set the state with the new copy
 		setIngredientList(items);
 		// console.log(ingredientList);
 	};
