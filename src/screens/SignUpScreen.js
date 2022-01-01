@@ -60,12 +60,15 @@ const SignUpScreen = ({ navigation }) => {
 						id: res.data.userId,
 						email: res.data.email,
 						isAdmin: res.data.isAdmin,
+						phone: res.data.phone,
+						location: res.data.location,
+						wallet: res.data.wallet,
 					});
 					const storeData = async (auth) => {
 						try {
 							const jsonValue = JSON.stringify(auth);
-							await AsyncStorage.setItem('auth', jsonValue);
-							const asyncAuth = await AsyncStorage.getItem('auth');
+							await AsyncStorage.setItem('user', jsonValue);
+							const asyncAuth = await AsyncStorage.getItem('user');
 							console.log(asyncAuth);
 						} catch (e) {
 							// saving error

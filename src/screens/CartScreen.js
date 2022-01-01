@@ -40,45 +40,54 @@ const CartScreen = () => {
 	// }, [reload]);
 
 	const handleOrder = (order) => {
-		const givenOrder = order;
-		console.log(givenOrder);
-		const ingredients = givenOrder.ingredients.map((item) => {
-			return {
-				id: item.id,
-			};
-		});
-		axios
-			.post(
-				'https://recipetohome-api.herokuapp.com/api/v1/order',
-				{
-					userId: auth.id,
-					total: total,
-					recipeId: order.recipeId,
-					id: order.id,
-					ingredients: ingredients,
-				},
-				config
-			)
-			.then((res) => {
-				console.log(res);
-				console.log(res.data);
-				if (res.data.order) {
-					const newCart = cart.filter((item) => item.id !== givenOrder.id);
-					const newTotal = total - givenOrder.total;
-					setTotal(newTotal);
-					setCart(newCart);
-					console.log(JSON.stringify(ingredients));
-					navigation.navigate('OrderConfirmation', {
-						order: res.data.order,
-					});
-				} else {
-					return;
-				}
-			})
-			.catch((err) => {
-				console.log(err);
+		if (auth.wallet < order.total) {
+			alert('You do not have enough money in your wallet to make this order');
+			return;
+		} else {
+			const givenOrder = order;
+			console.log(givenOrder);
+			const ingredients = givenOrder.ingredients.map((item) => {
+				return {
+					id: item.id,
+				};
 			});
-		setReload(!reload);
+			console.log(ingredients);
+			axios
+				.post(
+					'https://recipetohome-api.herokuapp.com/api/v1/order',
+					{
+						userId: auth.id,
+						total: total,
+						recipeId: order.recipeId,
+						id: order.id,
+						ingredients: ingredients,
+					},
+					config
+				)
+				.then((res) => {
+					console.log(res);
+					console.log(res.data);
+					if (res.data.success === true) {
+						const newCart = cart.filter((item) => item.id !== givenOrder.id);
+						const newTotal = total - givenOrder.total;
+						setTotal(newTotal);
+						setCart(newCart);
+						console.log(JSON.stringify(ingredients));
+						console.log(res.data.order);
+						navigation.navigate('OrderConfirmation', {
+							order: res.data.transaction[1],
+						});
+					} else if (res.data.message === 'Insufficient wallet balance') {
+						alert(
+							'You do not have enough money in your wallet to make this order'
+						);
+					}
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+			setReload(!reload);
+		}
 	};
 
 	const handleDelete = (orderId, ingredientId) => {

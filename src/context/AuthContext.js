@@ -8,6 +8,9 @@ export const AuthProvider = (props) => {
 		token: '',
 		name: '',
 		id: null,
+		location: null,
+		phone: null,
+		wallet: 0,
 	});
 
 	return (

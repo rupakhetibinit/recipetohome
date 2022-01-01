@@ -1,9 +1,10 @@
 import axios from 'axios';
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, SafeAreaView } from 'react-native';
 import { List, ActivityIndicator } from 'react-native-paper';
 import { RefreshControl } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const PendingOrders = () => {
 	const { auth, setAuth } = useContext(AuthContext);
@@ -43,9 +44,27 @@ const PendingOrders = () => {
 	};
 
 	return (
-		<View style={styles.container}>
+		<SafeAreaView style={styles.container}>
 			{loading && <ActivityIndicator size={25} style={{ margin: 20 }} />}
-
+			{data && data.filter((item) => item.delivered === false).length === 0 && (
+				<ScrollView
+					contentContainerStyle={styles.container}
+					refreshing={refreshing}
+					RefreshControl={
+						<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+					}
+				>
+					<Text
+						style={{
+							fontFamily: 'Poppins_500Medium',
+							fontSize: 20,
+							marginHorizontal: 10,
+						}}
+					>
+						You have no pending orders
+					</Text>
+				</ScrollView>
+			)}
 			{data && (
 				<View>
 					<FlatList
@@ -64,7 +83,7 @@ const PendingOrders = () => {
 					/>
 				</View>
 			)}
-		</View>
+		</SafeAreaView>
 	);
 };
 

@@ -121,6 +121,10 @@ const ProfileStackScreen = () => {
 						headerStyle: {
 							backgroundColor: '#1f65ff',
 						},
+						headerTitleStyle: {
+							color: '#fff',
+							fontFamily: 'Poppins_500Medium',
+						},
 						headerTitle: 'Pending Orders',
 					}}
 				/>
@@ -133,6 +137,10 @@ const ProfileStackScreen = () => {
 							backgroundColor: '#1f65ff',
 						},
 						headerTitle: 'Delivered Orders',
+						headerTitleStyle: {
+							color: '#fff',
+							fontFamily: 'Poppins_500Medium',
+						},
 					}}
 				/>
 			</ProfileStack.Navigator>

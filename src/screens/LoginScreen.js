@@ -38,11 +38,14 @@ const LoginScreen = ({ navigation }) => {
 					if (res.data.error) setMessage(res.data.error);
 
 					const user = {
-						token: res.data.accessToken,
-						name: res.data.name,
 						isAdmin: res.data.isAdmin,
 						email: res.data.email,
+						token: res.data.accessToken,
+						name: res.data.name,
 						id: res.data.userId,
+						location: res.data.location,
+						phone: res.data.phone,
+						wallet: res.data.wallet,
 					};
 					const storeData = async (user) => {
 						try {
@@ -64,6 +67,9 @@ const LoginScreen = ({ navigation }) => {
 								isAdmin: res.data.isAdmin,
 								email: res.data.email,
 								id: res.data.userId,
+								wallet: res.data.wallet,
+								location: res.data.location,
+								phone: res.data.phone,
 							});
 							// console.log(user);
 						})
