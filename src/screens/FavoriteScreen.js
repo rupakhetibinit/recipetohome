@@ -73,56 +73,56 @@ const FavoriteScreen = () => {
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<StatusBar style='dark' />
-			<View
-				style={{
-					flexDirection: 'row',
-					justifyContent: 'center',
-				}}
-			>
-				<View>
-					<Text
-						style={{
-							color: '#d02860',
-							fontSize: 24,
-							fontFamily: 'Poppins_500Medium',
-						}}
-					>
-						Favorite Recipes
-					</Text>
+			<View style={{ alignItems: 'center' }}>
+				<View
+					style={{
+						flexDirection: 'row',
+						justifyContent: 'center',
+					}}
+				>
+					<View>
+						<Text
+							style={{
+								color: '#d02860',
+								fontSize: 24,
+								fontFamily: 'Poppins_500Medium',
+							}}
+						>
+							Favorite Recipes
+						</Text>
+					</View>
 				</View>
-			</View>
 
-			{loading && (
-				<ActivityIndicator
-					size={'large'}
-					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-				/>
-			)}
+				{loading && (
+					<ActivityIndicator
+						size={'large'}
+						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+					/>
+				)}
 
-			{/* {data?.recipes?.likedRecipes?.length === 0 && (
+				{/* {data?.recipes?.likedRecipes?.length === 0 && (
 				<View style={{ flex: 1, justifyContent: 'center' }}>
 					<Text style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}>
 						You have no favorite recipes
 					</Text>
 				</View>
 			)} */}
-			{data?.recipes?.likedRecipes?.length === 0 && (
-				<ScrollView
-					refreshControl={
-						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-					}
-					contentContainerStyle={{ flex: 1, alignItems: 'center' }}
-				>
-					<View>
-						<Text style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}>
-							You have no favorite recipes
-						</Text>
-					</View>
-				</ScrollView>
-			)}
+				{data?.recipes?.likedRecipes?.length === 0 && (
+					<ScrollView
+						refreshControl={
+							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+						}
+						contentContainerStyle={{ flex: 1, alignItems: 'center' }}
+					>
+						<View>
+							<Text style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}>
+								You have no favorite recipes
+							</Text>
+						</View>
+					</ScrollView>
+				)}
 
-			{data?.recipes?.likedRecipes?.length > 0 && (
-				<View style={{ alignItems: 'center' }}>
+				{data?.recipes?.likedRecipes?.length > 0 && (
 					<FlatList
 						showsVerticalScrollIndicator={false}
 						refreshControl={
@@ -176,21 +176,21 @@ const FavoriteScreen = () => {
 						)}
 						key={(item) => item.id}
 					/>
-				</View>
-			)}
+				)}
 
-			{error && (
-				<Text
-					style={{
-						flex: 1,
-						alignItems: 'center',
-						justifyContent: 'center',
-						color: 'red',
-					}}
-				>
-					{error}
-				</Text>
-			)}
+				{error && (
+					<Text
+						style={{
+							flex: 1,
+							alignItems: 'center',
+							justifyContent: 'center',
+							color: 'red',
+						}}
+					>
+						{error}
+					</Text>
+				)}
+			</View>
 		</SafeAreaView>
 	);
 };
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		width: 0.9 * width,
 		height: 300,
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 10,
+		marginVertical: 10,
 		overflow: 'hidden',
 	},
 	image: {

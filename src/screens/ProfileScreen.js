@@ -139,10 +139,20 @@ const ProfileScreen = ({ navigation }) => {
 				</View>
 			)}
 			<View style={styles.menuWrapper}>
-				<TouchableRipple onPress={() => {}}>
+				<TouchableRipple onPress={() => navigation.navigate('PendingOrders')}>
+					<View style={styles.menuItem}>
+						<MaterialCommunityIcons
+							name='shopping-outline'
+							color='#5f2eea'
+							size={25}
+						/>
+						<Text style={styles.menuItemText}>Pending Orders</Text>
+					</View>
+				</TouchableRipple>
+				<TouchableRipple onPress={() => navigation.navigate('DeliveredOrders')}>
 					<View style={styles.menuItem}>
 						<MaterialCommunityIcons name='shopping' color='#5f2eea' size={25} />
-						<Text style={styles.menuItemText}>Your Orders</Text>
+						<Text style={styles.menuItemText}>Delivered Orders</Text>
 					</View>
 				</TouchableRipple>
 				<TouchableRipple onPress={onLogoutPressed}>

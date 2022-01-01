@@ -91,7 +91,11 @@ const SelectedRecipeScreen = () => {
 		});
 		setCart(newCart);
 		setTotal(grandTotal);
-		navigation.navigate('Cart');
+		navigation.navigate('Shopping', {
+			params: {
+				screen: 'Cart',
+			},
+		});
 	};
 
 	const handleLike = () => {

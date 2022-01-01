@@ -6,13 +6,16 @@ import SelectedRecipeScreen from '../screens/SelectedRecipeScreen';
 import RecipeScreen from '../screens/RecipeScreen';
 import CartScreen from '../screens/CartScreen';
 import { Ionicons } from '@expo/vector-icons';
+import PendingOrders from '../screens/PendingOrders';
+import DeliveredOrders from '../screens/DeliveredOrders';
 import FavoriteScreen from '../screens/FavoriteScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import OrderConfirmationScreen from '../screens/OrderConfirmationScreen';
 const RecipeStack = createNativeStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const ProfileStack = createNativeStackNavigator();
-
+const OrderStack = createNativeStackNavigator();
 const MainStack = () => {
 	return (
 		<Tab.Navigator
@@ -45,10 +48,10 @@ const MainStack = () => {
 				}}
 			/>
 			<Tab.Screen
-				name='Cart'
-				component={CartScreen}
+				name='Shopping'
+				component={OrderStackScreen}
 				options={{
-					tabBarLabel: 'Cart',
+					tabBarLabel: 'Shopping',
 					tabBarColor: '#694fad',
 					tabBarIcon: ({ color }) => (
 						<Ionicons name='ios-cart' color={color} size={26} />
@@ -91,14 +94,73 @@ const RecipeStackScreen = () => {
 const ProfileStackScreen = () => {
 	return (
 		<View style={{ flex: 1 }} collapsable={false}>
-			<ProfileStack.Navigator
-				screenOptions={{
-					headerShown: false,
-				}}
-			>
-				<ProfileStack.Screen name='MainProfile' component={ProfileScreen} />
-				<ProfileStack.Screen name='EditProfile' component={EditProfileScreen} />
+			<ProfileStack.Navigator>
+				<ProfileStack.Screen
+					name='MainProfile'
+					component={ProfileScreen}
+					options={{
+						headerShown: false,
+					}}
+				/>
+				<ProfileStack.Screen
+					name='EditProfile'
+					component={EditProfileScreen}
+					options={{
+						headerShown: true,
+						headerStyle: {
+							backgroundColor: '#1f65ff',
+						},
+						headerTitle: 'Edit Profile',
+					}}
+				/>
+				<ProfileStack.Screen
+					name='PendingOrders'
+					component={PendingOrders}
+					options={{
+						headerShown: true,
+						headerStyle: {
+							backgroundColor: '#1f65ff',
+						},
+						headerTitle: 'Pending Orders',
+					}}
+				/>
+				<ProfileStack.Screen
+					name='DeliveredOrders'
+					component={DeliveredOrders}
+					options={{
+						headerShown: true,
+						headerStyle: {
+							backgroundColor: '#1f65ff',
+						},
+						headerTitle: 'Delivered Orders',
+					}}
+				/>
 			</ProfileStack.Navigator>
+		</View>
+	);
+};
+
+const OrderStackScreen = () => {
+	return (
+		<View style={{ flex: 1 }} collapsable={false}>
+			<OrderStack.Navigator>
+				<OrderStack.Screen
+					name='Cart'
+					component={CartScreen}
+					options={{ headerShown: false }}
+				/>
+				<OrderStack.Screen
+					name='OrderConfirmation'
+					component={OrderConfirmationScreen}
+					options={{
+						headerShown: true,
+						headerStyle: {
+							backgroundColor: '#694fad',
+						},
+						headerTitle: 'Order Confirmation',
+					}}
+				/>
+			</OrderStack.Navigator>
 		</View>
 	);
 };
