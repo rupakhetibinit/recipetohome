@@ -61,7 +61,7 @@ const ProfileScreen = ({ navigation }) => {
 			try {
 				const jsonValue = await AsyncStorage.getItem('user');
 				if (jsonValue !== null && jsonValue !== undefined) {
-					await AsyncStorage.removeItem('auth');
+					await AsyncStorage.removeItem('user');
 					setAuth({
 						token: '',
 						name: '',
