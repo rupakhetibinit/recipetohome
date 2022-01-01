@@ -15,7 +15,13 @@ const ProfileStack = createNativeStackNavigator();
 
 const MainStack = () => {
 	return (
-		<Tab.Navigator initialRouteName='Home' activeColor='#fff'>
+		<Tab.Navigator
+			initialRouteName='Home'
+			activeColor='#fff'
+			backBehavior='history'
+			sceneAnimationEnabled={false}
+			shifting={true}
+		>
 			<Tab.Screen
 				name='Home'
 				component={RecipeStackScreen}

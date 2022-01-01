@@ -4,7 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Button, Checkbox, List } from 'react-native-paper';
+import { Button, Checkbox, List, TouchableRipple } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
 import { AuthContext } from '../context/AuthContext';
@@ -23,21 +23,21 @@ const CartScreen = () => {
 		},
 	};
 
-	useEffect(() => {
-		axios
-			.get(
-				'http://recipetohome-api.herokuapp.com/api/v1/orders/' + auth.id,
-				config
-			)
-			.then((res) => {
-				console.log(res);
-				console.log('this is the axios get request');
-				setOrderedItems(res.data.orders);
-			})
-			.catch((err) => {
-				console.log(err);
-			});
-	}, [reload]);
+	// useEffect(() => {
+	// 	axios
+	// 		.get(
+	// 			'http://recipetohome-api.herokuapp.com/api/v1/orders/' + auth.id,
+	// 			config
+	// 		)
+	// 		.then((res) => {
+	// 			console.log(res);
+	// 			console.log('this is the axios get request');
+	// 			setOrderedItems(res.data.orders);
+	// 		})
+	// 		.catch((err) => {
+	// 			console.log(err);
+	// 		});
+	// }, [reload]);
 
 	const handleOrder = (order) => {
 		const givenOrder = order;
@@ -194,7 +194,6 @@ const CartScreen = () => {
 												flex: 1,
 												flexDirection: 'row',
 												alignItems: 'center',
-												justifyContent: 'center',
 											}}
 										>
 											<Checkbox
@@ -204,80 +203,22 @@ const CartScreen = () => {
 												}}
 												color='#5F2EEA'
 											/>
-											<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+											<Text style={{ fontSize: 14 }}>
 												{item.amount} {item.measurement} {item.name}
 											</Text>
 										</View>
 									)}
 								/>
-								<Pressable onPress={() => handleOrder(parentData)}>
-									<Text>Order Now</Text>
-								</Pressable>
+								<TouchableRipple onPress={() => handleOrder(parentData)}>
+									<View>
+										<Text>Order Now</Text>
+									</View>
+								</TouchableRipple>
 							</List.Accordion>
 						);
 					}}
 				/>
 			)}
-
-			{/* {orderedItems !== null && orderedItems.length > 0 && (
-				<View style={{ flex: 1 }}>
-					<Text>Showing all orders</Text>
-					<FlatList
-						style={{
-							height: '100%',
-							width: '100%',
-						}}
-						showsVerticalScrollIndicator={false}
-						data={orderedItems}
-						renderItem={({ item }) => {
-							return (
-								<List.Accordion
-									title={`Order ${item.id.split('-')[0].toUpperCase()}`}
-									titleNumberOfLines={1}
-									titleStyle={{
-										color: '#5F2EEA',
-									}}
-									style={{
-										width: '100%',
-										paddingBottom: 20,
-									}}
-								>
-									<FlatList
-										showsVerticalScrollIndicator={false}
-										data={item.ingredients.filter(
-											(ingredient) => ingredient.checked === true
-										)}
-										renderItem={({ item }) => (
-											<View
-												style={{
-													flex: 1,
-													flexDirection: 'row',
-													alignItems: 'center',
-													justifyContent: 'center',
-												}}
-											>
-												<Checkbox
-													status={item.checked ? 'checked' : 'unchecked'}
-													onPress={() => {
-														handleDelete(parentData.id, item.id);
-													}}
-													color='#5F2EEA'
-												/>
-												<Text style={{ flex: 1, flexWrap: 'wrap' }}>
-													{item.amount} {item.measurement} {item.name}
-												</Text>
-											</View>
-										)}
-									/>
-									<Pressable onPress={() => handleOrder(parentData)}>
-										<Text>Order Now</Text>
-									</Pressable>
-								</List.Accordion>
-							);
-						}}
-					/>
-				</View>
-			)} */}
 		</SafeAreaView>
 	);
 };

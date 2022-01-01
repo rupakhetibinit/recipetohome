@@ -14,6 +14,7 @@ import {
 	FAB,
 } from 'react-native-paper';
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import EditProfileScreen from './EditProfileScreen';
 
 const ProfileScreen = ({ navigation }) => {
 	const { auth, setAuth } = useContext(AuthContext);
@@ -69,6 +70,7 @@ const ProfileScreen = ({ navigation }) => {
 					</View>
 				</View>
 			</View>
+
 			<View style={styles.userInfoSection}>
 				<View style={styles.row}>
 					<MaterialCommunityIcons
@@ -107,12 +109,8 @@ const ProfileScreen = ({ navigation }) => {
 			<View style={styles.menuWrapper}>
 				<TouchableRipple onPress={() => {}}>
 					<View style={styles.menuItem}>
-						<MaterialCommunityIcons
-							name='heart-outline'
-							color='#5f2eea'
-							size={25}
-						/>
-						<Text style={styles.menuItemText}>Your Favorites</Text>
+						<MaterialCommunityIcons name='shopping' color='#5f2eea' size={25} />
+						<Text style={styles.menuItemText}>Your Orders</Text>
 					</View>
 				</TouchableRipple>
 				<TouchableRipple onPress={onLogoutPressed}>
@@ -124,7 +122,7 @@ const ProfileScreen = ({ navigation }) => {
 			</View>
 
 			<FAB
-				style={{ position: 'absolute', bottom: 0, right: 0, margin: 18 }}
+				style={{ position: 'absolute', bottom: 0, right: 0, margin: 20 }}
 				small={false}
 				color='#5f2eea'
 				icon={() => {
@@ -136,7 +134,13 @@ const ProfileScreen = ({ navigation }) => {
 						/>
 					);
 				}}
-				onPress={() => navigation.navigate('EditProfile')}
+				onPress={() =>
+					navigation.navigate('EditProfile', {
+						name: auth.name,
+						email: auth.email,
+						id: auth.id,
+					})
+				}
 			/>
 		</SafeAreaView>
 	);

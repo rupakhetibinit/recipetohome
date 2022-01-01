@@ -7,6 +7,7 @@ import {
 	FlatList,
 	ScrollView,
 	Dimensions,
+	RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
@@ -23,11 +24,15 @@ import {
 	Headline,
 } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
+import axios from 'axios';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
+	const [refreshing, setRefreshing] = useState(false);
+	const [loading, setLoading] = useState(true);
+	const [data, setData] = useState(null);
 	function onChangeSearch(query) {
 		setSearchQuery(query);
 	}
@@ -40,17 +45,33 @@ const RecipeScreen = ({ navigation }) => {
 		.match(/(^\S|\S$)?/g)
 		.join('')
 		.toUpperCase();
-	const { data, loading, error } = useFetch(
-		'https://recipetohome-api.herokuapp.com/api/v1/recipes',
-		{
-			method: 'GET',
-			mode: 'cors',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${token}`,
-			},
-		}
-	);
+
+	useEffect(() => {
+		fetchData();
+		setLoading(false);
+	}, []);
+	const onRefresh = () => {
+		setRefreshing(true);
+		fetchData();
+	};
+	const fetchData = async () => {
+		await axios
+			.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
+				method: 'GET',
+				mode: 'cors',
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: `Bearer ${token}`,
+				},
+			})
+			.then((res) => {
+				console.log(res);
+				setData(res.data);
+				setLoading(false);
+				setRefreshing(false);
+			})
+			.catch((err) => console.log(err));
+	};
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -86,6 +107,15 @@ const RecipeScreen = ({ navigation }) => {
 			{data && (
 				<FlatList
 					showsVerticalScrollIndicator={false}
+					refreshControl={
+						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+					}
+					extraData={
+						data &&
+						data.recipes.filter((recipe) => {
+							recipe.name.toLowerCase().startsWith(searchQuery.toLowerCase());
+						})
+					}
 					data={
 						data &&
 						data.recipes.filter((recipe) =>
@@ -93,17 +123,15 @@ const RecipeScreen = ({ navigation }) => {
 						)
 					}
 					renderItem={({ item }) => (
-						<RecipeCard
-							id={item.id}
-							title={item.name}
-							url={item.imageUrl}
-							servings={item.servings}
-							onPress={() =>
-								navigation.navigate('SelectedRecipe', {
-									recipeId: item.id,
-								})
+						<View
+							style={styles.imageContainer}
+							onTouchStart={() =>
+								navigation.navigate('SelectedRecipe', { recipeId: item.id })
 							}
-						/>
+						>
+							<Image style={styles.image} source={{ uri: item.imageUrl }} />
+							<Text style={styles.text}>{item.name}</Text>
+						</View>
 					)}
 					key={(item) => item.id}
 				/>
@@ -138,5 +166,30 @@ const styles = StyleSheet.create({
 	avatar: {
 		width: 75,
 		height: 75,
+	},
+	imageContainer: {
+		alignContent: 'center',
+		width: 0.9 * width,
+		height: 300,
+		marginTop: 20,
+		marginBottom: 20,
+		overflow: 'hidden',
+	},
+	image: {
+		width: '100%',
+		height: '100%',
+		borderRadius: 10,
+	},
+	text: {
+		position: 'absolute',
+		left: 0,
+		bottom: 0,
+		margin: 20,
+		fontFamily: 'Poppins_600SemiBold',
+		fontSize: 18,
+		color: 'white',
+		textShadowOffset: { width: 1, height: 1 },
+		textShadowRadius: 1,
+		textShadowColor: 'rgba(0, 0, 0, 0.75)',
 	},
 });

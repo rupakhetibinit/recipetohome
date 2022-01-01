@@ -8,10 +8,8 @@ import {
 	Provider as PaperProvider,
 } from 'react-native-paper';
 
-import {
-	NavigationContainer,
-	DefaultTheme as NavigationDefaultTheme,
-} from '@react-navigation/native';
+import { DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/Routes';
 import {
 	useFonts,
