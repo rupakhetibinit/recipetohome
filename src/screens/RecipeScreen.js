@@ -8,6 +8,7 @@ import {
 	ScrollView,
 	Dimensions,
 	RefreshControl,
+	Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomButton from '../components/CustomButton';
@@ -123,15 +124,16 @@ const RecipeScreen = ({ navigation }) => {
 						)
 					}
 					renderItem={({ item }) => (
-						<View
-							style={styles.imageContainer}
-							onTouchStart={() =>
+						<Pressable
+							onPress={() =>
 								navigation.navigate('SelectedRecipe', { recipeId: item.id })
 							}
 						>
-							<Image style={styles.image} source={{ uri: item.imageUrl }} />
-							<Text style={styles.text}>{item.name}</Text>
-						</View>
+							<View style={styles.imageContainer}>
+								<Image style={styles.image} source={{ uri: item.imageUrl }} />
+								<Text style={styles.text}>{item.name}</Text>
+							</View>
+						</Pressable>
 					)}
 					key={(item) => item.id}
 				/>
@@ -171,8 +173,8 @@ const styles = StyleSheet.create({
 		alignContent: 'center',
 		width: 0.9 * width,
 		height: 300,
-		marginTop: 20,
-		marginBottom: 20,
+		marginTop: 10,
+		marginVertical: 10,
 		overflow: 'hidden',
 	},
 	image: {
