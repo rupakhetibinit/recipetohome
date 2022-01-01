@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
+import { ActivityIndicator } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
 	Button,
@@ -15,10 +16,39 @@ import {
 } from 'react-native-paper';
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import EditProfileScreen from './EditProfileScreen';
+import axios from 'axios';
 
 const ProfileScreen = ({ navigation }) => {
 	const { auth, setAuth } = useContext(AuthContext);
 	const [loggingOut, setLoggingOut] = useState(false);
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const config = {
+		headers: {
+			Authorization: `Bearer ${auth.token}`,
+			'Content-Type': 'application/json',
+		},
+	};
+
+	const getData = async () => {
+		setLoading(true);
+		axios
+			.get(
+				'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + auth.id,
+				config
+			)
+			.then((res) => {
+				console.log(res);
+				setData(res.data.orders);
+			})
+			.catch((err) => console.log(err))
+			.finally(() => setLoading(false));
+	};
+	useEffect(() => {
+		getData();
+		return () => {};
+	}, []);
+
 	const initials = auth.name
 		.match(/(^\S\S?|\b\S)?/g)
 		.join('')
@@ -59,6 +89,7 @@ const ProfileScreen = ({ navigation }) => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar style='dark' />
+			{loading && <ActivityIndicator />}
 			<View style={styles.userInfoSection}>
 				<View style={{ flexDirection: 'row', marginTop: 15 }}>
 					<Avatar.Text size={80} label={initials} />
@@ -90,22 +121,23 @@ const ProfileScreen = ({ navigation }) => {
 				</View>
 			</View>
 
-			<View style={styles.infoBoxWrapper}>
-				<View
-					style={[
-						styles.infoBox,
-						{ borderRightColor: '#dddddd', borderRightWidth: 1 },
-					]}
-				>
-					<Title>Rs. 1400</Title>
-					<Caption>Wallet</Caption>
+			{!loading && (
+				<View style={styles.infoBoxWrapper}>
+					<View
+						style={[
+							styles.infoBox,
+							{ borderRightColor: '#dddddd', borderRightWidth: 1 },
+						]}
+					>
+						<Title>Rs. 1400</Title>
+						<Caption>Wallet</Caption>
+					</View>
+					<View style={styles.infoBox}>
+						<Title>{data.length}</Title>
+						<Caption>Orders</Caption>
+					</View>
 				</View>
-				<View style={styles.infoBox}>
-					<Title>10</Title>
-					<Caption>Orders</Caption>
-				</View>
-			</View>
-
+			)}
 			<View style={styles.menuWrapper}>
 				<TouchableRipple onPress={() => {}}>
 					<View style={styles.menuItem}>

@@ -4,12 +4,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Image,
+	Pressable,
 	RefreshControl,
 	StyleSheet,
 	Text,
+	TouchableOpacity,
 	View,
 } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import {
+	FlatList,
+	ScrollView,
+	TouchableWithoutFeedback,
+} from 'react-native-gesture-handler';
 import { ActivityIndicator, Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RecipeCard from '../components/RecipeCard';
@@ -125,24 +131,28 @@ const FavoriteScreen = () => {
 						extraData={data.recipes}
 						data={data.recipes.likedRecipes}
 						renderItem={({ item }) => (
-							<View
-								style={styles.imageContainer}
-								onTouchStart={() =>
+							<Pressable
+								onPress={() =>
 									navigation.navigate('SelectedRecipe', { recipeId: item.id })
 								}
 							>
-								{data.recipes.likedRecipes.length === 0 && (
-									<View style={{ flex: 1, justifyContent: 'center' }}>
-										<Text
-											style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}
-										>
-											You have no favorite recipes
-										</Text>
-									</View>
-								)}
-								<Image style={styles.image} source={{ uri: item.imageUrl }} />
-								<Text style={styles.text}>{item.name}</Text>
-								{/* <View
+								<View style={styles.imageContainer}>
+									{data.recipes.likedRecipes.length === 0 && (
+										<View style={{ flex: 1, justifyContent: 'center' }}>
+											<Text
+												style={{
+													fontSize: 24,
+													fontFamily: 'Poppins_500Medium',
+												}}
+											>
+												You have no favorite recipes
+											</Text>
+										</View>
+									)}
+
+									<Image style={styles.image} source={{ uri: item.imageUrl }} />
+									<Text style={styles.text}>{item.name}</Text>
+									{/* <View
 									style={{
 										width: 50,
 										height: 50,
@@ -153,15 +163,16 @@ const FavoriteScreen = () => {
 										borderRadius: 50,
 										backgroundColor: 'white',
 									}}
-								>
+									>
 									<FontAwesome
-										style={{ position: 'absolute', top: 13, left: 13 }}
-										name='heart'
-										size={25}
-										color='#5F2EEA'
+									style={{ position: 'absolute', top: 13, left: 13 }}
+									name='heart'
+									size={25}
+									color='#5F2EEA'
 									/>
 								</View> */}
-							</View>
+								</View>
+							</Pressable>
 						)}
 						key={(item) => item.id}
 					/>
