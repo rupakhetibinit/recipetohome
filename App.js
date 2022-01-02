@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import 'react-native-gesture-handler';
 import { CartProvider } from './src/context/CartContext';
 import { AuthProvider } from './src/context/AuthContext';
@@ -7,7 +7,6 @@ import {
 	DefaultTheme as PaperDefaultTheme,
 	Provider as PaperProvider,
 } from 'react-native-paper';
-
 import { DefaultTheme as NavigationDefaultTheme } from '@react-navigation/native';
 import { NavigationContainer } from '@react-navigation/native';
 import Routes from './src/Routes';
@@ -33,6 +32,7 @@ import {
 	Poppins_900Black_Italic,
 } from '@expo-google-fonts/poppins';
 import merge from 'deepmerge';
+
 export default function App() {
 	const DefaultTheme = merge(NavigationDefaultTheme, PaperDefaultTheme);
 	const theme = {
@@ -75,6 +75,7 @@ export default function App() {
 		// 	</SafeAreaProvider>
 		// );
 		// }
+
 		return (
 			<SafeAreaProvider>
 				<AuthProvider>

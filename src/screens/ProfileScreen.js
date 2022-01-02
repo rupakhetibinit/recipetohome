@@ -12,7 +12,6 @@ import {
 	Title,
 	Caption,
 	TouchableRipple,
-	FAB,
 } from 'react-native-paper';
 import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 import EditProfileScreen from './EditProfileScreen';
@@ -125,6 +124,7 @@ const ProfileScreen = ({ navigation }) => {
 					phone: res.data.user.phone,
 					name: res.data.user.name,
 					wallet: res.data.user.wallet,
+					pushNotificationToken: res.data.pushNotificationToken,
 				});
 				storeData(auth)
 					.then(() => {

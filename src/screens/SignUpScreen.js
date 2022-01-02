@@ -48,7 +48,13 @@ const SignUpScreen = ({ navigation }) => {
 			axios
 				.post(
 					'https://recipetohome-api.herokuapp.com/api/auth/register',
-					{ email: email, password: password, name: name, isAdmin: false },
+					{
+						email: email,
+						password: password,
+						name: name,
+						isAdmin: false,
+						pushNotificationToken: auth.pushNotificationToken,
+					},
 					config
 				)
 				.then((res) => {
@@ -63,6 +69,7 @@ const SignUpScreen = ({ navigation }) => {
 						phone: res.data.phone,
 						location: res.data.location,
 						wallet: res.data.wallet,
+						pushNotificationToken: res.data.pushNotificationToken,
 					});
 					const storeData = async (auth) => {
 						try {

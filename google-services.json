@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "336551123290",
+    "project_id": "recipetohome",
+    "storage_bucket": "recipetohome.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:336551123290:android:f41599fa10ca984a4b3b63",
+        "android_client_info": {
+          "package_name": "com.rupakhetibinit.recipetohome"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "336551123290-du00g62vl4vauho5unpgspfs2uk95810.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-_PEo6323-YDUjWzdiKxqYUlMrCnqq7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "336551123290-du00g62vl4vauho5unpgspfs2uk95810.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

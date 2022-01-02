@@ -11,6 +11,7 @@ export const AuthProvider = (props) => {
 		location: null,
 		phone: null,
 		wallet: 0,
+		pushNotificationToken: '',
 	});
 
 	return (

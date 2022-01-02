@@ -32,6 +32,7 @@ const LoginScreen = ({ navigation }) => {
 				.post('https://recipetohome-api.herokuapp.com/api/auth/login', {
 					email,
 					password,
+					pushNotificationToken: auth.pushNotificationToken,
 				})
 				.then((res) => {
 					// console.log(res);
@@ -46,6 +47,7 @@ const LoginScreen = ({ navigation }) => {
 						location: res.data.location,
 						phone: res.data.phone,
 						wallet: res.data.wallet,
+						pushNotificationToken: res.data.pushNotificationToken,
 					};
 					const storeData = async (user) => {
 						try {
