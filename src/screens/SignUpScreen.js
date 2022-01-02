@@ -33,6 +33,18 @@ const SignUpScreen = ({ navigation }) => {
 			'Content-Type': 'application/json',
 		},
 	};
+
+	function looksLikeMail(str) {
+		var lastAtPos = str.lastIndexOf('@');
+		var lastDotPos = str.lastIndexOf('.');
+		return (
+			lastAtPos < lastDotPos &&
+			lastAtPos > 0 &&
+			str.indexOf('@@') == -1 &&
+			lastDotPos > 2 &&
+			str.length - lastDotPos > 2
+		);
+	}
 	const onSignupPressed = () => {
 		if (!name) {
 			setMessage('Full name is required');
@@ -42,6 +54,8 @@ const SignUpScreen = ({ navigation }) => {
 			setMessage('Password is required');
 		} else if (password !== confirmPassword) {
 			setMessage(`Passwords do not match`);
+		} else if (!looksLikeMail(email)) {
+			setMessage('Invalid email');
 		} else {
 			setLoading(true);
 			setMessage('');
@@ -84,7 +98,10 @@ const SignUpScreen = ({ navigation }) => {
 					storeData(auth);
 					setLoading(false);
 				})
-				.catch((err) => console.log(err));
+				.catch((err) => console.log(err))
+				.finally(() => {
+					setLoading(false);
+				});
 		}
 	};
 

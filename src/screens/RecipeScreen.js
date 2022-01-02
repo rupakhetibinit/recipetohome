@@ -21,16 +21,17 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
 
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [refreshing, setRefreshing] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [data, setData] = useState(null);
+
 	function onChangeSearch(query) {
 		setSearchQuery(query);
 	}
+
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const name = auth.name;
@@ -104,12 +105,6 @@ const RecipeScreen = ({ navigation }) => {
 					showsVerticalScrollIndicator={false}
 					refreshControl={
 						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-					}
-					extraData={
-						data &&
-						data.recipes.filter((recipe) => {
-							recipe.name.toLowerCase().startsWith(searchQuery.toLowerCase());
-						})
 					}
 					data={
 						data &&

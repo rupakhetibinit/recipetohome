@@ -4,21 +4,16 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, TextInput } from 'react-native-paper';
+import { ActivityIndicator, FAB } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {
-	Button,
-	Avatar,
-	Title,
-	Caption,
-	TouchableRipple,
-} from 'react-native-paper';
-import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
-import EditProfileScreen from './EditProfileScreen';
+import { Avatar, Title, Caption, TouchableRipple } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = () => {
+	const navigation = useNavigation();
 	const storeData = async (user) => {
 		try {
 			const jsonValue = JSON.stringify(user);
@@ -33,10 +28,7 @@ const ProfileScreen = ({ navigation }) => {
 	};
 
 	const { auth, setAuth } = useContext(AuthContext);
-	// console.log(auth);
-	const [location, setLocation] = useState(auth.location);
-	const [phone, setPhone] = useState(auth.phone);
-	const [disabled, setDisabled] = useState(true);
+
 	const [loggingOut, setLoggingOut] = useState(false);
 	const [data, setData] = useState(null);
 	const [loading, setLoading] = useState(true);
@@ -46,59 +38,6 @@ const ProfileScreen = ({ navigation }) => {
 			Authorization: `Bearer ${auth.token}`,
 			'Content-Type': 'application/json',
 		},
-	};
-
-	const handlePhoneSend = () => {
-		axios
-			.post(
-				'https://recipetohome-api.herokuapp.com/api/v1/users/phone',
-				{
-					userId: auth.id,
-					phone: phone,
-				},
-				config
-			)
-			.then((res) => {
-				if (res.data.success === true) {
-					setAuth({
-						...auth,
-						phone: res.data.phone,
-					});
-					storeData(auth)
-						.then(() => {
-							// console.log('stored');
-						})
-						.catch((err) => console.log(error));
-				}
-			})
-			.catch((err) => console.log(err))
-			.finally(() => setDisabled(true));
-	};
-	const handleLocationSend = () => {
-		axios
-			.post(
-				'https://recipetohome-api.herokuapp.com/api/v1/users/location',
-				{
-					userId: auth.id,
-					location: location,
-				},
-				config
-			)
-			.then((res) => {
-				if (res.data.success === true) {
-					setAuth({
-						...auth,
-						location: res.data.location,
-					});
-					storeData(auth)
-						.then(() => {
-							// console.log('stored');
-						})
-						.catch((err) => console.log(error));
-				}
-			})
-			.catch((err) => console.log(err))
-			.finally(() => setDisabled(true));
 	};
 
 	useEffect(() => {
@@ -115,19 +54,17 @@ const ProfileScreen = ({ navigation }) => {
 			.then((res) => {
 				// console.log(res.data.user);
 				setData(res.data.user);
-				setAuth({
-					isAdmin: res.data.user.isAdmin,
-					id: res.data.user.id,
-					token: auth.token,
-					email: res.data.user.email,
-					location: res.data.user.location,
-					phone: res.data.user.phone,
-					name: res.data.user.name,
-					wallet: res.data.user.wallet,
-					pushNotificationToken: res.data.pushNotificationToken,
-				});
 				storeData(auth)
 					.then(() => {
+						setAuth({
+							...auth,
+							isAdmin: res.data.user.isAdmin,
+							email: res.data.user.email,
+							location: res.data.user.location,
+							phone: res.data.user.phone,
+							name: res.data.user.name,
+							wallet: res.data.user.wallet,
+						});
 						// console.log('stored');
 					})
 					.catch((err) => console.log(err));
@@ -135,7 +72,6 @@ const ProfileScreen = ({ navigation }) => {
 			.catch((err) => console.log(err))
 			.finally(() => {
 				setLoading(false);
-				setDisabled(false);
 			});
 	};
 
@@ -151,6 +87,7 @@ const ProfileScreen = ({ navigation }) => {
 		.match(/(^\S|\S$)?/g)
 		.join('')
 		.toUpperCase();
+
 	const onLogoutPressed = () => {
 		setLoggingOut(true);
 		const deleteData = async () => {
@@ -214,64 +151,18 @@ const ProfileScreen = ({ navigation }) => {
 							name='map-marker-radius'
 							size={20}
 						/>
-						{auth.location !== null && (
-							<Text style={{ color: '#777777', marginLeft: 20 }}>
-								{auth.location}
-							</Text>
-						)}
-						{auth.location === null && (
-							<View style={styles.row}>
-								<TextInput
-									mode='outlined'
-									label='Location'
-									style={styles.textInput}
-									value={location}
-									onChangeText={(text) => setLocation(text)}
-									disabled={disabled}
-								/>
-								<MaterialCommunityIcons
-									color={'#777777'}
-									name='send'
-									size={20}
-									onPress={handleLocationSend}
-								/>
-							</View>
-						)}
+
+						<Text style={{ color: '#777777', marginLeft: 20 }}>
+							{auth.location ? auth.location : 'Location not set'}
+						</Text>
 					</View>
 					<View style={styles.row}>
 						<MaterialCommunityIcons color='#777777' name='phone' size={20} />
 
-						{auth.phone !== null && (
-							<Text style={{ color: '#777777', marginLeft: 20 }}>
-								+977-{auth.phone}
-							</Text>
-						)}
-						{auth.phone === null && (
-							<View style={styles.row}>
-								<TextInput
-									mode='outlined'
-									label='Phone No.'
-									style={styles.textInput}
-									value={phone}
-									disabled={disabled}
-									onChangeText={(text) => setPhone(text)}
-								/>
-								<MaterialCommunityIcons
-									color={'#777777'}
-									name='send'
-									size={20}
-									onPress={handlePhoneSend}
-								/>
-							</View>
-						)}
+						<Text style={{ color: '#777777', marginLeft: 20 }}>
+							{auth.phone ? `+977-${auth.phone}` : 'Phone not set'}
+						</Text>
 					</View>
-					{(auth.phone === null || auth.location === null) && (
-						<View style={styles.row}>
-							<Button mode='contained' onPress={() => setDisabled(!disabled)}>
-								{disabled ? 'Edit' : 'Save'}
-							</Button>
-						</View>
-					)}
 				</View>
 
 				{!loading && (
@@ -322,27 +213,21 @@ const ProfileScreen = ({ navigation }) => {
 					</TouchableRipple>
 				</View>
 
-				{/* <FAB
-				style={{ position: 'absolute', bottom: 0, right: 0, margin: 20 }}
-				small={false}
-				color='#5f2eea'
-				icon={() => {
-					return (
-						<MaterialCommunityIcons
-							name='account-edit'
-							color='black'
-							size={24}
-						/>
-					);
-				}}
-				onPress={() =>
-					navigation.navigate('EditProfile', {
-						name: auth.name,
-						email: auth.email,
-						id: auth.id,
-					})
-				}
-			/> */}
+				<FAB
+					style={{ position: 'absolute', bottom: 0, right: 0, margin: 20 }}
+					small={false}
+					color='#5f2eea'
+					icon={() => {
+						return (
+							<MaterialCommunityIcons
+								name='account-edit'
+								color='black'
+								size={24}
+							/>
+						);
+					}}
+					onPress={() => navigation.navigate('EditProfile')}
+				/>
 			</ScrollView>
 		</SafeAreaView>
 	);

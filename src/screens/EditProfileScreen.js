@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	ImageBackground,
 	StyleSheet,
 	Text,
 	View,
 	TouchableOpacity,
+	TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
@@ -12,10 +13,17 @@ import {
 	FontAwesome,
 	Feather,
 } from '@expo/vector-icons';
-import { Avatar } from 'react-native-paper';
+import { Avatar, Button } from 'react-native-paper';
 import { AuthContext } from '../context/AuthContext';
+import axios from 'axios';
 function EditProfileScreen({ navigation }) {
 	const { auth, setAuth } = useContext(AuthContext);
+	const [userInfo, setUserInfo] = useState({
+		name: '',
+		location: '',
+		phone: '',
+		email: '',
+	});
 	// Regex to find initials
 	const initials = auth.name
 		.match(/(^\S\S?|\b\S)?/g)
@@ -23,10 +31,56 @@ function EditProfileScreen({ navigation }) {
 		.match(/(^\S|\S$)?/g)
 		.join('')
 		.toUpperCase();
+	const config = {
+		headers: {
+			Authorization: `Bearer ${auth.token}`,
+			'Content-Type': 'application/json',
+		},
+	};
+
+	function handleUpdate() {
+		if (
+			userInfo.name === '' ||
+			userInfo.location === '' ||
+			userInfo.phone === '' ||
+			userInfo.email === ''
+		) {
+			alert('Please fill in all fields');
+		} else {
+			axios
+				.patch(
+					'https://recipetohome-api.herokuapp.com/api/v1/users/update',
+					{
+						userId: auth.id,
+						name: userInfo.name,
+						location: userInfo.location,
+						phone: userInfo.phone,
+						email: userInfo.email,
+					},
+					config
+				)
+				.then((res) => {
+					console.log(res.data);
+					if (res.data.success == true) {
+						setAuth({
+							...auth,
+							name: userInfo.name,
+							location: userInfo.location,
+							phone: userInfo.phone,
+							email: userInfo.email,
+						});
+						navigation.navigate('MainProfile');
+					} else {
+						alert('Error saving data');
+					}
+				})
+				.catch((err) => console.log(err));
+		}
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={{ margin: 20 }}>
+			<View style={{ margin: 5 }}>
 				<View style={{ alignItems: 'center' }}>
 					<TouchableOpacity onPress={() => {}}>
 						<View
@@ -46,7 +100,10 @@ function EditProfileScreen({ navigation }) {
 								}}
 							>
 								<View
-									style={{ alignItems: 'center', justifyContent: 'center' }}
+									style={{
+										alignItems: 'center',
+										justifyContent: 'center',
+									}}
 								>
 									<Avatar.Text label={initials} size={100} />
 									{/* <MaterialCommunityIcons
@@ -66,16 +123,71 @@ function EditProfileScreen({ navigation }) {
 							</View>
 						</View>
 					</TouchableOpacity>
+					<Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>
+						{auth.name}
+					</Text>
 				</View>
+				<View style={styles.action}>
+					<FontAwesome name='user-o' size={25} />
+					<TextInput
+						value={userInfo.name}
+						placeholder='Full Name'
+						placeholderTextColor='#666666'
+						style={styles.textInput}
+						autoCorrect={false}
+						onChangeText={(text) => setUserInfo({ ...userInfo, name: text })}
+					/>
+				</View>
+				<View style={styles.action}>
+					<FontAwesome name='envelope-o' size={25} />
+					<TextInput
+						value={userInfo.email}
+						placeholder='Email'
+						placeholderTextColor='#666666'
+						style={styles.textInput}
+						autoCorrect={false}
+						keyboardType='email-address'
+						onChangeText={(text) => setUserInfo({ ...userInfo, email: text })}
+					/>
+				</View>
+				<View style={styles.action}>
+					<FontAwesome name='phone' size={25} />
+					<TextInput
+						value={userInfo.phone}
+						placeholder='Phone'
+						placeholderTextColor='#666666'
+						style={styles.textInput}
+						autoCorrect={false}
+						keyboardType='numeric'
+						onChangeText={(text) => setUserInfo({ ...userInfo, phone: text })}
+					/>
+				</View>
+				<View style={styles.action}>
+					<MaterialCommunityIcons name='map-marker-outline' size={25} />
+					<TextInput
+						value={userInfo.location}
+						placeholder='Location'
+						placeholderTextColor='#666666'
+						style={styles.textInput}
+						autoCorrect={false}
+						onChangeText={(text) =>
+							setUserInfo({ ...userInfo, location: text })
+						}
+					/>
+				</View>
+				<Button
+					mode='contained'
+					style={{ alignSelf: 'center', width: '50%' }}
+					onPress={handleUpdate}
+				>
+					<Text style={{ color: '#fff' }}>Save</Text>
+				</Button>
 			</View>
 		</SafeAreaView>
 	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
 	container: {
 		flex: 1,
 	},
@@ -142,11 +254,14 @@ const styles = StyleSheet.create({
 	},
 	action: {
 		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'center',
 		marginTop: 10,
 		marginBottom: 10,
 		borderBottomWidth: 1,
 		borderBottomColor: '#f2f2f2',
 		paddingBottom: 5,
+		marginLeft: 10,
 	},
 	actionError: {
 		flexDirection: 'row',
@@ -157,7 +272,7 @@ const styles = StyleSheet.create({
 	},
 	textInput: {
 		flex: 1,
-		marginTop: Platform.OS === 'ios' ? 0 : -12,
+		marginTop: Platform.OS === 'ios' ? 0 : -5,
 		paddingLeft: 10,
 		color: '#05375a',
 	},

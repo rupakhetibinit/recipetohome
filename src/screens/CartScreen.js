@@ -1,43 +1,24 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useEffect } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useCallback, useContext, useRef } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import { Button, Checkbox, List, TouchableRipple } from 'react-native-paper';
+import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import CustomButton from '../components/CustomButton';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 const CartScreen = () => {
 	const navigation = useNavigation();
-	const route = useRoute();
-	const { auth, setAuth } = useContext(AuthContext);
-	const { cart, setCart, total, setTotal } = useContext(CartContext);
+	const { auth } = useContext(AuthContext);
+	const { cart, setCart, total } = useContext(CartContext);
 	const [reload, setReload] = React.useState(false);
-	const [orderedItems, setOrderedItems] = React.useState(null);
 	const config = {
 		headers: {
 			Authorization: `Bearer ${auth.token}`,
 			'Content-Type': 'application/json',
 		},
 	};
-
-	// useEffect(() => {
-	// 	axios
-	// 		.get(
-	// 			'http://recipetohome-api.herokuapp.com/api/v1/orders/' + auth.id,
-	// 			config
-	// 		)
-	// 		.then((res) => {
-	// 			console.log(res);
-	// 			console.log('this is the axios get request');
-	// 			setOrderedItems(res.data.orders);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// }, [reload]);
 
 	const handleOrder = (order) => {
 		if (auth.wallet < order.total) {
@@ -69,8 +50,8 @@ const CartScreen = () => {
 					// console.log(res.data);
 					if (res.data.success === true) {
 						const newCart = cart.filter((item) => item.id !== givenOrder.id);
-						const newTotal = total - givenOrder.total;
-						setTotal(newTotal);
+						// const newTotal = total - givenOrder.total;
+						// setTotal(newTotal);
 						setCart(newCart);
 						// console.log(JSON.stringify(ingredients));
 						// console.log(res.data.order);
@@ -83,7 +64,7 @@ const CartScreen = () => {
 						);
 					}
 				})
-				.catch((err) => {
+				.catch(() => {
 					// console.log(err);
 				});
 			setReload(!reload);
@@ -193,9 +174,7 @@ const CartScreen = () => {
 										>
 											<Checkbox
 												status={item.checked ? 'checked' : 'unchecked'}
-												onPress={() => {
-													handleDelete(parentData.id, item.id);
-												}}
+												onPress={() => handleDelete(parentData.id, item.id)}
 												color='#694fad'
 											/>
 											<Text style={{ fontSize: 14 }}>

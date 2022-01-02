@@ -1,32 +1,30 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useContext, useEffect, useState } from 'react';
-import { RefreshControlBase, StyleSheet, Text, View } from 'react-native';
-import {
-	ActivityIndicator,
-	Button,
-	Card,
-	Checkbox,
-	List,
-} from 'react-native-paper';
+import React, {
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
-import SingleIngredient from '../components/SingleIngredient';
+import { FlatList } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 import { StatusBar } from 'expo-status-bar';
 
 const SelectedRecipeScreen = () => {
-	const { setCart, cart, total, setTotal } = useContext(CartContext);
+	const { setCart, cart } = useContext(CartContext);
 	const navigation = useNavigation();
 	const route = useRoute();
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const id = auth.id;
 	const [ingredientList, setIngredientList] = useState(null);
-	const [expanded, setExpanded] = useState(false);
 	const [error, setError] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [recipe, setRecipe] = useState(null);
@@ -66,7 +64,6 @@ const SelectedRecipeScreen = () => {
 		headers: { Authorization: `Bearer ${token}` },
 		'Content-Type': 'application/json',
 	};
-
 	const handleAddToCart = () => {
 		if (
 			ingredientList.filter((ingredient) => ingredient.checked).length === 0
@@ -74,14 +71,15 @@ const SelectedRecipeScreen = () => {
 			alert('Please select at least one ingredient');
 			return;
 		} else {
+			// Make a copy of the old cart
 			const newCart = [...cart];
-
+			// Find the new total of the cart
 			const newTotal = ingredientList
 				.filter((ingredient) => ingredient.checked)
 				.reduce((acc, ingredient) => {
 					return acc + ingredient.price;
 				}, 0);
-
+			// Push the item into the cart
 			newCart.push({
 				id: uuid.v4(),
 				recipeId: recipeId,
@@ -90,7 +88,9 @@ const SelectedRecipeScreen = () => {
 				),
 				total: newTotal,
 			});
+			// Set the new cart
 			setCart(newCart);
+			// Navigate to the cart
 			navigation.navigate('Shopping', {
 				params: {
 					screen: 'Cart',
@@ -142,6 +142,7 @@ const SelectedRecipeScreen = () => {
 
 	// Checks and uncheck functionality for the ingredients
 	const handleChecked = (id) => {
+		console.log('re rendered');
 		// Make a shallow copy of the items
 		let items = [...ingredientList];
 		// Find the item index in original array
@@ -155,6 +156,33 @@ const SelectedRecipeScreen = () => {
 		setIngredientList(items);
 		// console.log(ingredientList);
 	};
+
+	function RenderIngredient(item, handleChecked) {
+		return (
+			<View style={styles.container}>
+				<Checkbox
+					status={item.checked ? 'checked' : 'unchecked'}
+					onPress={() => handleChecked(item.id)}
+					color='#5F2EEA'
+				/>
+				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+					{item.amount} {item.measurement} {item.name}
+				</Text>
+			</View>
+		);
+	}
+
+	function renderItem({ item }) {
+		return RenderIngredient(item, handleChecked);
+	}
+
+	function renderSteps({ item }) {
+		return <Text style={{ flex: 1, flexWrap: 'wrap' }}>{item}</Text>;
+	}
+
+	function getKeyExtractor() {
+		return uuid.v4();
+	}
 
 	return (
 		<SafeAreaView
@@ -217,18 +245,7 @@ const SelectedRecipeScreen = () => {
 
 					<FlatList
 						data={ingredientList}
-						renderItem={({ item }) => (
-							<View style={styles.container}>
-								<Checkbox
-									status={item.checked ? 'checked' : 'unchecked'}
-									onPress={() => handleChecked(item.id)}
-									color='#5F2EEA'
-								/>
-								<Text style={{ flex: 1, flexWrap: 'wrap' }}>
-									{item.amount} {item.measurement} {item.name}
-								</Text>
-							</View>
-						)}
+						renderItem={renderItem}
 						keyExtractor={(item) => item.id}
 						style={{
 							height: '100%',
@@ -247,10 +264,8 @@ const SelectedRecipeScreen = () => {
 					<FlatList
 						style={{ height: '90%' }}
 						data={recipe.steps}
-						keyExtractor={() => uuid.v4()}
-						renderItem={({ item }) => (
-							<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item}</Text>
-						)}
+						keyExtractor={getKeyExtractor}
+						renderItem={renderSteps}
 					/>
 				</View>
 			)}
