@@ -17,7 +17,7 @@ const PendingOrders = () => {
 			'Content-Type': 'application/json',
 		},
 	};
-	const getData = async () => {
+	async function getData() {
 		setLoading(true);
 		axios
 			.get(
@@ -31,7 +31,7 @@ const PendingOrders = () => {
 			})
 			.catch((err) => console.log(err))
 			.finally(() => setLoading(false));
-	};
+	}
 	useEffect(() => {
 		getData();
 		return () => {};

@@ -20,7 +20,7 @@ const CartScreen = () => {
 		},
 	};
 
-	const handleOrder = (order) => {
+	function handleOrder(order) {
 		if (auth.wallet < order.total) {
 			alert('You do not have enough money in your wallet to make this order');
 			return;
@@ -69,10 +69,10 @@ const CartScreen = () => {
 				});
 			setReload(!reload);
 		}
-	};
+	}
 
-	const handleDelete = (orderId, ingredientId) => {
-		// Make a shallow copy
+	function handleUnchecked(orderId, ingredientId) {
+		// Make a copy of the cart
 		const newCart = [...cart];
 		// Find the index of item to remove
 		const index = newCart.findIndex((item) => item.id === orderId);
@@ -94,7 +94,7 @@ const CartScreen = () => {
 			});
 		// Update the state with the new array
 		setCart(newCart);
-	};
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
@@ -174,7 +174,7 @@ const CartScreen = () => {
 										>
 											<Checkbox
 												status={item.checked ? 'checked' : 'unchecked'}
-												onPress={() => handleDelete(parentData.id, item.id)}
+												onPress={() => handleUnchecked(parentData.id, item.id)}
 												color='#694fad'
 											/>
 											<Text style={{ fontSize: 14 }}>

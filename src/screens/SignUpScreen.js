@@ -34,7 +34,7 @@ const SignUpScreen = ({ navigation }) => {
 		},
 	};
 
-	function looksLikeMail(str) {
+	function isEmailValid(str) {
 		var lastAtPos = str.lastIndexOf('@');
 		var lastDotPos = str.lastIndexOf('.');
 		return (
@@ -45,7 +45,8 @@ const SignUpScreen = ({ navigation }) => {
 			str.length - lastDotPos > 2
 		);
 	}
-	const onSignupPressed = () => {
+
+	function onSignupPressed() {
 		if (!name) {
 			setMessage('Full name is required');
 		} else if (!email) {
@@ -54,7 +55,7 @@ const SignUpScreen = ({ navigation }) => {
 			setMessage('Password is required');
 		} else if (password !== confirmPassword) {
 			setMessage(`Passwords do not match`);
-		} else if (!looksLikeMail(email)) {
+		} else if (!isEmailValid(email)) {
 			setMessage('Invalid email');
 		} else {
 			setLoading(true);
@@ -103,7 +104,7 @@ const SignUpScreen = ({ navigation }) => {
 					setLoading(false);
 				});
 		}
-	};
+	}
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>

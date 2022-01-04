@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -8,19 +8,12 @@ import {
 	RefreshControl,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	View,
 } from 'react-native';
-import {
-	FlatList,
-	ScrollView,
-	TouchableWithoutFeedback,
-} from 'react-native-gesture-handler';
-import { ActivityIndicator, Button } from 'react-native-paper';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import RecipeCard from '../components/RecipeCard';
 import { AuthContext } from '../context/AuthContext';
-import { FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 
 const width = Dimensions.get('window').width;
@@ -46,12 +39,12 @@ const FavoriteScreen = () => {
 		setLoading(false);
 	}, []);
 
-	const onRefresh = () => {
+	function onRefresh() {
 		setRefreshing(true);
 		fetchData();
 		setRefreshing(false);
-	};
-	const fetchData = async () => {
+	}
+	async function fetchData() {
 		await axios
 			.get(`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`, {
 				method: 'GET',
@@ -68,7 +61,7 @@ const FavoriteScreen = () => {
 				// console.log(err);
 				setError('something went wrong');
 			});
-	};
+	}
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>

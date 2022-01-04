@@ -46,11 +46,13 @@ const RecipeScreen = ({ navigation }) => {
 		fetchData();
 		setLoading(false);
 	}, []);
-	const onRefresh = () => {
+
+	function onRefresh() {
 		setRefreshing(true);
 		fetchData();
-	};
-	const fetchData = async () => {
+	}
+
+	async function fetchData() {
 		await axios
 			.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
 				method: 'GET',
@@ -67,7 +69,7 @@ const RecipeScreen = ({ navigation }) => {
 				setRefreshing(false);
 			})
 			.catch((err) => console.log(err));
-	};
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>

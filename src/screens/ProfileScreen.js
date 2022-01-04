@@ -41,11 +41,11 @@ const ProfileScreen = () => {
 	};
 
 	useEffect(() => {
-		getUser();
+		getUserData();
 		return () => {};
 	}, []);
 
-	const getUser = async () => {
+	async function getUserData() {
 		axios
 			.get(
 				'https://recipetohome-api.herokuapp.com/api/v1/users/wallet/' + auth.id,
@@ -73,11 +73,11 @@ const ProfileScreen = () => {
 			.finally(() => {
 				setLoading(false);
 			});
-	};
+	}
 
 	const onRefresh = React.useCallback(() => {
 		setRefreshing(true);
-		getUser();
+		getUserData();
 		setRefreshing(false);
 	}, []);
 

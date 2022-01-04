@@ -19,7 +19,8 @@ const LoginScreen = ({ navigation }) => {
 	const [password, setPassword] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
 	const [message, setMessage] = useState('');
-	const onLoginPressed = () => {
+
+	function onLoginPressed() {
 		if (!email && !password) {
 			setMessage('Email and Password are required');
 		} else if (!password) {
@@ -85,7 +86,7 @@ const LoginScreen = ({ navigation }) => {
 					setMessage('Invalid email or password');
 				});
 		}
-	};
+	}
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>

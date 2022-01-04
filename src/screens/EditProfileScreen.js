@@ -1,6 +1,5 @@
-import React, { useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import {
-	ImageBackground,
 	StyleSheet,
 	Text,
 	View,
@@ -8,11 +7,7 @@ import {
 	TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-	MaterialCommunityIcons,
-	FontAwesome,
-	Feather,
-} from '@expo/vector-icons';
+import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { Avatar, Button } from 'react-native-paper';
 import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
@@ -38,7 +33,7 @@ function EditProfileScreen({ navigation }) {
 		},
 	};
 
-	function handleUpdate() {
+	function handleEdit() {
 		if (
 			userInfo.name === '' ||
 			userInfo.location === '' ||
@@ -178,7 +173,7 @@ function EditProfileScreen({ navigation }) {
 				<Button
 					mode='contained'
 					style={{ alignSelf: 'center', width: '50%' }}
-					onPress={handleUpdate}
+					onPress={handleEdit}
 				>
 					<Text style={{ color: '#fff' }}>Save</Text>
 				</Button>

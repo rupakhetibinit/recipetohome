@@ -30,6 +30,7 @@ const SelectedRecipeScreen = () => {
 	const [recipe, setRecipe] = useState(null);
 	const [liked, setLiked] = useState(false);
 	const { recipeId } = route.params;
+
 	useEffect(() => {
 		axios
 			.get(
@@ -37,6 +38,7 @@ const SelectedRecipeScreen = () => {
 				config
 			)
 			.then((res) => {
+				// console.log(res.data);
 				setLoading(true);
 				setRecipe(res.data.recipe);
 				setLoading(false);
@@ -64,7 +66,8 @@ const SelectedRecipeScreen = () => {
 		headers: { Authorization: `Bearer ${token}` },
 		'Content-Type': 'application/json',
 	};
-	const handleAddToCart = () => {
+
+	function handleAddToCart() {
 		if (
 			ingredientList.filter((ingredient) => ingredient.checked).length === 0
 		) {
@@ -97,9 +100,9 @@ const SelectedRecipeScreen = () => {
 				},
 			});
 		}
-	};
+	}
 
-	const handleLike = () => {
+	function handleLike() {
 		if (liked === false) {
 			axios
 				.post(
@@ -138,24 +141,24 @@ const SelectedRecipeScreen = () => {
 				})
 				.catch((err) => console.log(err));
 		}
-	};
+	}
 
-	// Checks and uncheck functionality for the ingredients
-	const handleChecked = (id) => {
-		console.log('re rendered');
-		// Make a shallow copy of the items
-		let items = [...ingredientList];
-		// Find the item index in original array
-		const ingredientId = items.findIndex((item) => item.id === id);
-		// set item checked status to opposite of its current value
-		let item = { ...items[ingredientId] };
-		item.checked = !item.checked;
+	// Check and uncheck functionality for the ingredients
+	function handleChecked(id) {
+		// Make a copy of the ingredients
+		let ingredients = [...ingredientList];
+		// Find the ingredient index in original array
+		const ingredientId = ingredients.findIndex((item) => item.id === id);
+		// copy the ingredient from the array
+		let ingredient = { ...ingredients[ingredientId] };
+		// set ingredient checked status to opposite of its current value
+		ingredient.checked = !ingredient.checked;
 		// Replace the item in the copied array
-		items[ingredientId] = item;
+		ingredients[ingredientId] = ingredient;
 		// set the state with the new copy
-		setIngredientList(items);
+		setIngredientList(ingredients);
 		// console.log(ingredientList);
-	};
+	}
 
 	function RenderIngredient(item, handleChecked) {
 		return (
