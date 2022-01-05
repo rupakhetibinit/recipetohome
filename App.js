@@ -1,5 +1,6 @@
 import React from 'react';
 import 'react-native-gesture-handler';
+import { QueryClientProvider, QueryClient } from 'react-query';
 import { CartProvider } from './src/context/CartContext';
 import { AuthProvider } from './src/context/AuthContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -23,6 +24,8 @@ import {
 	Poppins_900Black,
 } from '@expo-google-fonts/poppins';
 import merge from 'deepmerge';
+
+const queryClient = new QueryClient();
 
 export default function App() {
 	const DefaultTheme = merge(NavigationDefaultTheme, PaperDefaultTheme);
@@ -60,20 +63,22 @@ export default function App() {
 
 		return (
 			<SafeAreaProvider>
-				<AuthProvider>
-					<CartProvider>
-						<PaperProvider theme={theme}>
-							<NavigationContainer>
-								<Routes />
-							</NavigationContainer>
-						</PaperProvider>
-						{/* <View
+				<QueryClientProvider client={queryClient}>
+					<AuthProvider>
+						<CartProvider>
+							<PaperProvider theme={theme}>
+								<NavigationContainer>
+									<Routes />
+								</NavigationContainer>
+							</PaperProvider>
+							{/* <View
 						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
 						>
 						<Text>Loading...</Text>
 					</View> */}
-					</CartProvider>
-				</AuthProvider>
+						</CartProvider>
+					</AuthProvider>
+				</QueryClientProvider>
 			</SafeAreaProvider>
 		);
 	}

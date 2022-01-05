@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -20,7 +20,7 @@ const width = Dimensions.get('window').width;
 
 const FavoriteScreen = () => {
 	const navigation = useNavigation();
-	const { auth, setAuth } = useContext(AuthContext);
+	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const id = auth.id;
 	const [error, setError] = useState(null);
@@ -44,8 +44,8 @@ const FavoriteScreen = () => {
 		fetchData();
 		setRefreshing(false);
 	}
-	async function fetchData() {
-		await axios
+	const fetchData = useCallback(() => {
+		axios
 			.get(`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`, {
 				method: 'GET',
 				config,
@@ -57,11 +57,11 @@ const FavoriteScreen = () => {
 				setRefreshing(false);
 				setError(null);
 			})
-			.catch((err) => {
+			.catch(() => {
 				// console.log(err);
 				setError('something went wrong');
 			});
-	}
+	}, []);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>

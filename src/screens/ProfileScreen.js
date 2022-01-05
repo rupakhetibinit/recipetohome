@@ -40,10 +40,10 @@ const ProfileScreen = () => {
 		},
 	};
 
-	useEffect(() => {
-		getUserData();
-		return () => {};
-	}, []);
+	// useEffect(() => {
+	// 	getUserData();
+	// 	return () => {};
+	// }, []);
 
 	async function getUserData() {
 		axios
@@ -183,28 +183,18 @@ const ProfileScreen = () => {
 					</View>
 				)}
 				<View style={styles.menuWrapper}>
-					<TouchableRipple onPress={() => navigation.navigate('PendingOrders')}>
-						<View style={styles.menuItem}>
-							<MaterialCommunityIcons
-								name='shopping-outline'
-								color='#5f2eea'
-								size={25}
-							/>
-							<Text style={styles.menuItemText}>Pending Orders</Text>
-						</View>
-					</TouchableRipple>
-					<TouchableRipple
-						onPress={() => navigation.navigate('DeliveredOrders')}
-					>
-						<View style={styles.menuItem}>
-							<MaterialCommunityIcons
-								name='shopping'
-								color='#5f2eea'
-								size={25}
-							/>
-							<Text style={styles.menuItemText}>Delivered Orders</Text>
-						</View>
-					</TouchableRipple>
+					<MenuItem
+						navigation={navigation}
+						route='PendingOrders'
+						icon='shopping-outline'
+						text='Pending Orders'
+					/>
+					<MenuItem
+						navigation={navigation}
+						route='DeliveredOrders'
+						icon='shopping'
+						text='Delivered Orders'
+					/>
 					<TouchableRipple onPress={onLogoutPressed}>
 						<View style={styles.menuItem}>
 							<MaterialCommunityIcons name='logout' color='#5f2eea' size={25} />
@@ -212,27 +202,50 @@ const ProfileScreen = () => {
 						</View>
 					</TouchableRipple>
 				</View>
-
-				<FAB
-					style={{ position: 'absolute', bottom: 0, right: 0, margin: 20 }}
-					small={false}
-					color='#5f2eea'
-					icon={() => {
-						return (
-							<MaterialCommunityIcons
-								name='account-edit'
-								color='black'
-								size={24}
-							/>
-						);
-					}}
-					onPress={() => navigation.navigate('EditProfile')}
-				/>
+				<FloatButton navigation={navigation} />
 			</ScrollView>
 		</SafeAreaView>
 	);
 };
 
+const MenuItem = React.memo(function ({
+	navigation = null,
+	route = null,
+	icon,
+	text,
+}) {
+	return (
+		<TouchableRipple onPress={() => navigation.navigate(route)}>
+			<View style={styles.menuItem}>
+				<MaterialCommunityIcons name={icon} color='#5f2eea' size={25} />
+				<Text style={styles.menuItemText}>{text}</Text>
+			</View>
+		</TouchableRipple>
+	);
+});
+
+class FloatButton extends React.PureComponent {
+	navigation = this.props.navigation;
+	render() {
+		return (
+			<FAB
+				style={{ position: 'absolute', bottom: 0, right: 0, margin: 20 }}
+				small={false}
+				color='#5f2eea'
+				icon={() => {
+					return (
+						<MaterialCommunityIcons
+							name='account-edit'
+							color='black'
+							size={24}
+						/>
+					);
+				}}
+				onPress={() => this.navigation.navigate('EditProfile')}
+			/>
+		);
+	}
+}
 export default ProfileScreen;
 
 const styles = StyleSheet.create({

@@ -3,7 +3,7 @@ import MainStack from './navigation/MainStack';
 import AuthStack from './navigation/AuthStack';
 import { AuthContext } from './context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { MMKV } from 'react-native-mmkv';
 const Routes = () => {
 	const [loading, setLoading] = useState(true);
 

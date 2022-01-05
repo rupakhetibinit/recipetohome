@@ -37,13 +37,16 @@
 		"react-native": "0.64.3",
 		"react-native-gesture-handler": "~2.1.0",
 		"react-native-keyboard-aware-scroll-view": "^0.9.4",
+		"react-native-mmkv": "^1.6.1",
 		"react-native-paper": "^4.11.1",
 		"react-native-safe-area-context": "3.3.2",
 		"react-native-screens": "~3.10.1",
 		"react-native-svg": "12.1.1",
 		"react-native-uuid": "^2.0.1",
 		"react-native-web": "0.17.1",
-		"uuid": "^8.3.2"
+		"react-query": "^3.34.7",
+		"uuid": "^8.3.2",
+		"zustand": "^3.6.8"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.12.9",

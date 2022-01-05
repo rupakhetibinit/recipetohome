@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -20,13 +20,11 @@ import {
 } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
+import { useQuery } from 'react-query';
 const width = Dimensions.get('window').width;
-
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const [refreshing, setRefreshing] = useState(false);
-	const [loading, setLoading] = useState(true);
-	const [data, setData] = useState(null);
 
 	function onChangeSearch(query) {
 		setSearchQuery(query);
@@ -42,33 +40,36 @@ const RecipeScreen = ({ navigation }) => {
 		.join('')
 		.toUpperCase();
 
-	useEffect(() => {
-		fetchData();
-		setLoading(false);
-	}, []);
+	const { data, isLoading, isError, error, refetch } = useQuery(
+		'recipes',
+		fetchRecipes,
+		{ select: (data) => data.data.recipes }
+	);
+	{
+		data && console.log(data);
+	}
+	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-	function onRefresh() {
-		setRefreshing(true);
-		fetchData();
+	function fetchRecipes() {
+		return axios.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		});
 	}
 
-	async function fetchData() {
-		await axios
-			.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
-				method: 'GET',
-				mode: 'cors',
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${token}`,
-				},
-			})
-			.then((res) => {
-				// console.log(res);
-				setData(res.data);
-				setLoading(false);
-				setRefreshing(false);
-			})
-			.catch((err) => console.log(err));
+	function RecipeComponent(item) {
+		return (
+			<Pressable
+				onPress={() => navigation.push('SelectedRecipe', { recipeId: item.id })}
+			>
+				<View style={styles.imageContainer}>
+					<Image style={styles.image} source={{ uri: item.imageUrl }} />
+					<Text style={styles.text}>{item.name}</Text>
+				</View>
+			</Pressable>
+		);
 	}
 
 	return (
@@ -101,31 +102,26 @@ const RecipeScreen = ({ navigation }) => {
 				style={{ width: width * 0.9, borderRadius: 10 }}
 			/>
 
-			{loading && <ActivityIndicator style={{ marginTop: 25 }} size={30} />}
+			{isLoading && <ActivityIndicator style={{ marginTop: 25 }} size={30} />}
+			{isError && (
+				<Text style={{ marginTop: 25, color: 'red' }}>
+					Something went wrong. Please try again later
+				</Text>
+			)}
 			{data && (
 				<FlatList
 					showsVerticalScrollIndicator={false}
 					refreshControl={
-						<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+						<RefreshControl
+							refreshing={isRefetchingByUser}
+							onRefresh={refetchByUser}
+						/>
 					}
-					data={
-						data &&
-						data.recipes.filter((recipe) =>
-							recipe.name.toLowerCase().startsWith(searchQuery.toLowerCase())
-						)
-					}
-					renderItem={({ item }) => (
-						<Pressable
-							onPress={() =>
-								navigation.navigate('SelectedRecipe', { recipeId: item.id })
-							}
-						>
-							<View style={styles.imageContainer}>
-								<Image style={styles.image} source={{ uri: item.imageUrl }} />
-								<Text style={styles.text}>{item.name}</Text>
-							</View>
-						</Pressable>
+					data={data.filter((recipe) =>
+						recipe.name.toLowerCase().startsWith(searchQuery.toLowerCase())
 					)}
+					extraData={data}
+					renderItem={({ item }) => RecipeComponent(item)}
 					key={(item) => item.id}
 				/>
 			)}

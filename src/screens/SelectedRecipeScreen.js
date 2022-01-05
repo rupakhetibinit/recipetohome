@@ -16,6 +16,7 @@ import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 import { StatusBar } from 'expo-status-bar';
+import { useQuery } from 'react-query';
 
 const SelectedRecipeScreen = () => {
 	const { setCart, cart } = useContext(CartContext);
@@ -25,42 +26,26 @@ const SelectedRecipeScreen = () => {
 	const token = auth.token;
 	const id = auth.id;
 	const [ingredientList, setIngredientList] = useState(null);
-	const [error, setError] = useState(false);
-	const [loading, setLoading] = useState(true);
-	const [recipe, setRecipe] = useState(null);
+	// const [error, setError] = useState(false);
+	// const [loading, setLoading] = useState(true);
+	// const [recipe, setRecipe] = useState(null);
 	const [liked, setLiked] = useState(false);
 	const { recipeId } = route.params;
 
-	useEffect(() => {
-		axios
-			.get(
-				`https://recipetohome-api.herokuapp.com/api/v1/recipes/${recipeId}`,
-				config
-			)
-			.then((res) => {
-				// console.log(res.data);
-				setLoading(true);
-				setRecipe(res.data.recipe);
-				setLoading(false);
-				setError(false);
-				res.data.recipe.likedBy.some((user) => user.id === id) &&
-					setLiked(true);
-				setIngredientList(
-					res.data.recipe.ingredients.map((ingredient) => ({
-						...ingredient,
-						checked: false,
-					}))
-				);
-				// console.log(ingredientList);
-			})
-			.catch((err) => {
-				setError('something went wrong');
-			});
-	}, []);
-	// useEffect(() => {
-	// 	console.log(total);
-	// 	console.log(cart);
-	// }, [cart, total]);
+	function fetchRecipeById() {
+		return axios.get(
+			'https://recipetohome-api.herokuapp.com/api/v1/recipes/' + recipeId,
+			config
+		);
+	}
+
+	const { data, isLoading, isError, error } = useQuery(
+		['recipes', recipeId],
+		fetchRecipeById,
+		{
+			select: (data) => data.data.recipe,
+		}
+	);
 
 	const config = {
 		headers: { Authorization: `Bearer ${token}` },
@@ -192,20 +177,14 @@ const SelectedRecipeScreen = () => {
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 		>
 			<StatusBar style='dark' />
-			{loading && (
+			{isLoading && (
 				<ActivityIndicator
 					size={'large'}
 					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 				/>
 			)}
-			{error === null && (
-				<Text
-					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-				>
-					Error
-				</Text>
-			)}
-			{recipe && (
+			{isError && <Text style={{ color: red }}>{error.message}</Text>}
+			{data && (
 				<View
 					style={{
 						flex: 1,
@@ -221,8 +200,8 @@ const SelectedRecipeScreen = () => {
 							marginBottom: 20,
 						}}
 					>
-						<Card.Title title={recipe.name} />
-						<Card.Cover resizeMode='cover' source={{ uri: recipe.imageUrl }} />
+						<Card.Title title={data.name} />
+						<Card.Cover resizeMode='cover' source={{ uri: data.imageUrl }} />
 						<Card.Actions
 							style={{
 								flexDirection: 'row',
@@ -266,7 +245,7 @@ const SelectedRecipeScreen = () => {
 					</Text>
 					<FlatList
 						style={{ height: '90%' }}
-						data={recipe.steps}
+						data={data.steps}
 						keyExtractor={getKeyExtractor}
 						renderItem={renderSteps}
 					/>
