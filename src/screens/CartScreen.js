@@ -71,7 +71,7 @@ const CartScreen = () => {
 		}
 	}
 
-	const handleUnchecked = useCallback((orderId, ingredientId) => {
+	function handleUnchecked(orderId, ingredientId) {
 		// Make a copy of the cart
 		const newCart = [...cart];
 		// Find the index of item to remove
@@ -94,7 +94,7 @@ const CartScreen = () => {
 			});
 		// Update the state with the new array
 		setCart(newCart);
-	}, []);
+	}
 
 	return (
 		<SafeAreaView style={styles.container}>
