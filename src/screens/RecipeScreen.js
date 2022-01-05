@@ -40,6 +40,14 @@ const RecipeScreen = ({ navigation }) => {
 		.join('')
 		.toUpperCase();
 
+	function fetchRecipes() {
+		return axios.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		});
+	}
 	const { data, isLoading, isError, error, refetch } = useQuery(
 		'recipes',
 		fetchRecipes,
@@ -49,15 +57,6 @@ const RecipeScreen = ({ navigation }) => {
 		data && console.log(data);
 	}
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-
-	function fetchRecipes() {
-		return axios.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		});
-	}
 
 	function RecipeComponent(item) {
 		return (

@@ -1,57 +1,55 @@
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { List, ActivityIndicator } from 'react-native-paper';
 import { RefreshControl } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useQuery } from 'react-query';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const PendingOrders = () => {
-	const { auth, setAuth } = useContext(AuthContext);
-	const [loading, setLoading] = useState(true);
-	const [refreshing, setRefreshing] = useState(false);
-	const [data, setData] = useState(null);
+	const { auth } = useContext(AuthContext);
 	const config = {
 		headers: {
 			Authorization: `Bearer ${auth.token}`,
 			'Content-Type': 'application/json',
 		},
 	};
-	async function getData() {
-		setLoading(true);
-		axios
-			.get(
-				'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + auth.id,
-				config
-			)
-			.then((res) => {
-				// console.log(res);
-				setData(res.data.orders);
-				// console.log(res.data.orders);
-			})
-			.catch((err) => console.log(err))
-			.finally(() => setLoading(false));
-	}
-	useEffect(() => {
-		getData();
-		return () => {};
-	}, []);
 
-	const onRefresh = () => {
-		setRefreshing(true);
-		getData();
-		setRefreshing(false);
-	};
+	function fetchDeliveredOrders() {
+		return axios.get(
+			'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + auth.id,
+			config
+		);
+	}
+	const { data, isLoading, isError, error, refetch } = useQuery(
+		'deliveredOrders',
+		fetchDeliveredOrders,
+		{
+			select: (data) =>
+				data.data.orders.filter((order) => order.delivered === true),
+		}
+	);
+	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
 	return (
 		<View style={styles.container}>
-			{loading && <ActivityIndicator size={25} style={{ margin: 20 }} />}
-			{data && data.filter((item) => item.delivered === true).length === 0 && (
+			{isLoading && <ActivityIndicator size={25} style={{ margin: 20 }} />}
+			{isError && (
+				<Text style={{ margin: 30, color: 'red', fontSize: 20 }}>
+					{error.message}
+				</Text>
+			)}
+			{data?.length === 0 ? (
 				<ScrollView
 					contentContainerStyle={styles.container}
-					refreshing={refreshing}
+					refreshing={isRefetchingByUser}
 					RefreshControl={
-						<RefreshControl onRefresh={onRefresh} refreshing={refreshing} />
+						<RefreshControl
+							onRefresh={refetchByUser}
+							refreshing={isRefetchingByUser}
+						/>
 					}
 				>
 					<Text
@@ -64,13 +62,11 @@ const PendingOrders = () => {
 						You have no delivered orders
 					</Text>
 				</ScrollView>
-			)}
-
-			{data && (
+			) : (
 				<View>
 					<FlatList
-						data={data.filter((item) => item.delivered === true)}
-						extraData={data.filter((item) => item.delivered === true)}
+						data={data}
+						extraData={data}
 						renderItem={({ item }) => (
 							<List.Accordion
 								title={`Order ${item.id.split('-')[0].toUpperCase()}`}
@@ -79,8 +75,8 @@ const PendingOrders = () => {
 							</List.Accordion>
 						)}
 						keyExtractor={(item) => item.id}
-						refreshing={refreshing}
-						onRefresh={onRefresh}
+						refreshing={isRefetchingByUser}
+						onRefresh={refetchByUser}
 					/>
 				</View>
 			)}

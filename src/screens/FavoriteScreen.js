@@ -15,6 +15,8 @@ import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
+import { useQuery } from 'react-query';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const width = Dimensions.get('window').width;
 
@@ -23,45 +25,59 @@ const FavoriteScreen = () => {
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const id = auth.id;
-	const [error, setError] = useState(null);
-	const [refreshing, setRefreshing] = useState(false);
-	const [loading, setLoading] = useState(true);
-	const [data, setData] = useState(null);
 	const config = {
 		headers: {
 			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 	};
-
-	useEffect(() => {
-		fetchData();
-		setLoading(false);
-	}, []);
-
-	function onRefresh() {
-		setRefreshing(true);
-		fetchData();
-		setRefreshing(false);
-	}
-	const fetchData = useCallback(() => {
-		axios
-			.get(`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`, {
+	function fetchFavoriteRecipes() {
+		return axios.get(
+			`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`,
+			{
 				method: 'GET',
 				config,
-			})
-			.then((res) => {
-				// console.log(res);
-				setData(res.data);
-				setLoading(false);
-				setRefreshing(false);
-				setError(null);
-			})
-			.catch(() => {
-				// console.log(err);
-				setError('something went wrong');
-			});
-	}, []);
+			}
+		);
+	}
+
+	const { isLoading, isError, error, data, refetch } = useQuery(
+		'fetch-favorite-recipes',
+		fetchFavoriteRecipes,
+		{
+			select: (data) => data.data.recipes.likedRecipes,
+		}
+	);
+	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
+
+	// useEffect(() => {
+	// 	fetchData();
+	// 	setLoading(false);
+	// }, []);
+
+	// function onRefresh() {
+	// 	setRefreshing(true);
+	// 	fetchData();
+	// 	setRefreshing(false);
+	// }
+	// const fetchData = useCallback(() => {
+	// 	axios
+	// 		.get(`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`, {
+	// 			method: 'GET',
+	// 			config,
+	// 		})
+	// 		.then((res) => {
+	// 			// console.log(res);
+	// 			setData(res.data);
+	// 			setLoading(false);
+	// 			setRefreshing(false);
+	// 			setError(null);
+	// 		})
+	// 		.catch(() => {
+	// 			// console.log(err);
+	// 			setError('something went wrong');
+	// 		});
+	// }, []);
 
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
@@ -86,11 +102,8 @@ const FavoriteScreen = () => {
 					</View>
 				</View>
 
-				{loading && (
-					<ActivityIndicator
-						size={'large'}
-						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-					/>
+				{isLoading && (
+					<ActivityIndicator size={'small'} style={{ marginTop: 30 }} />
 				)}
 
 				{/* {data?.recipes?.likedRecipes?.length === 0 && (
@@ -100,10 +113,13 @@ const FavoriteScreen = () => {
 					</Text>
 				</View>
 			)} */}
-				{data?.recipes?.likedRecipes?.length === 0 && (
+				{data?.length === 0 ? (
 					<ScrollView
 						refreshControl={
-							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+							<RefreshControl
+								refreshing={isRefetchingByUser}
+								onRefresh={refetchByUser}
+							/>
 						}
 						contentContainerStyle={{ flex: 1, alignItems: 'center' }}
 					>
@@ -113,16 +129,17 @@ const FavoriteScreen = () => {
 							</Text>
 						</View>
 					</ScrollView>
-				)}
-
-				{data?.recipes?.likedRecipes?.length > 0 && (
+				) : (
 					<FlatList
 						showsVerticalScrollIndicator={false}
 						refreshControl={
-							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+							<RefreshControl
+								refreshing={isRefetchingByUser}
+								onRefresh={refetchByUser}
+							/>
 						}
-						extraData={data.recipes}
-						data={data.recipes.likedRecipes}
+						data={data}
+						extraData={data}
 						renderItem={({ item }) => (
 							<Pressable
 								onPress={() =>
@@ -130,19 +147,6 @@ const FavoriteScreen = () => {
 								}
 							>
 								<View style={styles.imageContainer}>
-									{data.recipes.likedRecipes.length === 0 && (
-										<View style={{ flex: 1, justifyContent: 'center' }}>
-											<Text
-												style={{
-													fontSize: 24,
-													fontFamily: 'Poppins_500Medium',
-												}}
-											>
-												You have no favorite recipes
-											</Text>
-										</View>
-									)}
-
 									<Image style={styles.image} source={{ uri: item.imageUrl }} />
 									<Text style={styles.text}>{item.name}</Text>
 									{/* <View
@@ -171,7 +175,7 @@ const FavoriteScreen = () => {
 					/>
 				)}
 
-				{error && (
+				{isError && (
 					<Text
 						style={{
 							flex: 1,
@@ -180,7 +184,7 @@ const FavoriteScreen = () => {
 							color: 'red',
 						}}
 					>
-						{error}
+						{error.message}
 					</Text>
 				)}
 			</View>

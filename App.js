@@ -24,7 +24,7 @@ import {
 	Poppins_900Black,
 } from '@expo-google-fonts/poppins';
 import merge from 'deepmerge';
-
+import { RecoilRoot } from 'recoil';
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -64,20 +64,22 @@ export default function App() {
 		return (
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
-					<AuthProvider>
-						<CartProvider>
-							<PaperProvider theme={theme}>
-								<NavigationContainer>
-									<Routes />
-								</NavigationContainer>
-							</PaperProvider>
-							{/* <View
+					<RecoilRoot>
+						<AuthProvider>
+							<CartProvider>
+								<PaperProvider theme={theme}>
+									<NavigationContainer>
+										<Routes />
+									</NavigationContainer>
+								</PaperProvider>
+								{/* <View
 						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
 						>
 						<Text>Loading...</Text>
 					</View> */}
-						</CartProvider>
-					</AuthProvider>
+							</CartProvider>
+						</AuthProvider>
+					</RecoilRoot>
 				</QueryClientProvider>
 			</SafeAreaProvider>
 		);

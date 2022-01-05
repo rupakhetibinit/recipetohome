@@ -3,6 +3,7 @@ import React, {
 	useCallback,
 	useContext,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from 'react';
@@ -25,7 +26,7 @@ const SelectedRecipeScreen = () => {
 	const { auth } = useContext(AuthContext);
 	const token = auth.token;
 	const id = auth.id;
-	const [ingredientList, setIngredientList] = useState(null);
+	const [ingredientList, setIngredientList] = useState([]);
 	// const [error, setError] = useState(false);
 	// const [loading, setLoading] = useState(true);
 	// const [recipe, setRecipe] = useState(null);
@@ -43,7 +44,19 @@ const SelectedRecipeScreen = () => {
 		['recipes', recipeId],
 		fetchRecipeById,
 		{
-			select: (data) => data.data.recipe,
+			select: (data) => {
+				return data.data.recipe;
+			},
+			onSuccess: (data) => {
+				const list = data.ingredients.map((ingredient) => {
+					return { ...ingredient, checked: false };
+				});
+				// console.log(list);
+				setIngredientList(list);
+				data.likedBy.filter((user) => user.id === id).length > 0
+					? setLiked(true)
+					: setLiked(false);
+			},
 		}
 	);
 
@@ -177,14 +190,15 @@ const SelectedRecipeScreen = () => {
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 		>
 			<StatusBar style='dark' />
-			{isLoading && (
-				<ActivityIndicator
-					size={'large'}
-					style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-				/>
-			)}
-			{isError && <Text style={{ color: red }}>{error.message}</Text>}
-			{data && (
+			{isLoading ||
+				(ingredientList.length === 0 && (
+					<ActivityIndicator
+						size={'large'}
+						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+					/>
+				))}
+			{isError && <Text style={{ color: 'red' }}>{error.message}</Text>}
+			{data && ingredientList.length > 0 && (
 				<View
 					style={{
 						flex: 1,
@@ -228,7 +242,7 @@ const SelectedRecipeScreen = () => {
 					<FlatList
 						data={ingredientList}
 						renderItem={renderItem}
-						keyExtractor={(item) => item.id}
+						keyExtractor={(item) => uuid.v4()}
 						style={{
 							height: '100%',
 						}}

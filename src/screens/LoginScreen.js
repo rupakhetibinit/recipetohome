@@ -9,12 +9,21 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useMutation } from 'react-query';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
 const LoginScreen = ({ navigation }) => {
-	const { setAuth, auth } = useContext(AuthContext);
-	const [loading, setLoading] = useState(false);
+	function onLogin() {
+		return axios.post('https://recipetohome-api.herokuapp.com/api/auth/login', {
+			email,
+			password,
+		});
+	}
+
+	const { mutate: handleOnLogin, isLoading } = useMutation(onLogin);
+	const { setAuth } = useContext(AuthContext);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
@@ -28,63 +37,50 @@ const LoginScreen = ({ navigation }) => {
 		} else if (!email) {
 			setMessage('Email is required');
 		} else {
-			setLoading(true);
-			axios
-				.post('https://recipetohome-api.herokuapp.com/api/auth/login', {
+			handleOnLogin(
+				{
 					email,
 					password,
-				})
-				.then((res) => {
-					// console.log(res);
-					if (res.data.error) setMessage(res.data.error);
-
-					const user = {
-						isAdmin: res.data.isAdmin,
-						email: res.data.email,
-						token: res.data.accessToken,
-						name: res.data.name,
-						id: res.data.userId,
-						location: res.data.location,
-						phone: res.data.phone,
-						wallet: res.data.wallet,
-					};
-					const storeData = async (user) => {
-						try {
-							const jsonValue = JSON.stringify(user);
-							await AsyncStorage.setItem('user', jsonValue);
-							const asyncUser = await AsyncStorage.getItem('user');
-							// console.log(asyncUser);
-							// console.log('stored');
-						} catch (e) {
-							// saving error
-							console.log('Error saving token');
+				},
+				{
+					onSuccess: (data) => {
+						if (data.data.success === false) {
+							setMessage(data.data.message);
+						} else {
+							const user = {
+								id: data.data.userId,
+								email: data.data.email,
+								token: data.data.token,
+								name: data.data.name,
+								isAdmin: data.data.isAdmin,
+								location: data.data.location,
+								phone: data.data.phone,
+								wallet: data.data.wallet,
+							};
+							AsyncStorage.setItem('user', JSON.stringify(user))
+								.then(() => {
+									setAuth({
+										token: data.data.accessToken,
+										email: data.data.email,
+										id: data.data.userId,
+										name: data.data.name,
+										isAdmin: data.data.isAdmin,
+										location: data.data.location,
+										phone: data.data.phone,
+										wallet: data.data.wallet,
+									});
+								})
+								.catch((err) => console.log(err));
 						}
-					};
-					storeData(user)
-						.then(() => {
-							setAuth({
-								token: res.data.accessToken,
-								name: res.data.name,
-								isAdmin: res.data.isAdmin,
-								email: res.data.email,
-								id: res.data.userId,
-								wallet: res.data.wallet,
-								location: res.data.location,
-								phone: res.data.phone,
-							});
-							// console.log(user);
-						})
-						.catch((err) => {
-							console.log(err);
-						});
-
-					setLoading(false);
-				})
-				.catch((err) => {
-					setLoading(false);
-					console.log(err);
-					setMessage('Invalid email or password');
-				});
+					},
+					onError: () => {
+						setMessage('Something Went wrong. Please try again later');
+					},
+					onSettled: () => {
+						setMessage('');
+					},
+				}
+			);
 		}
 	}
 
@@ -109,8 +105,12 @@ const LoginScreen = ({ navigation }) => {
 					isPassword={true}
 					setSecureTextEntry={setSecureTextEntry}
 				/>
-				<CustomMessage text={message} setText={setMessage} />
-				<CustomButton onPress={onLoginPressed} text='Login' loading={loading} />
+				{message && <Text style={{ color: 'red' }}>{message}</Text>}
+				<CustomButton
+					onPress={onLoginPressed}
+					text='Login'
+					loading={isLoading}
+				/>
 				<View style={styles.bottomText}>
 					<Text
 						style={{
@@ -120,7 +120,7 @@ const LoginScreen = ({ navigation }) => {
 							letterSpacing: 1,
 						}}
 					>
-						Don't Have an Account?{'  '}
+						{"Don't have an account?"}
 					</Text>
 					<Text
 						style={{

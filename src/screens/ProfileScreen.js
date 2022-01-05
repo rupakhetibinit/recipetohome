@@ -31,7 +31,7 @@ const ProfileScreen = () => {
 
 	const [loggingOut, setLoggingOut] = useState(false);
 	const [data, setData] = useState(null);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 	const [refreshing, setRefreshing] = useState(false);
 	const config = {
 		headers: {
