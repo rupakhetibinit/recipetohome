@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
-import { useCallback, useContext, useEffect, useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -17,14 +16,14 @@ import { AuthContext } from '../context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useRecoilValue } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 
 const width = Dimensions.get('window').width;
 
 const FavoriteScreen = () => {
+	const { id, token } = useRecoilValue(AuthAtom);
 	const navigation = useNavigation();
-	const { auth } = useContext(AuthContext);
-	const token = auth.token;
-	const id = auth.id;
 	const config = {
 		headers: {
 			Authorization: `Bearer ${token}`,

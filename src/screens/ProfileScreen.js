@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { RefreshControl, StyleSheet, Text, View } from 'react-native';
-import { useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, FAB } from 'react-native-paper';
@@ -11,31 +9,21 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
+import { useQuery } from 'react-query';
+import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const ProfileScreen = () => {
 	const navigation = useNavigation();
-	const storeData = async (user) => {
-		try {
-			const jsonValue = JSON.stringify(user);
-			await AsyncStorage.setItem('user', jsonValue);
-			// const asyncUser = await AsyncStorage.getItem('user');
-			// console.log(asyncUser);
-			// console.log('stored');
-		} catch (e) {
-			// saving error
-			console.log('Error saving token');
-		}
-	};
-
-	const { auth, setAuth } = useContext(AuthContext);
+	const setAuth = useSetRecoilState(AuthAtom);
+	const { token, id, name, email, location, phone, wallet } =
+		useRecoilValue(AuthAtom);
 
 	const [loggingOut, setLoggingOut] = useState(false);
-	const [data, setData] = useState(null);
-	const [loading, setLoading] = useState(false);
-	const [refreshing, setRefreshing] = useState(false);
 	const config = {
 		headers: {
-			Authorization: `Bearer ${auth.token}`,
+			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 	};
@@ -45,43 +33,26 @@ const ProfileScreen = () => {
 	// 	return () => {};
 	// }, []);
 
-	async function getUserData() {
-		axios
-			.get(
-				'https://recipetohome-api.herokuapp.com/api/v1/users/wallet/' + auth.id,
-				config
-			)
-			.then((res) => {
-				// console.log(res.data.user);
-				setData(res.data.user);
-				storeData(auth)
-					.then(() => {
-						setAuth({
-							...auth,
-							isAdmin: res.data.user.isAdmin,
-							email: res.data.user.email,
-							location: res.data.user.location,
-							phone: res.data.user.phone,
-							name: res.data.user.name,
-							wallet: res.data.user.wallet,
-						});
-						// console.log('stored');
-					})
-					.catch((err) => console.log(err));
-			})
-			.catch((err) => console.log(err))
-			.finally(() => {
-				setLoading(false);
-			});
+	function getUserData() {
+		return axios.get(
+			'https://recipetohome-api.herokuapp.com/api/v1/users/wallet/' + id,
+			config
+		);
 	}
+	const { data, isLoading, error, isError, refetch } = useQuery(
+		'getUserData',
+		getUserData,
+		{
+			select: (data) => data.data.user,
+			onSuccess: (data) => {
+				console.log(data);
+			},
+		}
+	);
 
-	const onRefresh = React.useCallback(() => {
-		setRefreshing(true);
-		getUserData();
-		setRefreshing(false);
-	}, []);
+	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-	const initials = auth.name
+	const initials = name
 		.match(/(^\S\S?|\b\S)?/g)
 		.join('')
 		.match(/(^\S|\S$)?/g)
@@ -127,19 +98,22 @@ const ProfileScreen = () => {
 			<ScrollView
 				contentContainerStyle={{ flex: 1 }}
 				refreshControl={
-					<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+					<RefreshControl
+						refreshing={isRefetchingByUser}
+						onRefresh={refetchByUser}
+					/>
 				}
 			>
 				<StatusBar style='dark' />
-				{loading && <ActivityIndicator />}
+				{isLoading && <ActivityIndicator />}
 				<View style={styles.userInfoSection}>
 					<View style={{ flexDirection: 'row', marginTop: 15 }}>
 						<Avatar.Text size={80} label={initials} />
 						<View style={{ marginLeft: 20 }}>
 							<Title style={[styles.title, { marginTop: 15, marginBottom: 5 }]}>
-								{auth.name}
+								{name}
 							</Title>
-							<Caption style={styles.caption}>{auth.email}</Caption>
+							<Caption style={styles.caption}>{email}</Caption>
 						</View>
 					</View>
 				</View>
@@ -153,19 +127,19 @@ const ProfileScreen = () => {
 						/>
 
 						<Text style={{ color: '#777777', marginLeft: 20 }}>
-							{auth.location ? auth.location : 'Location not set'}
+							{location ? location : 'Location not set'}
 						</Text>
 					</View>
 					<View style={styles.row}>
 						<MaterialCommunityIcons color='#777777' name='phone' size={20} />
 
 						<Text style={{ color: '#777777', marginLeft: 20 }}>
-							{auth.phone ? `+977-${auth.phone}` : 'Phone not set'}
+							{phone ? `+977-${phone}` : 'Phone not set'}
 						</Text>
 					</View>
 				</View>
 
-				{!loading && (
+				{!isLoading && (
 					<View style={styles.infoBoxWrapper}>
 						<View
 							style={[
@@ -173,11 +147,11 @@ const ProfileScreen = () => {
 								{ borderRightColor: '#dddddd', borderRightWidth: 1 },
 							]}
 						>
-							<Title>Rs. {auth.wallet}</Title>
+							<Title>Rs. {data.wallet}</Title>
 							<Caption>Wallet</Caption>
 						</View>
 						<View style={styles.infoBox}>
-							<Title>{data?._count?.orders}</Title>
+							<Title>{data?._count.orders}</Title>
 							<Caption>Orders</Caption>
 						</View>
 					</View>
@@ -202,6 +176,7 @@ const ProfileScreen = () => {
 						</View>
 					</TouchableRipple>
 				</View>
+				{isError && <Text style={{ color: 'red' }}>Something went wrong</Text>}
 				<FloatButton navigation={navigation} />
 			</ScrollView>
 		</SafeAreaView>

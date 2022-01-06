@@ -1,16 +1,15 @@
-import React, { useContext, useState } from 'react';
+import { useState } from 'react';
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import logo from '../../assets/logo.png';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
-import CustomMessage from '../components/CustomMessage';
-import { AuthContext } from '../context/AuthContext';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation } from 'react-query';
-
+import { useSetRecoilState } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -23,12 +22,11 @@ const LoginScreen = ({ navigation }) => {
 	}
 
 	const { mutate: handleOnLogin, isLoading } = useMutation(onLogin);
-	const { setAuth } = useContext(AuthContext);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
 	const [message, setMessage] = useState('');
-
+	const setAuth = useSetRecoilState(AuthAtom);
 	function onLoginPressed() {
 		if (!email && !password) {
 			setMessage('Email and Password are required');
@@ -105,7 +103,7 @@ const LoginScreen = ({ navigation }) => {
 					isPassword={true}
 					setSecureTextEntry={setSecureTextEntry}
 				/>
-				{message && <Text style={{ color: 'red' }}>{message}</Text>}
+				{message.length > 0 && <Text style={{ color: 'red' }}>{message}</Text>}
 				<CustomButton
 					onPress={onLoginPressed}
 					text='Login'
@@ -120,7 +118,7 @@ const LoginScreen = ({ navigation }) => {
 							letterSpacing: 1,
 						}}
 					>
-						{"Don't have an account?"}
+						Don't have an account?
 					</Text>
 					<Text
 						style={{

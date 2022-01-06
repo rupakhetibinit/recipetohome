@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -10,7 +10,6 @@ import {
 	Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthContext } from '../context/AuthContext';
 import {
 	Searchbar,
 	ActivityIndicator,
@@ -23,6 +22,8 @@ import axios from 'axios';
 import { useQuery } from 'react-query';
 const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useRecoilValue } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 
@@ -30,9 +31,8 @@ const RecipeScreen = ({ navigation }) => {
 		setSearchQuery(query);
 	}
 
-	const { auth } = useContext(AuthContext);
-	const token = auth.token;
-	const name = auth.name;
+	const { token, name } = useRecoilValue(AuthAtom);
+
 	const initials = name
 		.match(/(^\S\S?|\b\S)?/g)
 		.join('')
@@ -53,9 +53,7 @@ const RecipeScreen = ({ navigation }) => {
 		fetchRecipes,
 		{ select: (data) => data.data.recipes }
 	);
-	{
-		data && console.log(data);
-	}
+
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
 	function RecipeComponent(item) {
@@ -82,7 +80,7 @@ const RecipeScreen = ({ navigation }) => {
 				}}
 			>
 				<View style={styles.headerContainer}>
-					<Headline style={styles.header}>Hello {auth.name}</Headline>
+					<Headline style={styles.header}>Hello {name}</Headline>
 					<Caption style={{ fontSize: 16 }}>
 						What do you want to cook today?
 					</Caption>

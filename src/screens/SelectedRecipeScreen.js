@@ -1,16 +1,8 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, {
-	useCallback,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import { useContext, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthContext } from '../context/AuthContext';
 import { FontAwesome } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
@@ -18,18 +10,16 @@ import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
+import { useRecoilValue } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 
 const SelectedRecipeScreen = () => {
 	const { setCart, cart } = useContext(CartContext);
 	const navigation = useNavigation();
 	const route = useRoute();
-	const { auth } = useContext(AuthContext);
-	const token = auth.token;
-	const id = auth.id;
+	const { token, id } = useRecoilValue(AuthAtom);
 	const [ingredientList, setIngredientList] = useState([]);
-	// const [error, setError] = useState(false);
-	// const [loading, setLoading] = useState(true);
-	// const [recipe, setRecipe] = useState(null);
+
 	const [liked, setLiked] = useState(false);
 	const { recipeId } = route.params;
 

@@ -65,20 +65,18 @@ export default function App() {
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
 					<RecoilRoot>
-						<AuthProvider>
-							<CartProvider>
-								<PaperProvider theme={theme}>
-									<NavigationContainer>
-										<Routes />
-									</NavigationContainer>
-								</PaperProvider>
-								{/* <View
+						<CartProvider>
+							<PaperProvider theme={theme}>
+								<NavigationContainer>
+									<Routes />
+								</NavigationContainer>
+							</PaperProvider>
+							{/* <View
 						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
 						>
 						<Text>Loading...</Text>
 					</View> */}
-							</CartProvider>
-						</AuthProvider>
+						</CartProvider>
 					</RecoilRoot>
 				</QueryClientProvider>
 			</SafeAreaProvider>

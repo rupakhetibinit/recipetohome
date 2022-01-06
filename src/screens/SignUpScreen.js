@@ -15,12 +15,13 @@ import CustomMessage from '../components/CustomMessage';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
+import { useSetRecoilState } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
 const SignUpScreen = ({ navigation }) => {
-	const { auth, setAuth } = useContext(AuthContext);
 	const [loading, setLoading] = useState(false);
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
@@ -28,6 +29,7 @@ const SignUpScreen = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [secureTextEntry, setSecureTextEntry] = useState(true);
 	const [message, setMessage] = useState(' ');
+	const setAuth = useSetRecoilState(AuthAtom);
 	const config = {
 		headers: {
 			'Content-Type': 'application/json',
@@ -68,24 +70,12 @@ const SignUpScreen = ({ navigation }) => {
 						password: password,
 						name: name,
 						isAdmin: false,
-						pushNotificationToken: auth.pushNotificationToken,
 					},
 					config
 				)
 				.then((res) => {
 					setLoading(true);
 					if (res.data.error) setMessage(res.data.error);
-					setAuth({
-						token: res.data.token,
-						name: res.data.name,
-						id: res.data.userId,
-						email: res.data.email,
-						isAdmin: res.data.isAdmin,
-						phone: res.data.phone,
-						location: res.data.location,
-						wallet: res.data.wallet,
-						pushNotificationToken: res.data.pushNotificationToken,
-					});
 					const storeData = async (auth) => {
 						try {
 							const jsonValue = JSON.stringify(auth);
@@ -97,6 +87,16 @@ const SignUpScreen = ({ navigation }) => {
 						}
 					};
 					storeData(auth);
+					setAuth({
+						token: res.data.token,
+						name: res.data.name,
+						id: res.data.userId,
+						email: res.data.email,
+						isAdmin: res.data.isAdmin,
+						phone: res.data.phone,
+						location: res.data.location,
+						wallet: res.data.wallet,
+					});
 					setLoading(false);
 				})
 				.catch((err) => console.log(err))

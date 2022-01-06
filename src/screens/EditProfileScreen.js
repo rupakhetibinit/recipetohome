@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
 	StyleSheet,
 	Text,
@@ -9,10 +9,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { Avatar, Button } from 'react-native-paper';
-import { AuthContext } from '../context/AuthContext';
 import axios from 'axios';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 function EditProfileScreen({ navigation }) {
-	const { auth, setAuth } = useContext(AuthContext);
+	const { id, name, token } = useRecoilValue(AuthAtom);
+	const setAuth = useSetRecoilState(AuthAtom);
 	const [userInfo, setUserInfo] = useState({
 		name: '',
 		location: '',
@@ -20,7 +22,7 @@ function EditProfileScreen({ navigation }) {
 		email: '',
 	});
 	// Regex to find initials
-	const initials = auth.name
+	const initials = name
 		.match(/(^\S\S?|\b\S)?/g)
 		.join('')
 		.match(/(^\S|\S$)?/g)
@@ -28,7 +30,7 @@ function EditProfileScreen({ navigation }) {
 		.toUpperCase();
 	const config = {
 		headers: {
-			Authorization: `Bearer ${auth.token}`,
+			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 	};
@@ -46,7 +48,7 @@ function EditProfileScreen({ navigation }) {
 				.patch(
 					'https://recipetohome-api.herokuapp.com/api/v1/users/update',
 					{
-						userId: auth.id,
+						userId: id,
 						name: userInfo.name,
 						location: userInfo.location,
 						phone: userInfo.phone,
@@ -57,12 +59,14 @@ function EditProfileScreen({ navigation }) {
 				.then((res) => {
 					console.log(res.data);
 					if (res.data.success == true) {
-						setAuth({
-							...auth,
-							name: userInfo.name,
-							location: userInfo.location,
-							phone: userInfo.phone,
-							email: userInfo.email,
+						setAuth((prevState) => {
+							return {
+								...prevState,
+								name: userInfo.name,
+								location: userInfo.location,
+								phone: userInfo.phone,
+								email: userInfo.email,
+							};
 						});
 						navigation.navigate('MainProfile');
 					} else {
@@ -119,7 +123,7 @@ function EditProfileScreen({ navigation }) {
 						</View>
 					</TouchableOpacity>
 					<Text style={{ marginTop: 5, fontSize: 16, fontWeight: 'bold' }}>
-						{auth.name}
+						{name}
 					</Text>
 				</View>
 				<View style={styles.action}>

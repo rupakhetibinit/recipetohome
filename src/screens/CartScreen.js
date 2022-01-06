@@ -1,27 +1,28 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import React, { useCallback, useContext, useRef } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthContext } from '../context/AuthContext';
+import { useRecoilValue } from 'recoil';
 import { CartContext } from '../context/CartContext';
+import { AuthAtom } from '../stores/atoms';
 const CartScreen = () => {
 	const navigation = useNavigation();
-	const { auth } = useContext(AuthContext);
+	const { wallet, token } = useRecoilValue(AuthAtom);
 	const { cart, setCart, total } = useContext(CartContext);
 	const [reload, setReload] = React.useState(false);
 	const config = {
 		headers: {
-			Authorization: `Bearer ${auth.token}`,
+			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 	};
 
 	function handleOrder(order) {
-		if (auth.wallet < order.total) {
+		if (wallet < order.total) {
 			alert('You do not have enough money in your wallet to make this order');
 			return;
 		} else {

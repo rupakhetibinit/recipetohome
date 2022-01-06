@@ -1,25 +1,25 @@
 import axios from 'axios';
-import { useContext } from 'react';
 import { StyleSheet, Text, View, FlatList } from 'react-native';
 import { List, ActivityIndicator } from 'react-native-paper';
 import { RefreshControl } from 'react-native';
-import { AuthContext } from '../context/AuthContext';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import { useRecoilValue } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
 
 const PendingOrders = () => {
-	const { auth } = useContext(AuthContext);
+	const { id, token } = useRecoilValue(AuthAtom);
 	const config = {
 		headers: {
-			Authorization: `Bearer ${auth.token}`,
+			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json',
 		},
 	};
 
 	function fetchDeliveredOrders() {
 		return axios.get(
-			'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + auth.id,
+			'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + id,
 			config
 		);
 	}

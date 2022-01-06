@@ -1,15 +1,12 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import React, { useContext } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthContext } from '../context/AuthContext';
 
 const OrderConfirmationScreen = () => {
 	const route = useRoute();
 	const navigation = useNavigation();
 	const { order } = route.params;
-	const { auth, setAuth } = useContext(AuthContext);
 	// console.log(order);
 	return (
 		<SafeAreaView style={styles.container}>

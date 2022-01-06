@@ -14,7 +14,6 @@ const AuthStack = () => {
 				contentStyle: { backgroundColor: '#fff' },
 			}}
 		>
-			{/* <Stack.Screen name='Login' component={LoginScreen} />*/}
 			<Stack.Screen name='Signup' component={SignUpScreen} />
 			<Stack.Screen name='Login' component={LoginScreen} />
 			<Stack.Screen name='SelectedRecipe' component={SelectedRecipeScreen} />
