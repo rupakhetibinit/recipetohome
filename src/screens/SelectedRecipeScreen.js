@@ -1,5 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,21 +7,23 @@ import { FontAwesome } from '@expo/vector-icons';
 import { FlatList } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
-import { CartContext } from '../context/CartContext';
 import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
-import { useRecoilValue } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { AuthAtom, Cart, ingredientListFamily } from '../stores/atoms';
 
 const SelectedRecipeScreen = () => {
-	const { setCart, cart } = useContext(CartContext);
 	const navigation = useNavigation();
 	const route = useRoute();
+	const { recipeId } = route.params;
+	const [ingredients, setIngredients] = useRecoilState(
+		ingredientListFamily(recipeId)
+	);
+	// const [cart, setCart] = useRecoilState(Cart);
+	const setCart = useSetRecoilState(Cart);
 	const { token, id } = useRecoilValue(AuthAtom);
-	const [ingredientList, setIngredientList] = useState([]);
 
 	const [liked, setLiked] = useState(false);
-	const { recipeId } = route.params;
 
 	function fetchRecipeById() {
 		return axios.get(
@@ -42,10 +44,11 @@ const SelectedRecipeScreen = () => {
 					return { ...ingredient, checked: false };
 				});
 				// console.log(list);
-				setIngredientList(list);
 				data.likedBy.filter((user) => user.id === id).length > 0
 					? setLiked(true)
 					: setLiked(false);
+				setIngredients((prevState) => [...list]);
+				console.log(ingredients);
 			},
 		}
 	);
@@ -56,31 +59,25 @@ const SelectedRecipeScreen = () => {
 	};
 
 	function handleAddToCart() {
-		if (
-			ingredientList.filter((ingredient) => ingredient.checked).length === 0
-		) {
+		if (ingredients.filter((ingredient) => ingredient.checked).length === 0) {
 			alert('Please select at least one ingredient');
 			return;
 		} else {
-			// Make a copy of the old cart
-			const newCart = [...cart];
-			// Find the new total of the cart
-			const newTotal = ingredientList
+			const newTotal = ingredients
 				.filter((ingredient) => ingredient.checked)
 				.reduce((acc, ingredient) => {
 					return acc + ingredient.price;
 				}, 0);
-			// Push the item into the cart
-			newCart.push({
+			const newCart = {
 				id: uuid.v4(),
 				recipeId: recipeId,
-				ingredients: ingredientList.filter(
+				ingredients: ingredients.filter(
 					(ingredient) => ingredient.checked === true
 				),
 				total: newTotal,
-			});
+			};
 			// Set the new cart
-			setCart(newCart);
+			setCart((prev) => [...prev, newCart]);
 			// Navigate to the cart
 			navigation.navigate('Shopping', {
 				params: {
@@ -130,22 +127,18 @@ const SelectedRecipeScreen = () => {
 				.catch((err) => console.log(err));
 		}
 	}
+	function replaceItemAtIndex(arr, index, newValue) {
+		return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
+	}
 
 	// Check and uncheck functionality for the ingredients
-	function handleChecked(id) {
-		// Make a copy of the ingredients
-		let ingredients = [...ingredientList];
-		// Find the ingredient index in original array
-		const ingredientId = ingredients.findIndex((item) => item.id === id);
-		// copy the ingredient from the array
-		let ingredient = { ...ingredients[ingredientId] };
-		// set ingredient checked status to opposite of its current value
-		ingredient.checked = !ingredient.checked;
-		// Replace the item in the copied array
-		ingredients[ingredientId] = ingredient;
-		// set the state with the new copy
-		setIngredientList(ingredients);
-		// console.log(ingredientList);
+	function handleChecked(item) {
+		const newIngredients = replaceItemAtIndex(
+			ingredients,
+			ingredients.indexOf(item),
+			{ ...item, checked: !item.checked }
+		);
+		setIngredients(newIngredients);
 	}
 
 	function RenderIngredient(item, handleChecked) {
@@ -153,7 +146,7 @@ const SelectedRecipeScreen = () => {
 			<View style={styles.container}>
 				<Checkbox
 					status={item.checked ? 'checked' : 'unchecked'}
-					onPress={() => handleChecked(item.id)}
+					onPress={() => handleChecked(item)}
 					color='#5F2EEA'
 				/>
 				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
@@ -181,14 +174,14 @@ const SelectedRecipeScreen = () => {
 		>
 			<StatusBar style='dark' />
 			{isLoading ||
-				(ingredientList.length === 0 && (
+				(ingredients.length === 0 && (
 					<ActivityIndicator
 						size={'large'}
 						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 					/>
 				))}
 			{isError && <Text style={{ color: 'red' }}>{error.message}</Text>}
-			{data && ingredientList.length > 0 && (
+			{data && (
 				<View
 					style={{
 						flex: 1,
@@ -230,9 +223,9 @@ const SelectedRecipeScreen = () => {
 					</Text>
 
 					<FlatList
-						data={ingredientList}
+						data={ingredients}
 						renderItem={renderItem}
-						keyExtractor={(item) => uuid.v4()}
+						keyExtractor={() => uuid.v4()}
 						style={{
 							height: '100%',
 						}}

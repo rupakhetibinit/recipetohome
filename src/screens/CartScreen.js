@@ -1,18 +1,17 @@
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRecoilValue } from 'recoil';
-import { CartContext } from '../context/CartContext';
-import { AuthAtom } from '../stores/atoms';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { AuthAtom, Cart } from '../stores/atoms';
 const CartScreen = () => {
 	const navigation = useNavigation();
-	const { wallet, token } = useRecoilValue(AuthAtom);
-	const { cart, setCart, total } = useContext(CartContext);
+	const { wallet, token, id } = useRecoilValue(AuthAtom);
+	const [cart, setCart] = useRecoilState(Cart);
 	const [reload, setReload] = React.useState(false);
 	const config = {
 		headers: {
@@ -38,7 +37,7 @@ const CartScreen = () => {
 				.post(
 					'https://recipetohome-api.herokuapp.com/api/v1/order',
 					{
-						userId: auth.id,
+						userId: id,
 						total: order.total,
 						recipeId: order.recipeId,
 						id: order.id,

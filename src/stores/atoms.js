@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { atom, atomFamily, selector } from 'recoil';
 
 export const AuthAtom = atom({
 	key: 'auth',
@@ -12,4 +12,29 @@ export const AuthAtom = atom({
 		phone: null,
 		wallet: 0,
 	},
+});
+
+export const nameInitials = selector({
+	key: 'initials',
+	get: ({ get }) => {
+		const { name } = get(AuthAtom);
+		const initials = name
+			.match(/(^\S\S?|\b\S)?/g)
+			.join('')
+			.match(/(^\S|\S$)?/g)
+			.join('')
+			.toUpperCase();
+
+		return initials;
+	},
+});
+
+export const Cart = atom({
+	key: 'cart',
+	default: [],
+});
+
+export const ingredientListFamily = atomFamily({
+	key: 'ingredientList',
+	default: [],
 });

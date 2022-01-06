@@ -23,7 +23,7 @@ import { useQuery } from 'react-query';
 const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, nameInitials } from '../stores/atoms';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 
@@ -33,12 +33,7 @@ const RecipeScreen = ({ navigation }) => {
 
 	const { token, name } = useRecoilValue(AuthAtom);
 
-	const initials = name
-		.match(/(^\S\S?|\b\S)?/g)
-		.join('')
-		.match(/(^\S|\S$)?/g)
-		.join('')
-		.toUpperCase();
+	const initials = useRecoilValue(nameInitials);
 
 	function fetchRecipes() {
 		return axios.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
@@ -62,7 +57,12 @@ const RecipeScreen = ({ navigation }) => {
 				onPress={() => navigation.push('SelectedRecipe', { recipeId: item.id })}
 			>
 				<View style={styles.imageContainer}>
-					<Image style={styles.image} source={{ uri: item.imageUrl }} />
+					<Image
+						style={styles.image}
+						source={{ uri: item.imageUrl }}
+						resizeMode='cover'
+						resizeMethod='auto'
+					/>
 					<Text style={styles.text}>{item.name}</Text>
 				</View>
 			</Pressable>

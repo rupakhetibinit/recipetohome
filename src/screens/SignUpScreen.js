@@ -87,7 +87,7 @@ const SignUpScreen = ({ navigation }) => {
 						}
 					};
 					storeData(auth);
-					setAuth({
+					setAuth(() => ({
 						token: res.data.token,
 						name: res.data.name,
 						id: res.data.userId,
@@ -96,7 +96,7 @@ const SignUpScreen = ({ navigation }) => {
 						phone: res.data.phone,
 						location: res.data.location,
 						wallet: res.data.wallet,
-					});
+					}));
 					setLoading(false);
 				})
 				.catch((err) => console.log(err))

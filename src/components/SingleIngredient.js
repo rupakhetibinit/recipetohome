@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Checkbox, List } from 'react-native-paper';
-import { useContext } from 'react';
-import { CartContext } from '../context/CartContext';
+import { Checkbox } from 'react-native-paper';
 const SingleIngredient = ({ item, name }) => {
 	const [checked, setChecked] = useState(item.checked);
-	const { setCart, cart, total, setTotal } = useContext(CartContext);
 
 	return (
 		<View style={styles.container}>

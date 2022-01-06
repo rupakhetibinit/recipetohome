@@ -2,7 +2,7 @@ import React from 'react';
 import { Dimensions, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
-width = Dimensions.get('window').width;
+const width = Dimensions.get('window').width;
 
 const CustomInput = ({
 	iconName,

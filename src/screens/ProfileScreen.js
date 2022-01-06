@@ -9,16 +9,17 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { AuthAtom, nameInitials } from '../stores/atoms';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 
 const ProfileScreen = () => {
+	const resetAuthState = useResetRecoilState(AuthAtom);
+	const initials = useRecoilValue(nameInitials);
 	const navigation = useNavigation();
 	const setAuth = useSetRecoilState(AuthAtom);
-	const { token, id, name, email, location, phone, wallet } =
-		useRecoilValue(AuthAtom);
+	const { token, id, name, email, location, phone } = useRecoilValue(AuthAtom);
 
 	const [loggingOut, setLoggingOut] = useState(false);
 	const config = {
@@ -46,18 +47,12 @@ const ProfileScreen = () => {
 			select: (data) => data.data.user,
 			onSuccess: (data) => {
 				console.log(data);
+				setAuth((prevState) => ({ ...prevState, wallet: data.wallet }));
 			},
 		}
 	);
 
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
-
-	const initials = name
-		.match(/(^\S\S?|\b\S)?/g)
-		.join('')
-		.match(/(^\S|\S$)?/g)
-		.join('')
-		.toUpperCase();
 
 	const onLogoutPressed = () => {
 		setLoggingOut(true);
@@ -66,16 +61,6 @@ const ProfileScreen = () => {
 				const jsonValue = await AsyncStorage.getItem('user');
 				if (jsonValue !== null && jsonValue !== undefined) {
 					await AsyncStorage.removeItem('user');
-					setAuth({
-						isAdmin: false,
-						email: '',
-						token: '',
-						name: '',
-						id: null,
-						location: null,
-						phone: null,
-						wallet: 0,
-					});
 					// console.log('deleted');
 				} else {
 					setLoggingOut(false);
@@ -88,6 +73,7 @@ const ProfileScreen = () => {
 		deleteData()
 			.then(() => {
 				// console.log('data finally deleted');
+				resetAuthState();
 			})
 			.catch((err) => {
 				console.log(err);

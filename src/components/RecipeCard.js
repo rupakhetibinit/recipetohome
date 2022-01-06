@@ -1,10 +1,6 @@
-import React from 'react';
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
-import { Card, Title, Paragraph, Button } from 'react-native-paper';
-import { FontAwesome } from '@expo/vector-icons';
+import { Dimensions, StyleSheet, Text } from 'react-native';
+import { Card } from 'react-native-paper';
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
-import useNavigation from '@react-navigation/native';
 const RecipeCard = ({ title, url, servings, onPress = () => {} }) => {
 	return (
 		<Card
