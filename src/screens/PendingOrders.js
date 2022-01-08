@@ -36,32 +36,6 @@ const PendingOrders = () => {
 	}
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-	// const getData = async () => {
-	// 	setLoading(true);
-	// 	axios
-	// 		.get(
-	// 			'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + auth.id,
-	// 			config
-	// 		)
-	// 		.then((res) => {
-	// 			// console.log(res);
-	// 			setData(res.data.orders);
-	// 			// console.log(res.data.orders);
-	// 		})
-	// 		.catch((err) => console.log(err))
-	// 		.finally(() => setLoading(false));
-	// };
-	// useEffect(() => {
-	// 	getData();
-	// 	return () => {};
-	// }, []);
-
-	// const onRefresh = () => {
-	// 	setRefreshing(true);
-	// 	getData();
-	// 	setRefreshing(false);
-	// };
-
 	return (
 		<SafeAreaView style={styles.container}>
 			{isError && <Text style={{ color: 'red' }}>Error! {error.message}</Text>}
