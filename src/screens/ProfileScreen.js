@@ -29,11 +29,6 @@ const ProfileScreen = () => {
 		},
 	};
 
-	// useEffect(() => {
-	// 	getUserData();
-	// 	return () => {};
-	// }, []);
-
 	function getUserData() {
 		return axios.get(
 			'https://recipetohome-api.herokuapp.com/api/v1/users/wallet/' + id,
