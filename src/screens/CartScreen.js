@@ -7,11 +7,14 @@ import { FlatList } from 'react-native-gesture-handler';
 import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useSnapshot } from 'valtio';
 import { AuthAtom, Cart } from '../stores/atoms';
+import state from '../stores/valtioStore';
 const CartScreen = () => {
 	const navigation = useNavigation();
 	const { wallet, token, id } = useRecoilValue(AuthAtom);
-	const [cart, setCart] = useRecoilState(Cart);
+	// const [cart, setCart] = useRecoilState(Cart);
+	const snap = useSnapshot(state);
 	const [reload, setReload] = React.useState(false);
 	const config = {
 		headers: {
@@ -46,15 +49,9 @@ const CartScreen = () => {
 					config
 				)
 				.then((res) => {
-					// console.log(res);
-					// console.log(res.data);
 					if (res.data.success === true) {
-						const newCart = cart.filter((item) => item.id !== givenOrder.id);
-						// const newTotal = total - givenOrder.total;
-						// setTotal(newTotal);
-						setCart(newCart);
-						// console.log(JSON.stringify(ingredients));
-						// console.log(res.data.order);
+						state.cartState.splice(state.cartState.indexOf(givenOrder), 1);
+
 						navigation.navigate('OrderConfirmation', {
 							order: res.data.transaction[1],
 						});
@@ -73,7 +70,7 @@ const CartScreen = () => {
 
 	function handleUnchecked(orderId, ingredientId) {
 		// Make a copy of the cart
-		const newCart = [...cart];
+		const newCart = [...snap.cartState];
 		// Find the index of item to remove
 		const index = newCart.findIndex((item) => item.id === orderId);
 		// Remove the ingredient that was unchecked
@@ -85,15 +82,14 @@ const CartScreen = () => {
 			newCart[index].total -
 			newCart[index].ingredients.find((item) => item.id === ingredientId).price;
 		// Remove the item from the array if it is the last ingredient
-		ingredients.length === 0 && newCart.splice(index, 1);
+		ingredients.length === 0 && state.cartState.splice(index, 1);
 		ingredients.length > 0 &&
-			newCart.splice(index, 1, {
+			state.cartState.splice(index, 1, {
 				...newCart[index],
 				ingredients: ingredients,
 				total: newTotal,
 			});
 		// Update the state with the new array
-		setCart(newCart);
 	}
 
 	return (
@@ -116,7 +112,7 @@ const CartScreen = () => {
 					</Text>
 				</View>
 			</View>
-			{cart.length === 0 ? (
+			{snap.cartState.length === 0 ? (
 				<View
 					style={{
 						flex: 1,
@@ -141,8 +137,8 @@ const CartScreen = () => {
 						width: '100%',
 					}}
 					showsVerticalScrollIndicator={false}
-					data={cart}
-					extraData={cart}
+					data={snap.cartState}
+					extraData={snap.cartState}
 					renderItem={({ item }) => {
 						let parentData = item;
 						return (
@@ -160,9 +156,7 @@ const CartScreen = () => {
 								<FlatList
 									showsVerticalScrollIndicator={false}
 									key={item.ingredients.id}
-									data={item.ingredients.filter(
-										(ingredient) => ingredient.checked === true
-									)}
+									data={item.ingredients}
 									renderItem={({ item }) => (
 										<View
 											style={{
@@ -173,7 +167,7 @@ const CartScreen = () => {
 											}}
 										>
 											<Checkbox
-												status={item.checked ? 'checked' : 'unchecked'}
+												status='checked'
 												onPress={() => handleUnchecked(parentData.id, item.id)}
 												color='#694fad'
 											/>

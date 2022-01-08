@@ -2,7 +2,7 @@
 	"expo": {
 		"name": "recipetohome",
 		"slug": "recipetohome",
-		"version": "1.2.0",
+		"version": "1.2.6",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
 		"splash": {

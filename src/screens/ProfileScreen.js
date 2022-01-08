@@ -42,8 +42,9 @@ const ProfileScreen = () => {
 			select: (data) => data.data.user,
 			onSuccess: (data) => {
 				console.log(data);
-				setAuth((prevState) => ({ ...prevState, wallet: data.wallet }));
 			},
+			// 	setAuth((prevState) => ({ ...prevState, wallet: data.wallet }));
+			// },
 		}
 	);
 

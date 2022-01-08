@@ -48,6 +48,9 @@ const RecipeScreen = ({ navigation }) => {
 		fetchRecipes,
 		{ select: (data) => data.data.recipes }
 	);
+	{
+		data && console.log(data);
+	}
 
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

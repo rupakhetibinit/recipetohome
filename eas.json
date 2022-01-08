@@ -4,10 +4,12 @@
 	},
 	"build": {
 		"development": {
+			"node": "16.13.1",
 			"developmentClient": true,
 			"distribution": "internal"
 		},
 		"preview": {
+			"node": "16.13.1",
 			"distribution": "internal",
 			"android": {
 				"buildType": "apk"

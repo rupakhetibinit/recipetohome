@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
@@ -11,16 +11,28 @@ import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { AuthAtom, Cart, ingredientListFamily } from '../stores/atoms';
+import { useSnapshot, proxy } from 'valtio';
+import state from '../stores/valtioStore';
+const width = Dimensions.get('window').width;
 
+const ingredientList = proxy({
+	state: [],
+});
 const SelectedRecipeScreen = () => {
-	const navigation = useNavigation();
+	const [checkedIngredients, setCheckedIngredients] = useState([]);
 	const route = useRoute();
 	const { recipeId } = route.params;
-	const [ingredients, setIngredients] = useRecoilState(
-		ingredientListFamily(recipeId)
-	);
+	useEffect(() => {
+		return () => {
+			ingredientList.state = [];
+		};
+	}, [recipeId]);
+	const navigation = useNavigation();
+	// const [ingredients, setIngredients] = useState([]);
+	const ingredientSnap = useSnapshot(ingredientList);
 	// const [cart, setCart] = useRecoilState(Cart);
-	const setCart = useSetRecoilState(Cart);
+	// const setCart = useSetRecoilState(Cart);
+	const snap = useSnapshot(state);
 	const { token, id } = useRecoilValue(AuthAtom);
 
 	const [liked, setLiked] = useState(false);
@@ -32,7 +44,7 @@ const SelectedRecipeScreen = () => {
 		);
 	}
 
-	const { data, isLoading, isError, error } = useQuery(
+	const { data, isLoading, isError, error, isSuccess } = useQuery(
 		['recipes', recipeId],
 		fetchRecipeById,
 		{
@@ -40,15 +52,7 @@ const SelectedRecipeScreen = () => {
 				return data.data.recipe;
 			},
 			onSuccess: (data) => {
-				const list = data.ingredients.map((ingredient) => {
-					return { ...ingredient, checked: false };
-				});
-				// console.log(list);
-				data.likedBy.filter((user) => user.id === id).length > 0
-					? setLiked(true)
-					: setLiked(false);
-				setIngredients((prevState) => [...list]);
-				console.log(ingredients);
+				setLiked(data.likedBy.filter((user) => user.id === id).length > 0);
 			},
 		}
 	);
@@ -59,31 +63,32 @@ const SelectedRecipeScreen = () => {
 	};
 
 	function handleAddToCart() {
-		if (ingredients.filter((ingredient) => ingredient.checked).length === 0) {
+		if (checkedIngredients.length === 0) {
 			alert('Please select at least one ingredient');
 			return;
 		} else {
-			const newTotal = ingredients
-				.filter((ingredient) => ingredient.checked)
-				.reduce((acc, ingredient) => {
-					return acc + ingredient.price;
-				}, 0);
+			const newTotal = checkedIngredients.reduce((acc, ingredient) => {
+				return acc + ingredient.price;
+			}, 0);
 			const newCart = {
 				id: uuid.v4(),
 				recipeId: recipeId,
-				ingredients: ingredients.filter(
-					(ingredient) => ingredient.checked === true
-				),
+				ingredients: checkedIngredients,
 				total: newTotal,
 			};
-			// Set the new cart
-			setCart((prev) => [...prev, newCart]);
-			// Navigate to the cart
-			navigation.navigate('Shopping', {
-				params: {
-					screen: 'Cart',
-				},
-			});
+			if (newCart.total === 0) {
+				alert('Please select at least one ingredient');
+				return;
+			} else {
+				// Set the new cart
+				state.cartState.push(newCart);
+				// Navigate to the cart
+				navigation.navigate('Shopping', {
+					params: {
+						screen: 'Cart',
+					},
+				});
+			}
 		}
 	}
 
@@ -132,21 +137,26 @@ const SelectedRecipeScreen = () => {
 	}
 
 	// Check and uncheck functionality for the ingredients
-	function handleChecked(item) {
-		const newIngredients = replaceItemAtIndex(
-			ingredients,
-			ingredients.indexOf(item),
-			{ ...item, checked: !item.checked }
-		);
-		setIngredients(newIngredients);
+	function handleChecked(item, setCheckedIngredients) {
+		const index = checkedIngredients.indexOf(item);
+		if (index === -1) {
+			setCheckedIngredients([...checkedIngredients, item]);
+		} else {
+			const newChecked = checkedIngredients.filter(
+				(ingredient) => ingredient !== item
+			);
+			setCheckedIngredients([...newChecked]);
+		}
 	}
 
 	function RenderIngredient(item, handleChecked) {
 		return (
 			<View style={styles.container}>
 				<Checkbox
-					status={item.checked ? 'checked' : 'unchecked'}
-					onPress={() => handleChecked(item)}
+					status={
+						checkedIngredients.indexOf(item) !== -1 ? 'checked' : 'unchecked'
+					}
+					onPress={() => handleChecked(item, setCheckedIngredients)}
 					color='#5F2EEA'
 				/>
 				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
@@ -173,15 +183,9 @@ const SelectedRecipeScreen = () => {
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
 		>
 			<StatusBar style='dark' />
-			{isLoading ||
-				(ingredients.length === 0 && (
-					<ActivityIndicator
-						size={'large'}
-						style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
-					/>
-				))}
+			{isLoading && <ActivityIndicator size={'large'} />}
 			{isError && <Text style={{ color: 'red' }}>{error.message}</Text>}
-			{data && (
+			{isSuccess && (
 				<View
 					style={{
 						flex: 1,
@@ -223,7 +227,7 @@ const SelectedRecipeScreen = () => {
 					</Text>
 
 					<FlatList
-						data={ingredients}
+						data={data.ingredients}
 						renderItem={renderItem}
 						keyExtractor={() => uuid.v4()}
 						style={{
