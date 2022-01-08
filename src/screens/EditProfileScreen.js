@@ -58,7 +58,7 @@ function EditProfileScreen({ navigation }) {
 				)
 				.then((res) => {
 					console.log(res.data);
-					if (res.data.success == true) {
+					if (res.data.success === true) {
 						setAuth((prevState) => {
 							return {
 								...prevState,

@@ -12,7 +12,6 @@ import {
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthContext } from '../context/AuthContext';
 import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
@@ -49,35 +48,6 @@ const FavoriteScreen = () => {
 	);
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
-	// useEffect(() => {
-	// 	fetchData();
-	// 	setLoading(false);
-	// }, []);
-
-	// function onRefresh() {
-	// 	setRefreshing(true);
-	// 	fetchData();
-	// 	setRefreshing(false);
-	// }
-	// const fetchData = useCallback(() => {
-	// 	axios
-	// 		.get(`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`, {
-	// 			method: 'GET',
-	// 			config,
-	// 		})
-	// 		.then((res) => {
-	// 			// console.log(res);
-	// 			setData(res.data);
-	// 			setLoading(false);
-	// 			setRefreshing(false);
-	// 			setError(null);
-	// 		})
-	// 		.catch(() => {
-	// 			// console.log(err);
-	// 			setError('something went wrong');
-	// 		});
-	// }, []);
-
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<StatusBar style='dark' />
@@ -105,13 +75,6 @@ const FavoriteScreen = () => {
 					<ActivityIndicator size={'small'} style={{ marginTop: 30 }} />
 				)}
 
-				{/* {data?.recipes?.likedRecipes?.length === 0 && (
-				<View style={{ flex: 1, justifyContent: 'center' }}>
-					<Text style={{ fontSize: 24, fontFamily: 'Poppins_500Medium' }}>
-						You have no favorite recipes
-					</Text>
-				</View>
-			)} */}
 				{data?.length === 0 ? (
 					<ScrollView
 						refreshControl={
@@ -181,6 +144,7 @@ const FavoriteScreen = () => {
 							alignItems: 'center',
 							justifyContent: 'center',
 							color: 'red',
+							textShadowColor: '#412441',
 						}}
 					>
 						{error.message}

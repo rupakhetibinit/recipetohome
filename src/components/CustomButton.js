@@ -33,15 +33,12 @@ export default CustomButton;
 const styles = StyleSheet.create({
 	container: {
 		backgroundColor: '#5F2EEA',
-
 		width: 0.85 * Dimensions.get('window').width,
 		padding: 15,
 		marginTop: 11,
 		height: 64,
-
 		alignItems: 'center',
 		justifyContent: 'center',
-
 		borderRadius: 16,
 	},
 	text: {

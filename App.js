@@ -1,5 +1,6 @@
 import React from 'react';
 import 'react-native-gesture-handler';
+import axios from 'axios';
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { CartProvider } from './src/context/CartContext';
 import { AuthProvider } from './src/context/AuthContext';
@@ -28,6 +29,13 @@ import { RecoilRoot } from 'recoil';
 const queryClient = new QueryClient();
 
 export default function App() {
+	React.useEffect(() => {
+		axios
+			.get('https://recipetohome-api.herokuapp.com/check')
+			.then(() => {})
+			.catch(() => {});
+		return () => null;
+	}, []);
 	const DefaultTheme = merge(NavigationDefaultTheme, PaperDefaultTheme);
 	const theme = {
 		...DefaultTheme,
@@ -65,18 +73,16 @@ export default function App() {
 			<SafeAreaProvider>
 				<QueryClientProvider client={queryClient}>
 					<RecoilRoot>
-						<CartProvider>
-							<PaperProvider theme={theme}>
-								<NavigationContainer>
-									<Routes />
-								</NavigationContainer>
-							</PaperProvider>
-							{/* <View
+						<PaperProvider theme={theme}>
+							<NavigationContainer>
+								<Routes />
+							</NavigationContainer>
+						</PaperProvider>
+						{/* <View
 						style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
 						>
 						<Text>Loading...</Text>
 					</View> */}
-						</CartProvider>
 					</RecoilRoot>
 				</QueryClientProvider>
 			</SafeAreaProvider>

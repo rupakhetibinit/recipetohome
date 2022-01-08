@@ -89,7 +89,6 @@ const CartScreen = () => {
 				ingredients: ingredients,
 				total: newTotal,
 			});
-		// Update the state with the new array
 	}
 
 	return (
