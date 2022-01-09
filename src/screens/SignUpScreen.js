@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import { AuthContext } from '../context/AuthContext';
 import {
 	Dimensions,
 	Image,
@@ -7,6 +6,7 @@ import {
 	Text,
 	View,
 	SafeAreaView,
+	AsyncStorage,
 } from 'react-native';
 import signup from '../../assets/signup.png';
 import CustomInput from '../components/CustomInput';
@@ -17,7 +17,7 @@ import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useSetRecoilState } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
 
@@ -37,8 +37,8 @@ const SignUpScreen = ({ navigation }) => {
 	};
 
 	function isEmailValid(str) {
-		var lastAtPos = str.lastIndexOf('@');
-		var lastDotPos = str.lastIndexOf('.');
+		let lastAtPos = str.lastIndexOf('@');
+		let lastDotPos = str.lastIndexOf('.');
 		return (
 			lastAtPos < lastDotPos &&
 			lastAtPos > 0 &&
@@ -74,19 +74,6 @@ const SignUpScreen = ({ navigation }) => {
 					config
 				)
 				.then((res) => {
-					setLoading(true);
-					if (res.data.error) setMessage(res.data.error);
-					const storeData = async (auth) => {
-						try {
-							const jsonValue = JSON.stringify(auth);
-							await AsyncStorage.setItem('user', jsonValue);
-							// const asyncAuth = await AsyncStorage.getItem('user');
-							// console.log(asyncAuth);
-						} catch (e) {
-							// saving error
-						}
-					};
-					storeData(auth);
 					setAuth(() => ({
 						token: res.data.token,
 						name: res.data.name,
@@ -97,11 +84,6 @@ const SignUpScreen = ({ navigation }) => {
 						location: res.data.location,
 						wallet: res.data.wallet,
 					}));
-					setLoading(false);
-				})
-				.catch((err) => console.log(err))
-				.finally(() => {
-					setLoading(false);
 				});
 		}
 	}

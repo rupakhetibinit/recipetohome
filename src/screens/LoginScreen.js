@@ -45,17 +45,8 @@ const LoginScreen = ({ navigation }) => {
 						if (data.data.success === false) {
 							setMessage(data.data.message);
 						} else {
-							const user = {
-								id: data.data.userId,
-								email: data.data.email,
-								token: data.data.token,
-								name: data.data.name,
-								isAdmin: data.data.isAdmin,
-								location: data.data.location,
-								phone: data.data.phone,
-								wallet: data.data.wallet,
-							};
-							AsyncStorage.setItem('user', JSON.stringify(user))
+							console.log(data.data.accessToken);
+							AsyncStorage.setItem('token', data.data.accessToken)
 								.then(() => {
 									setAuth({
 										token: data.data.accessToken,

@@ -1,19 +1,19 @@
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useSnapshot } from 'valtio';
 import { AuthAtom, Cart } from '../stores/atoms';
 import state from '../stores/valtioStore';
+import axios from 'axios';
+
 const CartScreen = () => {
 	const navigation = useNavigation();
 	const { wallet, token, id } = useRecoilValue(AuthAtom);
-	// const [cart, setCart] = useRecoilState(Cart);
 	const snap = useSnapshot(state);
 	const [reload, setReload] = React.useState(false);
 	const config = {
@@ -22,7 +22,6 @@ const CartScreen = () => {
 			'Content-Type': 'application/json',
 		},
 	};
-
 	function handleOrder(order) {
 		if (wallet < order.total) {
 			alert('You do not have enough money in your wallet to make this order');

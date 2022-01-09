@@ -52,13 +52,7 @@ const PendingOrders = () => {
 						/>
 					}
 				>
-					<Text
-						style={{
-							fontFamily: 'Poppins_500Medium',
-							fontSize: 20,
-							marginHorizontal: 10,
-						}}
-					>
+					<Text style={styles.deliveredOrdersText}>
 						You have no delivered orders
 					</Text>
 				</ScrollView>
@@ -89,5 +83,10 @@ export default PendingOrders;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+	},
+	deliveredOrdersText: {
+		fontFamily: 'Poppins_500Medium',
+		fontSize: 20,
+		marginHorizontal: 10,
 	},
 });

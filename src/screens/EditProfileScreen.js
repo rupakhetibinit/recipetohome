@@ -7,7 +7,7 @@ import {
 	TextInput,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
