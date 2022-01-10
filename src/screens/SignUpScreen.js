@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import {
 	Dimensions,
 	Image,
@@ -6,7 +6,6 @@ import {
 	Text,
 	View,
 	SafeAreaView,
-	AsyncStorage,
 } from 'react-native';
 import signup from '../../assets/signup.png';
 import CustomInput from '../components/CustomInput';
@@ -17,9 +16,16 @@ import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useSetRecoilState } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+
+async function save(key, value) {
+	try {
+		await SecureStore.setItemAsync(key, value);
+	} catch (e) {
+		console.log(e);
+	}
+}
 
 const SignUpScreen = ({ navigation }) => {
 	const [loading, setLoading] = useState(false);
@@ -74,16 +80,26 @@ const SignUpScreen = ({ navigation }) => {
 					config
 				)
 				.then((res) => {
-					setAuth(() => ({
-						token: res.data.token,
-						name: res.data.name,
-						id: res.data.userId,
-						email: res.data.email,
-						isAdmin: res.data.isAdmin,
-						phone: res.data.phone,
-						location: res.data.location,
-						wallet: res.data.wallet,
-					}));
+					save('token', res.data.token)
+						.then(() => {
+							setAuth(() => ({
+								token: res.data.token,
+								name: res.data.name,
+								id: res.data.userId,
+								email: res.data.email,
+								isAdmin: res.data.isAdmin,
+								phone: res.data.phone,
+								location: res.data.location,
+								wallet: res.data.wallet,
+							}));
+							console.log('saved');
+						})
+						.catch((err) => {
+							console.log(err);
+						});
+				})
+				.catch((err) => {
+					console.log(err);
 				});
 		}
 	}

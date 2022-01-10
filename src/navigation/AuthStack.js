@@ -1,5 +1,4 @@
 import LoginScreen from '../screens/LoginScreen';
-import SelectedRecipeScreen from '../screens/SelectedRecipeScreen';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignUpScreen from '../screens/SignUpScreen';
 

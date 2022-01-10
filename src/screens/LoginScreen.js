@@ -6,12 +6,20 @@ import CustomButton from '../components/CustomButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useMutation } from 'react-query';
 import { useSetRecoilState } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
+import * as SecureStore from 'expo-secure-store';
+
+async function save(key, value) {
+	try {
+		await SecureStore.setItemAsync(key, value);
+	} catch (e) {
+		console.log(e);
+	}
+}
 
 const LoginScreen = ({ navigation }) => {
 	function onLogin() {
@@ -46,9 +54,10 @@ const LoginScreen = ({ navigation }) => {
 							setMessage(data.data.message);
 						} else {
 							console.log(data.data.accessToken);
-							AsyncStorage.setItem('token', data.data.accessToken)
+							save('token', data.data.accessToken)
 								.then(() => {
-									setAuth({
+									console.log('saved');
+									setAuth(() => ({
 										token: data.data.accessToken,
 										email: data.data.email,
 										id: data.data.userId,
@@ -57,9 +66,11 @@ const LoginScreen = ({ navigation }) => {
 										location: data.data.location,
 										phone: data.data.phone,
 										wallet: data.data.wallet,
-									});
+									}));
 								})
-								.catch((err) => console.log(err));
+								.catch((e) => {
+									console.log('error', e);
+								});
 						}
 					},
 					onError: () => {
@@ -127,6 +138,7 @@ const LoginScreen = ({ navigation }) => {
 		</KeyboardAwareScrollView>
 	);
 };
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,

@@ -3,19 +3,26 @@ import { RefreshControl, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, FAB } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Avatar, Title, Caption, TouchableRipple } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { AuthAtom, nameInitials } from '../stores/atoms';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
+import * as SecureStore from 'expo-secure-store';
+
+async function deleteKey(key) {
+	try {
+		await SecureStore.deleteItemAsync(key);
+	} catch (e) {
+		console.log(e);
+	}
+}
 
 const ProfileScreen = () => {
-	const resetAuthState = useResetRecoilState(AuthAtom);
 	const initials = useRecoilValue(nameInitials);
 	const navigation = useNavigation();
 	const setAuth = useSetRecoilState(AuthAtom);
@@ -35,7 +42,7 @@ const ProfileScreen = () => {
 			config
 		);
 	}
-	const { data, isLoading, error, isError, refetch } = useQuery(
+	const { data, isLoading, isError, refetch } = useQuery(
 		'getUserData',
 		getUserData,
 		{
@@ -52,28 +59,21 @@ const ProfileScreen = () => {
 
 	const onLogoutPressed = () => {
 		setLoggingOut(true);
-		const deleteData = async () => {
-			try {
-				const jsonValue = await AsyncStorage.getItem('user');
-				if (jsonValue !== null && jsonValue !== undefined) {
-					await AsyncStorage.removeItem('user');
-					// console.log('deleted');
-				} else {
-					setLoggingOut(false);
-				}
-			} catch (e) {
-				console.log(e);
-				setLoggingOut(false);
-			}
-		};
-		deleteData()
+		deleteKey('token')
 			.then(() => {
-				// console.log('data finally deleted');
-				resetAuthState();
+				setAuth(() => ({
+					isAdmin: false,
+					email: '',
+					token: '',
+					name: '',
+					id: null,
+					location: null,
+					phone: null,
+					wallet: 0,
+				}));
+				setLoggingOut(false);
 			})
-			.catch((err) => {
-				console.log(err);
-			});
+			.catch((err) => console.log(err));
 	};
 	return (
 		<SafeAreaView style={styles.container}>
