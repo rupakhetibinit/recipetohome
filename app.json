@@ -29,5 +29,8 @@
 			"favicon": "./assets/favicon.png"
 		},
 		"jsEngine":"hermes"
-	}
+	},
+	"name":"mmkvtest",
+	"slug":"mmkvtest",
+	"plugins":"./react-native-mmkv-plugin",
 }

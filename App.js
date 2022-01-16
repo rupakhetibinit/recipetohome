@@ -1,4 +1,5 @@
 import React from 'react';
+import 'expo-dev-client';
 import 'react-native-gesture-handler';
 import axios from 'axios';
 import { QueryClientProvider, QueryClient } from 'react-query';

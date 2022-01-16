@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ import { useRecoilValue } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
 import { useSnapshot, proxy } from 'valtio';
 import state from '../stores/valtioStore';
+import LottieView from 'lottie-react-native';
 const width = Dimensions.get('window').width;
 
 const ingredientList = proxy({
@@ -28,14 +29,29 @@ const SelectedRecipeScreen = () => {
 		};
 	}, [recipeId]);
 	const navigation = useNavigation();
+	const animation = React.useRef(null);
+	const isFirstRun = React.useRef(true);
+	const [liked, setLiked] = useState(false);
+	React.useEffect(() => {
+		if (isFirstRun.current) {
+			if (liked) {
+				animation.current?.play(66, 66);
+			} else {
+				animation.current?.play(20, 20);
+			}
+			isFirstRun.current = false;
+		} else if (liked === true) {
+			animation.current?.play(20, 50);
+		} else {
+			animation.current?.play(0, 20);
+		}
+	}, [liked]);
 	// const [ingredients, setIngredients] = useState([]);
 	const ingredientSnap = useSnapshot(ingredientList);
 	// const [cart, setCart] = useRecoilState(Cart);
 	// const setCart = useSetRecoilState(Cart);
 	const snap = useSnapshot(state);
 	const { token, id } = useRecoilValue(AuthAtom);
-
-	const [liked, setLiked] = useState(false);
 
 	function fetchRecipeById() {
 		return axios.get(
@@ -51,7 +67,7 @@ const SelectedRecipeScreen = () => {
 			select: (data) => {
 				return data.data.recipe;
 			},
-			onSuccess: (data) => {
+			onSettled: (data) => {
 				setLiked(data.likedBy.filter((user) => user.id === id).length > 0);
 			},
 		}
@@ -197,23 +213,42 @@ const SelectedRecipeScreen = () => {
 					<Card
 						style={{
 							width: 0.9 * width,
-							height: 300,
+							height: 320,
 							marginBottom: 20,
 						}}
 					>
 						<Card.Title title={data.name} />
-						<Card.Cover resizeMode='cover' source={{ uri: data.imageUrl }} />
-						<Card.Actions
+						<Card.Cover
+							resizeMode='cover'
+							source={{ uri: data.imageUrl }}
+							style={{ marginBottom: 10 }}
+						/>
+						{/* <Card.Actions
 							style={{
 								flexDirection: 'row',
+							}}
+						> */}
+						<View
+							style={{
+								flexDirection: 'row',
+								alignItems: 'center',
 								justifyContent: 'space-between',
 							}}
 						>
-							<Button onPress={handleLike}>
-								<FontAwesome name={liked ? 'heart' : 'heart-o'} size={25} />
+							<Pressable onPress={handleLike}>
+								<LottieView
+									ref={animation}
+									style={{ width: 60, height: 60 }}
+									source={require('../../assets/like-animation.json')}
+									autoPlay={false}
+									loop={false}
+									speed={2}
+								/>
+							</Pressable>
+							<Button onPress={handleAddToCart}>
+								<Text style={{ fontSize: 18 }}>Add to Cart</Text>
 							</Button>
-							<Button onPress={handleAddToCart}>Add to Cart</Button>
-						</Card.Actions>
+						</View>
 					</Card>
 
 					<Text

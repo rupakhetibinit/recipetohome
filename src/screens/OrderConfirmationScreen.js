@@ -1,4 +1,5 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -27,6 +28,18 @@ const OrderConfirmationScreen = () => {
 					})}
 				</Text>
 			</View>
+			<LottieView
+				style={{ width: 200, height: 200, alignSelf: 'center' }}
+				source={require('../../assets/delivery.json')}
+				autoPlay={true}
+				loop={true}
+				autoSize={true}
+			/>
+			<Text
+				style={[styles.headerText, { alignSelf: 'center', color: '#BC1141' }]}
+			>
+				We will be delivering your items soon
+			</Text>
 			<View style={{ alignItems: 'center' }}>
 				<Button
 					mode='contained'
