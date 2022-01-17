@@ -1,11 +1,10 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
-import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
+import { ActivityIndicator, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { FontAwesome } from '@expo/vector-icons';
 import FastImage from 'react-native-fast-image';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
@@ -48,11 +47,7 @@ const SelectedRecipeScreen = () => {
 			animation.current?.play(0, 20);
 		}
 	}, [liked]);
-	// const [ingredients, setIngredients] = useState([]);
-	const ingredientSnap = useSnapshot(ingredientList);
-	// const [cart, setCart] = useRecoilState(Cart);
-	// const setCart = useSetRecoilState(Cart);
-	const snap = useSnapshot(state);
+
 	const { token, id } = useRecoilValue(AuthAtom);
 
 	function fetchRecipeById() {
@@ -169,7 +164,7 @@ const SelectedRecipeScreen = () => {
 
 	function RenderIngredient(item, handleChecked) {
 		return (
-			<View style={styles.container}>
+			<View style={styles.ingredientList}>
 				<Checkbox
 					status={
 						checkedIngredients.indexOf(item) !== -1 ? 'checked' : 'unchecked'
@@ -204,58 +199,18 @@ const SelectedRecipeScreen = () => {
 			{isLoading && <ActivityIndicator size={'large'} />}
 			{isError && <Text style={{ color: 'red' }}>{error.message}</Text>}
 			{isSuccess && (
-				<View
-					style={{
-						flex: 1,
-						marginTop: 20,
-						marginHorizontal: 0.1 * width,
-						justifyContent: 'center',
-					}}
-				>
-					{/* <Card
-						style={{
-							width: 0.9 * width,
-							height: 320,
-							marginBottom: 20,
-						}}
-					> */}
-					<View
-						style={{
-							width: 0.9 * width,
-							height: 280,
-							flexDirection: 'column',
-						}}
-					>
-						{/* <Card.Title title={data.name} /> */}
-						<Text
-							style={{
-								alignSelf: 'center',
-								fontSize: 20,
-								fontWeight: 'bold',
-							}}
-						>
-							{data.name}
-						</Text>
+				<View style={[styles.container, { marginTop: 0 }]}>
+					<View style={styles.imageWrapper}>
 						<SharedElement id={data.id}>
 							<FastImage
 								resizeMode={FastImage.resizeMode.cover}
 								source={{ uri: data.imageUrl }}
-								style={{ width: 0.9 * width, height: 200 }}
+								style={{ width: width, height: 200 }}
 								resizeMethod='auto'
 							/>
 						</SharedElement>
-						{/* <Card.Actions
-							style={{
-								flexDirection: 'row',
-							}}
-						> */}
-						<View
-							style={{
-								flexDirection: 'row',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
+						<Text style={styles.imageText}>{data.name}</Text>
+						<View style={styles.likeAndCartWrapper}>
 							<Pressable onPress={handleLike}>
 								<LottieView
 									ref={animation}
@@ -266,48 +221,35 @@ const SelectedRecipeScreen = () => {
 									speed={2}
 								/>
 							</Pressable>
-							<Button onPress={handleAddToCart}>
-								<Text style={{ fontSize: 18 }}>Add to Cart</Text>
-							</Button>
+							<TouchableOpacity onPress={handleAddToCart}>
+								<Text
+									style={[
+										styles.universalText,
+										{ textTransform: 'uppercase', marginRight: 10 },
+									]}
+								>
+									Add to Cart
+								</Text>
+							</TouchableOpacity>
 						</View>
 					</View>
 					{/* </Card> */}
 
 					<FlatList
+						contentContainerStyle={styles.marginWrapper}
 						data={data.ingredients}
 						renderItem={renderItem}
 						keyExtractor={() => uuid.v4()}
-						style={{
-							height: 'auto',
-						}}
-						scroll
 						ListHeaderComponent={() => {
-							return (
-								<Text
-									style={{
-										color: '#5F2EEA',
-										fontSize: 24,
-										fontFamily: 'Poppins_500Medium',
-									}}
-								>
-									Ingredients
-								</Text>
-							);
+							return <Text style={styles.universalText}>Ingredients</Text>;
 						}}
 						showsVerticalScrollIndicator={false}
 					/>
-
-					<Text
-						style={{
-							color: '#5F2EEA',
-							fontSize: 24,
-							fontFamily: 'Poppins_500Medium',
-						}}
-					>
-						Steps
-					</Text>
 					<FlatList
-						style={{ height: 'auto' }}
+						contentContainerStyle={styles.marginWrapper}
+						ListHeaderComponent={() => {
+							return <Text style={styles.universalText}>Steps</Text>;
+						}}
 						data={data.steps}
 						keyExtractor={getKeyExtractor}
 						renderItem={renderSteps}
@@ -321,14 +263,47 @@ const SelectedRecipeScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		marginTop: 20,
+		marginHorizontal: 0.1 * width,
+	},
+	imageWrapper: {
+		flexDirection: 'column',
+	},
+	imageText: {
+		position: 'absolute',
+		bottom: 75,
+		left: 0,
+		paddingLeft: 10,
+		fontFamily: 'Poppins_500Medium',
+		fontSize: 15,
+		color: 'white',
+		textShadowOffset: {
+			width: 5,
+			height: 5,
+		},
+		textShadowColor: 'black',
+	},
+	likeAndCartWrapper: {
 		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
+		justifyContent: 'space-between',
+	},
+	universalText: {
+		color: '#5F2EEA',
+		fontSize: 18,
+		fontFamily: 'Poppins_500Medium',
+	},
+	ingredientList: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	marginWrapper: {
+		marginHorizontal: 10,
 	},
 });
 
 SelectedRecipeScreen.sharedElements = (navigation) => {
-	const data = navigation.getParams;
+	const data = navigation.params;
 	return [data.recipeId];
 };
 
