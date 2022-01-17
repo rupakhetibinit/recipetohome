@@ -3,6 +3,7 @@ module.exports = () => {
 		return {
 			ios: { bundleIdentifier: 'com.rupakhetibinit.recipetohome' },
 			android: { package: 'com.rupakhetibinit.recipetohome' },
+			jsEngine: 'hermes',
 		};
 	} else {
 		return {
@@ -10,6 +11,7 @@ module.exports = () => {
 			android: {
 				package: 'dev.com.rupakhetibinit.recipetohome',
 			},
+			jsEngine: 'hermes',
 		};
 	}
 };

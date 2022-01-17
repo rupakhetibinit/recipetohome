@@ -5,6 +5,7 @@
 		"version": "1.2.6",
 		"orientation": "portrait",
 		"icon": "./assets/icon.png",
+		"jsEngine": "hermes",
 		"splash": {
 			"image": "./assets/splash.png",
 			"resizeMode": "contain",
@@ -28,9 +29,6 @@
 		},
 		"web": {
 			"favicon": "./assets/favicon.png"
-		},
-		"jsEngine": "hermes"
-	},
-	"name": "mmkvtest",
-	"slug": "mmkvtest"
+		}
+	}
 }
