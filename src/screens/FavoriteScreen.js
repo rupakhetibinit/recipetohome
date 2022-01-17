@@ -9,7 +9,11 @@ import {
 	Text,
 	View,
 } from 'react-native';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import {
+	FlatList,
+	ScrollView,
+	TouchableOpacity,
+} from 'react-native-gesture-handler';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';

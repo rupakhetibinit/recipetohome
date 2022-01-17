@@ -12,9 +12,16 @@ import FavoriteScreen from '../screens/FavoriteScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import OrderConfirmationScreen from '../screens/OrderConfirmationScreen';
-const RecipeStack = createNativeStackNavigator();
+import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
+import {
+	CardStyleInterpolators,
+	createStackNavigator,
+	HeaderStyleInterpolators,
+	TransitionSpecs,
+} from '@react-navigation/stack';
+const RecipeStack = createSharedElementStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
-const ProfileStack = createNativeStackNavigator();
+const ProfileStack = createStackNavigator();
 const OrderStack = createNativeStackNavigator();
 const MainStack = () => {
 	return (
@@ -79,10 +86,16 @@ const RecipeStackScreen = () => {
 			<RecipeStack.Navigator
 				screenOptions={{
 					headerShown: false,
+					gestureEnabled: true,
+					cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 				}}
+				initialRouteName='Main'
 			>
 				<RecipeStack.Screen name='Main' component={RecipeScreen} />
 				<RecipeStack.Screen
+					sharedElements={(route) => {
+						return [route.params.recipeId];
+					}}
 					name='SelectedRecipe'
 					component={SelectedRecipeScreen}
 				/>
@@ -126,6 +139,9 @@ const ProfileStackScreen = () => {
 							fontFamily: 'Poppins_500Medium',
 						},
 						headerTitle: 'Pending Orders',
+						gestureEnabled: true,
+						cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+						headerStyleInterpolator: HeaderStyleInterpolators.forSlideLeft,
 					}}
 				/>
 				<ProfileStack.Screen
@@ -141,6 +157,8 @@ const ProfileStackScreen = () => {
 							color: '#fff',
 							fontFamily: 'Poppins_500Medium',
 						},
+						gestureEnabled: true,
+						cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
 					}}
 				/>
 			</ProfileStack.Navigator>

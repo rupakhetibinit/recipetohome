@@ -4,7 +4,8 @@ import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ActivityIndicator, Button, Card, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons';
-import { FlatList } from 'react-native-gesture-handler';
+import FastImage from 'react-native-fast-image';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
@@ -14,6 +15,7 @@ import { AuthAtom } from '../stores/atoms';
 import { useSnapshot, proxy } from 'valtio';
 import state from '../stores/valtioStore';
 import LottieView from 'lottie-react-native';
+import { SharedElement } from 'react-navigation-shared-element';
 const width = Dimensions.get('window').width;
 
 const ingredientList = proxy({
@@ -210,19 +212,38 @@ const SelectedRecipeScreen = () => {
 						justifyContent: 'center',
 					}}
 				>
-					<Card
+					{/* <Card
 						style={{
 							width: 0.9 * width,
 							height: 320,
 							marginBottom: 20,
 						}}
+					> */}
+					<View
+						style={{
+							width: 0.9 * width,
+							height: 280,
+							flexDirection: 'column',
+						}}
 					>
-						<Card.Title title={data.name} />
-						<Card.Cover
-							resizeMode='cover'
-							source={{ uri: data.imageUrl }}
-							style={{ marginBottom: 10 }}
-						/>
+						{/* <Card.Title title={data.name} /> */}
+						<Text
+							style={{
+								alignSelf: 'center',
+								fontSize: 20,
+								fontWeight: 'bold',
+							}}
+						>
+							{data.name}
+						</Text>
+						<SharedElement id={data.id}>
+							<FastImage
+								resizeMode={FastImage.resizeMode.cover}
+								source={{ uri: data.imageUrl }}
+								style={{ width: 0.9 * width, height: 200 }}
+								resizeMethod='auto'
+							/>
+						</SharedElement>
 						{/* <Card.Actions
 							style={{
 								flexDirection: 'row',
@@ -249,25 +270,31 @@ const SelectedRecipeScreen = () => {
 								<Text style={{ fontSize: 18 }}>Add to Cart</Text>
 							</Button>
 						</View>
-					</Card>
-
-					<Text
-						style={{
-							color: '#5F2EEA',
-							fontSize: 24,
-							fontFamily: 'Poppins_500Medium',
-						}}
-					>
-						Ingredients
-					</Text>
+					</View>
+					{/* </Card> */}
 
 					<FlatList
 						data={data.ingredients}
 						renderItem={renderItem}
 						keyExtractor={() => uuid.v4()}
 						style={{
-							height: '100%',
+							height: 'auto',
 						}}
+						scroll
+						ListHeaderComponent={() => {
+							return (
+								<Text
+									style={{
+										color: '#5F2EEA',
+										fontSize: 24,
+										fontFamily: 'Poppins_500Medium',
+									}}
+								>
+									Ingredients
+								</Text>
+							);
+						}}
+						showsVerticalScrollIndicator={false}
 					/>
 
 					<Text
@@ -280,7 +307,7 @@ const SelectedRecipeScreen = () => {
 						Steps
 					</Text>
 					<FlatList
-						style={{ height: '90%' }}
+						style={{ height: 'auto' }}
 						data={data.steps}
 						keyExtractor={getKeyExtractor}
 						renderItem={renderSteps}
@@ -299,4 +326,10 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 	},
 });
+
+SelectedRecipeScreen.sharedElements = (navigation) => {
+	const data = navigation.getParams;
+	return [data.recipeId];
+};
+
 export default SelectedRecipeScreen;

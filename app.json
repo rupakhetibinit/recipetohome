@@ -1,36 +1,39 @@
 {
-	"expo": {
-		"name": "recipetohome",
-		"slug": "recipetohome",
-		"version": "1.2.6",
-		"orientation": "portrait",
-		"icon": "./assets/icon.png",
-		"splash": {
-			"image": "./assets/splash.png",
-			"resizeMode": "contain",
-			"backgroundColor": "#ffffff"
-		},
-		"updates": {
-			"fallbackToCacheTimeout": 0
-		},
-		"assetBundlePatterns": ["**/*"],
-		"ios": {
-			"supportsTablet": true
-		},
-		"android": {
-			"adaptiveIcon": {
-				"foregroundImage": "./assets/icon.png",
-				"backgroundColor": "#FFFFFF"
-			},
-			"googleServicesFile": "./google-services.json",
-			"package": "com.rupakhetibinit.recipetohome"
-		},
-		"web": {
-			"favicon": "./assets/favicon.png"
-		},
-		"jsEngine":"hermes"
-	},
-	"name":"mmkvtest",
-	"slug":"mmkvtest",
-	"plugins":"./react-native-mmkv-plugin",
+  "expo": {
+    "name": "recipetohome",
+    "slug": "recipetohome",
+    "version": "1.2.6",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rupakhetibinit.recipetohome"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.rupakhetibinit.recipetohome"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "jsEngine": "hermes"
+  },
+  "name": "mmkvtest",
+  "slug": "mmkvtest",
+  "plugins": "./react-native-mmkv-plugin"
 }

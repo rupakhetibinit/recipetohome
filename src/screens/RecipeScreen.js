@@ -9,6 +9,7 @@ import {
 	RefreshControl,
 	Pressable,
 } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Searchbar,
@@ -24,6 +25,7 @@ const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
 import { AuthAtom, nameInitials } from '../stores/atoms';
+import { SharedElement } from 'react-navigation-shared-element';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 
@@ -57,15 +59,19 @@ const RecipeScreen = ({ navigation }) => {
 	function RecipeComponent(item) {
 		return (
 			<Pressable
-				onPress={() => navigation.push('SelectedRecipe', { recipeId: item.id })}
+				onPress={() =>
+					navigation.navigate('SelectedRecipe', { recipeId: item.id })
+				}
 			>
 				<View style={styles.imageContainer}>
-					<Image
-						style={styles.image}
-						source={{ uri: item.imageUrl }}
-						resizeMode='cover'
-						resizeMethod='auto'
-					/>
+					<SharedElement id={item.id}>
+						<FastImage
+							style={styles.image}
+							source={{ uri: item.imageUrl }}
+							resizeMode={FastImage.resizeMode.cover}
+							resizeMethod='auto'
+						/>
+					</SharedElement>
 					<Text style={styles.text}>{item.name}</Text>
 				</View>
 			</Pressable>
