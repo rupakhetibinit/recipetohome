@@ -9,11 +9,7 @@ import {
 	Text,
 	View,
 } from 'react-native';
-import {
-	FlatList,
-	ScrollView,
-	TouchableOpacity,
-} from 'react-native-gesture-handler';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { ActivityIndicator } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -115,25 +111,6 @@ const FavoriteScreen = () => {
 								<View style={styles.imageContainer}>
 									<Image style={styles.image} source={{ uri: item.imageUrl }} />
 									<Text style={styles.text}>{item.name}</Text>
-									{/* <View
-									style={{
-										width: 50,
-										height: 50,
-										position: 'absolute',
-										right: 0,
-										bottom: 0,
-										margin: 20,
-										borderRadius: 50,
-										backgroundColor: 'white',
-									}}
-									>
-									<FontAwesome
-									style={{ position: 'absolute', top: 13, left: 13 }}
-									name='heart'
-									size={25}
-									color='#5F2EEA'
-									/>
-								</View> */}
 								</View>
 							</Pressable>
 						)}

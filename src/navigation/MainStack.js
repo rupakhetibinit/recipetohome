@@ -19,7 +19,7 @@ import {
 	HeaderStyleInterpolators,
 	TransitionSpecs,
 } from '@react-navigation/stack';
-const RecipeStack = createSharedElementStackNavigator();
+const RecipeStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
 const ProfileStack = createStackNavigator();
 const OrderStack = createNativeStackNavigator();
@@ -88,13 +88,14 @@ const RecipeStackScreen = () => {
 					headerShown: false,
 					gestureEnabled: true,
 					cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
+					gestureResponseDistance: 50,
 				}}
-				initialRouteName='Main'
 			>
 				<RecipeStack.Screen name='Main' component={RecipeScreen} />
 				<RecipeStack.Screen
-					sharedElements={(route) => {
-						return [route.params.recipeId];
+					options={{
+						headerTitle: () => null,
+						headerBackTitleStyle: { color: 'black' },
 					}}
 					name='SelectedRecipe'
 					component={SelectedRecipeScreen}

@@ -7,7 +7,7 @@ import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilValue } from 'recoil';
 import { useSnapshot } from 'valtio';
-import { AuthAtom, Cart } from '../stores/atoms';
+import { AuthAtom } from '../stores/atoms';
 import state from '../stores/valtioStore';
 import axios from 'axios';
 

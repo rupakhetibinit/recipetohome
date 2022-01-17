@@ -3,7 +3,6 @@ import {
 	StyleSheet,
 	Text,
 	View,
-	Image,
 	FlatList,
 	Dimensions,
 	RefreshControl,
@@ -25,7 +24,6 @@ const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
 import { AuthAtom, nameInitials } from '../stores/atoms';
-import { SharedElement } from 'react-navigation-shared-element';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 
@@ -50,9 +48,6 @@ const RecipeScreen = ({ navigation }) => {
 		fetchRecipes,
 		{ select: (data) => data.data.recipes }
 	);
-	// {
-	// 	data && console.log(data);
-	// }
 
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
@@ -64,14 +59,12 @@ const RecipeScreen = ({ navigation }) => {
 				}
 			>
 				<View style={styles.imageContainer}>
-					<SharedElement id={item.id}>
-						<FastImage
-							style={styles.image}
-							source={{ uri: item.imageUrl }}
-							resizeMode={FastImage.resizeMode.cover}
-							resizeMethod='auto'
-						/>
-					</SharedElement>
+					<FastImage
+						style={styles.image}
+						source={{ uri: item.imageUrl }}
+						resizeMode={FastImage.resizeMode.cover}
+						resizeMethod='auto'
+					/>
 					<Text style={styles.text}>{item.name}</Text>
 				</View>
 			</Pressable>
@@ -81,13 +74,7 @@ const RecipeScreen = ({ navigation }) => {
 	return (
 		<SafeAreaView style={styles.container}>
 			<StatusBar style='dark' />
-			<View
-				style={{
-					flexDirection: 'row',
-					marginHorizontal: 20,
-					marginVertical: 10,
-				}}
-			>
+			<View style={styles.headerWrapper}>
 				<View style={styles.headerContainer}>
 					<Headline style={styles.header}>Hello {name}</Headline>
 					<Caption style={{ fontSize: 16 }}>
@@ -186,5 +173,10 @@ const styles = StyleSheet.create({
 		textShadowOffset: { width: 1, height: 1 },
 		textShadowRadius: 1,
 		textShadowColor: 'rgba(0, 0, 0, 0.75)',
+	},
+	headerWrapper: {
+		flexDirection: 'row',
+		marginHorizontal: 20,
+		marginVertical: 10,
 	},
 });

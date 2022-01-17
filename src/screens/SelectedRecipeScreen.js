@@ -11,10 +11,9 @@ import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
-import { useSnapshot, proxy } from 'valtio';
+import { proxy } from 'valtio';
 import state from '../stores/valtioStore';
 import LottieView from 'lottie-react-native';
-import { SharedElement } from 'react-navigation-shared-element';
 const width = Dimensions.get('window').width;
 
 const ingredientList = proxy({
@@ -201,14 +200,12 @@ const SelectedRecipeScreen = () => {
 			{isSuccess && (
 				<View style={[styles.container, { marginTop: 0 }]}>
 					<View style={styles.imageWrapper}>
-						<SharedElement id={data.id}>
-							<FastImage
-								resizeMode={FastImage.resizeMode.cover}
-								source={{ uri: data.imageUrl }}
-								style={{ width: width, height: 200 }}
-								resizeMethod='auto'
-							/>
-						</SharedElement>
+						<FastImage
+							resizeMode={FastImage.resizeMode.cover}
+							source={{ uri: data.imageUrl }}
+							style={{ width: width, height: 200 }}
+							resizeMethod='auto'
+						/>
 						<Text style={styles.imageText}>{data.name}</Text>
 						<View style={styles.likeAndCartWrapper}>
 							<Pressable onPress={handleLike}>
@@ -291,7 +288,7 @@ const styles = StyleSheet.create({
 	universalText: {
 		color: '#5F2EEA',
 		fontSize: 18,
-		fontFamily: 'Poppins_500Medium',
+		fontFamily: 'Poppins_600SemiBold',
 	},
 	ingredientList: {
 		flexDirection: 'row',
@@ -301,10 +298,5 @@ const styles = StyleSheet.create({
 		marginHorizontal: 10,
 	},
 });
-
-SelectedRecipeScreen.sharedElements = (navigation) => {
-	const data = navigation.params;
-	return [data.recipeId];
-};
 
 export default SelectedRecipeScreen;

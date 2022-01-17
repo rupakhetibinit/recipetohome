@@ -11,12 +11,12 @@ const OrderConfirmationScreen = () => {
 	// console.log(order);
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={{ marginHorizontal: 30 }}>
+			<View style={styles.textWrapper}>
 				<Text style={styles.headerText}>
 					Your order has been placed successfully!
 				</Text>
 			</View>
-			<View style={{ alignItems: 'flex-start', marginHorizontal: 30 }}>
+			<View style={{ alignItems: 'flex-start', marginHorizontal: 10 }}>
 				<Text>
 					Your order number is: {order.id.split('-')[0].toUpperCase()}
 				</Text>
@@ -69,8 +69,11 @@ const styles = StyleSheet.create({
 		fontFamily: 'Poppins_500Medium',
 	},
 	headerText: {
-		fontSize: 20,
+		fontSize: 16,
 		fontFamily: 'Poppins_600SemiBold',
 		color: '#694fad',
+	},
+	textWrapper: {
+		marginHorizontal: 10,
 	},
 });
