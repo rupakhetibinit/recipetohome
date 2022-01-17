@@ -1,14 +1,16 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { material, iOSUIKit } from 'react-native-typography';
 
 const OrderConfirmationScreen = () => {
 	const route = useRoute();
 	const navigation = useNavigation();
 	const { order } = route.params;
 	// console.log(order);
+	const width = Dimensions.get('window').width;
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.textWrapper}>
@@ -17,26 +19,31 @@ const OrderConfirmationScreen = () => {
 				</Text>
 			</View>
 			<View style={{ alignItems: 'flex-start', marginHorizontal: 10 }}>
-				<Text>
+				<Text style={material.body2}>
 					Your order number is: {order.id.split('-')[0].toUpperCase()}
 				</Text>
-				<Text>Your order total is: {order.total}</Text>
-				<Text>Your ordered ingredients are:</Text>
-				<Text>
+				<Text style={material.body2}>Your order total is: {order.total}</Text>
+				<Text style={iOSUIKit.title3Emphasized}>
+					Your ordered ingredients are:
+				</Text>
+				<Text style={iOSUIKit.body}>
 					{order.ingredients.map((item) => {
 						return item.name + '\n';
 					})}
 				</Text>
 			</View>
 			<LottieView
-				style={{ width: 200, height: 200, alignSelf: 'center' }}
-				source={require('../../assets/delivery.json')}
+				style={{ width: width }}
+				source={require('../../assets/delivery-guy.json')}
 				autoPlay={true}
 				loop={true}
 				autoSize={true}
 			/>
 			<Text
-				style={[styles.headerText, { alignSelf: 'center', color: '#BC1141' }]}
+				style={[
+					styles.headerText,
+					{ alignSelf: 'center', color: '#485275', marginBottom: 5 },
+				]}
 			>
 				We will be delivering your items soon
 			</Text>
