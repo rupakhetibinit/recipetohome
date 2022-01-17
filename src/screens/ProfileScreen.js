@@ -47,9 +47,9 @@ const ProfileScreen = () => {
 		getUserData,
 		{
 			select: (data) => data.data.user,
-			onSuccess: (data) => {
-				console.log(data);
-			},
+			// onSuccess: (data) => {
+			// 	console.log(data);
+			// },
 			// 	setAuth((prevState) => ({ ...prevState, wallet: data.wallet }));
 			// },
 		}
