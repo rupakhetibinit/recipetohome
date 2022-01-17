@@ -1,4 +1,3 @@
-import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View } from 'react-native';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -12,12 +11,10 @@ import FavoriteScreen from '../screens/FavoriteScreen';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import OrderConfirmationScreen from '../screens/OrderConfirmationScreen';
-import { createSharedElementStackNavigator } from 'react-navigation-shared-element';
 import {
 	CardStyleInterpolators,
 	createStackNavigator,
 	HeaderStyleInterpolators,
-	TransitionSpecs,
 } from '@react-navigation/stack';
 const RecipeStack = createStackNavigator();
 const Tab = createMaterialBottomTabNavigator();
