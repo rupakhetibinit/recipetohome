@@ -7,8 +7,8 @@ import {
 	Dimensions,
 	RefreshControl,
 	Pressable,
+	Image,
 } from 'react-native';
-import FastImage from 'react-native-fast-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
 	Searchbar,
@@ -59,11 +59,11 @@ const RecipeScreen = ({ navigation }) => {
 				}
 			>
 				<View style={styles.imageContainer}>
-					<FastImage
+					<Image
 						style={styles.image}
 						source={{ uri: item.imageUrl }}
-						resizeMode={FastImage.resizeMode.cover}
-						resizeMethod='auto'
+						resizeMode='cover'
+						resizeMethod='scale'
 					/>
 					<Text style={styles.text}>{item.name}</Text>
 				</View>
