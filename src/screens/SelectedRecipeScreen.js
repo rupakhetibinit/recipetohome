@@ -1,10 +1,17 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { Dimensions, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+	Dimensions,
+	Image,
+	Pressable,
+	SectionList,
+	StyleSheet,
+	Text,
+	View,
+} from 'react-native';
 import { ActivityIndicator, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FastImage from 'react-native-fast-image';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
@@ -161,7 +168,7 @@ const SelectedRecipeScreen = () => {
 		}
 	}
 
-	function RenderIngredient(item, handleChecked) {
+	function renderItem({ item }) {
 		return (
 			<View style={styles.ingredientList}>
 				<Checkbox
@@ -178,12 +185,15 @@ const SelectedRecipeScreen = () => {
 		);
 	}
 
-	function renderItem({ item }) {
-		return RenderIngredient(item, handleChecked);
-	}
-
-	function renderSteps({ item }) {
-		return <Text style={{ flex: 1, flexWrap: 'wrap' }}>{item}</Text>;
+	function renderSteps({ item, index }) {
+		return (
+			<View style={styles.stepsWrapper}>
+				<Text style={styles.stepsText}>STEP {index + 1}</Text>
+				<Text style={{ fontFamily: 'Poppins_400Regular', fontSize: 14 }}>
+					{item}
+				</Text>
+			</View>
+		);
 	}
 
 	function getKeyExtractor() {
@@ -200,8 +210,8 @@ const SelectedRecipeScreen = () => {
 			{isSuccess && (
 				<View style={[styles.container, { marginTop: 0 }]}>
 					<View style={styles.imageWrapper}>
-						<FastImage
-							resizeMode={FastImage.resizeMode.cover}
+						<Image
+							resizeMode='cover'
 							source={{ uri: data.imageUrl }}
 							style={{ width: width, height: 200 }}
 							resizeMethod='auto'
@@ -230,26 +240,31 @@ const SelectedRecipeScreen = () => {
 							</TouchableOpacity>
 						</View>
 					</View>
-					{/* </Card> */}
-
-					<FlatList
+					<SectionList
 						contentContainerStyle={styles.marginWrapper}
-						data={data.ingredients}
-						renderItem={renderItem}
-						keyExtractor={() => uuid.v4()}
-						ListHeaderComponent={() => {
-							return <Text style={styles.universalText}>Ingredients</Text>;
+						sections={[
+							{
+								title: 'Ingredients',
+								data: data.ingredients,
+								renderItem: renderItem,
+								keyExtractor: () => uuid.v4(),
+							},
+							{
+								title: 'Steps',
+								data: data.steps,
+								renderItem: renderSteps,
+								keyExtractor: getKeyExtractor,
+							},
+						]}
+						renderSectionHeader={({ section }) => {
+							return (
+								<View style={{ backgroundColor: '#f2f2f2', marginBottom: 5 }}>
+									<Text style={styles.universalText}>{section.title}</Text>
+								</View>
+							);
 						}}
 						showsVerticalScrollIndicator={false}
-					/>
-					<FlatList
-						contentContainerStyle={styles.marginWrapper}
-						ListHeaderComponent={() => {
-							return <Text style={styles.universalText}>Steps</Text>;
-						}}
-						data={data.steps}
-						keyExtractor={getKeyExtractor}
-						renderItem={renderSteps}
+						stickySectionHeadersEnabled={true}
 					/>
 				</View>
 			)}
@@ -289,13 +304,26 @@ const styles = StyleSheet.create({
 		color: '#5F2EEA',
 		fontSize: 18,
 		fontFamily: 'Poppins_600SemiBold',
+		textTransform: 'uppercase',
+		marginLeft: 4,
 	},
 	ingredientList: {
 		flexDirection: 'row',
 		alignItems: 'center',
 	},
 	marginWrapper: {
-		marginHorizontal: 10,
+		marginRight: 5,
+		marginLeft: 5,
+	},
+	stepsWrapper: {
+		height: 'auto',
+		backgroundColor: '#d7d8da',
+		padding: 10,
+		borderRadius: 6,
+		marginBottom: 5,
+	},
+	stepsText: {
+		fontFamily: 'Poppins_500Medium',
 	},
 });
 
