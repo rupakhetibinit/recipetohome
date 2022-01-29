@@ -6,21 +6,16 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, config } from '../stores/atoms';
 
 const PendingOrders = () => {
-	const { id, token } = useRecoilValue(AuthAtom);
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	};
+	const { id } = useRecoilValue(AuthAtom);
+	const apiConfig = useRecoilValue(config);
 
 	function fetchDeliveredOrders() {
 		return axios.get(
 			'https://recipetohome-api.herokuapp.com/api/v1/orders/user/' + id,
-			config
+			apiConfig
 		);
 	}
 	const { data, isLoading, isError, error, refetch } = useQuery(

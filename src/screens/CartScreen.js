@@ -8,22 +8,18 @@ import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilValue } from 'recoil';
 import { useSnapshot } from 'valtio';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, config } from '../stores/atoms';
 import state from '../stores/valtioStore';
 import axios from 'axios';
 
 const CartScreen = () => {
+	const apiConfig = useRecoilValue(config);
 	const queryClient = useQueryClient();
 	const navigation = useNavigation();
-	const { wallet, token, id } = useRecoilValue(AuthAtom);
+	const { wallet, id } = useRecoilValue(AuthAtom);
 	const snap = useSnapshot(state);
 	const [reload, setReload] = React.useState(false);
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	};
+
 	async function handleOrder(order) {
 		try {
 			if (wallet < order.total) {
@@ -47,7 +43,7 @@ const CartScreen = () => {
 						id: order.id,
 						ingredients: ingredients,
 					},
-					config
+					apiConfig
 				);
 				if (res.data.success === true) {
 					state.cartState.splice(state.cartState.indexOf(givenOrder), 1);

@@ -29,6 +29,20 @@ export const nameInitials = selector({
 	},
 });
 
+export const config = selector({
+	key: 'config',
+	get: ({ get }) => {
+		const { token } = get(AuthAtom);
+		const config = {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		};
+		return config;
+	},
+});
+
 export const Cart = atom({
 	key: 'cart',
 	default: [],

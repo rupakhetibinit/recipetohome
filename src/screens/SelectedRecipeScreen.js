@@ -17,7 +17,7 @@ import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
 import { useQuery, useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, config } from '../stores/atoms';
 import { proxy } from 'valtio';
 import state from '../stores/valtioStore';
 import LottieView from 'lottie-react-native';
@@ -30,6 +30,7 @@ const SelectedRecipeScreen = () => {
 	const queryClient = useQueryClient();
 	const [checkedIngredients, setCheckedIngredients] = useState([]);
 	const route = useRoute();
+	const apiConfig = useRecoilValue(config);
 	const { recipeId } = route.params;
 	useEffect(() => {
 		return () => {
@@ -55,12 +56,12 @@ const SelectedRecipeScreen = () => {
 		}
 	}, [liked]);
 
-	const { token, id } = useRecoilValue(AuthAtom);
+	const { id } = useRecoilValue(AuthAtom);
 
 	function fetchRecipeById() {
 		return axios.get(
 			'https://recipetohome-api.herokuapp.com/api/v1/recipes/' + recipeId,
-			config
+			apiConfig
 		);
 	}
 
@@ -76,11 +77,6 @@ const SelectedRecipeScreen = () => {
 			},
 		}
 	);
-
-	const config = {
-		headers: { Authorization: `Bearer ${token}` },
-		'Content-Type': 'application/json',
-	};
 
 	function handleAddToCart() {
 		if (checkedIngredients.length === 0) {
@@ -122,13 +118,8 @@ const SelectedRecipeScreen = () => {
 					{
 						userId: parseInt(id),
 					},
-					{
-						headers: {
-							Authorization: `Bearer ${token}`,
-						},
-					}
+					apiConfig
 				);
-				// console.log(JSON.stringify(res));
 				res.data.like !== undefined && setLiked(true);
 			} else if (liked === true) {
 				const res = await axios.patch(
@@ -136,7 +127,7 @@ const SelectedRecipeScreen = () => {
 						recipeId +
 						'/like',
 					{ userId: parseInt(id) },
-					config
+					apiConfig
 				);
 				res.data.dislike !== undefined && setLiked(false);
 			}
@@ -146,10 +137,6 @@ const SelectedRecipeScreen = () => {
 			queryClient.invalidateQueries('fetch-favorite-recipes');
 		}
 	}
-	function replaceItemAtIndex(arr, index, newValue) {
-		return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
-	}
-
 	// Check and uncheck functionality for the ingredients
 	function handleChecked(item, setCheckedIngredients) {
 		const index = checkedIngredients.indexOf(item);

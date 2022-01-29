@@ -11,9 +11,9 @@ import { MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 import { Avatar, Button } from 'react-native-paper';
 import axios from 'axios';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, config } from '../stores/atoms';
 function EditProfileScreen({ navigation }) {
-	const { id, name, token } = useRecoilValue(AuthAtom);
+	const { id, name } = useRecoilValue(AuthAtom);
 	const setAuth = useSetRecoilState(AuthAtom);
 	const [userInfo, setUserInfo] = useState({
 		name: '',
@@ -21,6 +21,7 @@ function EditProfileScreen({ navigation }) {
 		phone: '',
 		email: '',
 	});
+	const apiConfig = useRecoilValue(config);
 	// Regex to find initials
 	const initials = name
 		.match(/(^\S\S?|\b\S)?/g)
@@ -28,24 +29,18 @@ function EditProfileScreen({ navigation }) {
 		.match(/(^\S|\S$)?/g)
 		.join('')
 		.toUpperCase();
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	};
 
-	function handleEdit() {
-		if (
-			userInfo.name === '' ||
-			userInfo.location === '' ||
-			userInfo.phone === '' ||
-			userInfo.email === ''
-		) {
-			alert('Please fill in all fields');
-		} else {
-			axios
-				.patch(
+	async function handleEdit() {
+		try {
+			if (
+				userInfo.name === '' ||
+				userInfo.location === '' ||
+				userInfo.phone === '' ||
+				userInfo.email === ''
+			) {
+				alert('Please fill in all fields');
+			} else {
+				const res = await axios.patch(
 					'https://recipetohome-api.herokuapp.com/api/v1/users/update',
 					{
 						userId: id,
@@ -54,26 +49,25 @@ function EditProfileScreen({ navigation }) {
 						phone: userInfo.phone,
 						email: userInfo.email,
 					},
-					config
-				)
-				.then((res) => {
-					console.log(res.data);
-					if (res.data.success === true) {
-						setAuth((prevState) => {
-							return {
-								...prevState,
-								name: userInfo.name,
-								location: userInfo.location,
-								phone: userInfo.phone,
-								email: userInfo.email,
-							};
-						});
-						navigation.navigate('MainProfile');
-					} else {
-						alert('Error saving data');
-					}
-				})
-				.catch((err) => console.log(err));
+					apiConfig
+				);
+				if (res.data.success === true) {
+					setAuth((prevState) => {
+						return {
+							...prevState,
+							name: userInfo.name,
+							location: userInfo.location,
+							phone: userInfo.phone,
+							email: userInfo.email,
+						};
+					});
+					navigation.navigate('MainProfile');
+				} else {
+					alert('Error saving data');
+				}
+			}
+		} catch (error) {
+			console.log(error);
 		}
 	}
 

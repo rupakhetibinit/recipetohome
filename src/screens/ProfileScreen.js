@@ -9,7 +9,7 @@ import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { AuthAtom, nameInitials } from '../stores/atoms';
+import { AuthAtom, config, nameInitials } from '../stores/atoms';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import * as SecureStore from 'expo-secure-store';
@@ -26,20 +26,15 @@ const ProfileScreen = () => {
 	const initials = useRecoilValue(nameInitials);
 	const navigation = useNavigation();
 	const setAuth = useSetRecoilState(AuthAtom);
-	const { token, id, name, email, location, phone } = useRecoilValue(AuthAtom);
+	const { id, name, email, location, phone } = useRecoilValue(AuthAtom);
 
 	const [loggingOut, setLoggingOut] = useState(false);
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	};
+	const apiConfig = useRecoilValue(config);
 
 	function getUserData() {
 		return axios.get(
 			'https://recipetohome-api.herokuapp.com/api/v1/users/wallet/' + id,
-			config
+			apiConfig
 		);
 	}
 	const { data, isLoading, isError, refetch } = useQuery(

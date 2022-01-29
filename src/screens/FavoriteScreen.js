@@ -16,25 +16,20 @@ import { StatusBar } from 'expo-status-bar';
 import { useQuery } from 'react-query';
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
-import { AuthAtom } from '../stores/atoms';
+import { AuthAtom, config } from '../stores/atoms';
 
 const width = Dimensions.get('window').width;
 
 const FavoriteScreen = () => {
 	const { id, token } = useRecoilValue(AuthAtom);
 	const navigation = useNavigation();
-	const config = {
-		headers: {
-			Authorization: `Bearer ${token}`,
-			'Content-Type': 'application/json',
-		},
-	};
+	const apiConfig = useRecoilValue(config);
 	function fetchFavoriteRecipes() {
 		return axios.get(
 			`https://recipetohome-api.herokuapp.com/api/v1/user/liked/${id}`,
 			{
 				method: 'GET',
-				config,
+				config: apiConfig,
 			}
 		);
 	}

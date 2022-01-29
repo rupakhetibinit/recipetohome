@@ -23,19 +23,17 @@ import { useQuery } from 'react-query';
 const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
-import { AuthAtom, nameInitials } from '../stores/atoms';
+import { AuthAtom, config, nameInitials } from '../stores/atoms';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-	const { token, name } = useRecoilValue(AuthAtom);
+	const { name } = useRecoilValue(AuthAtom);
 	const initials = useRecoilValue(nameInitials);
-
+	const apiConfig = useRecoilValue(config);
 	function fetchRecipes() {
-		return axios.get('https://recipetohome-api.herokuapp.com/api/v1/recipes', {
-			headers: {
-				Authorization: `Bearer ${token}`,
-				'Content-Type': 'application/json',
-			},
-		});
+		return axios.get(
+			'https://recipetohome-api.herokuapp.com/api/v1/recipes',
+			apiConfig
+		);
 	}
 	const { data, isLoading, isError, refetch } = useQuery(
 		'recipes',
