@@ -26,13 +26,7 @@ import { useRecoilValue } from 'recoil';
 import { AuthAtom, nameInitials } from '../stores/atoms';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
-
-	function onChangeSearch(query) {
-		setSearchQuery(query);
-	}
-
 	const { token, name } = useRecoilValue(AuthAtom);
-
 	const initials = useRecoilValue(nameInitials);
 
 	function fetchRecipes() {
@@ -43,7 +37,7 @@ const RecipeScreen = ({ navigation }) => {
 			},
 		});
 	}
-	const { data, isLoading, isError, error, refetch } = useQuery(
+	const { data, isLoading, isError, refetch } = useQuery(
 		'recipes',
 		fetchRecipes,
 		{ select: (data) => data.data.recipes }
@@ -90,7 +84,7 @@ const RecipeScreen = ({ navigation }) => {
 			</View>
 			<Searchbar
 				placeholder='Search'
-				onChangeText={onChangeSearch}
+				onChangeText={(query) => setSearchQuery(query)}
 				value={searchQuery}
 				style={{ width: width * 0.9, borderRadius: 10 }}
 			/>

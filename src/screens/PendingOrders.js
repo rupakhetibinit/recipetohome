@@ -64,6 +64,7 @@ const PendingOrders = () => {
 					<FlatList
 						data={data}
 						extraData={data}
+						initialNumToRender={15}
 						renderItem={({ item }) => (
 							<List.Accordion
 								title={`Order ${item.id.split('-')[0].toUpperCase()}`}

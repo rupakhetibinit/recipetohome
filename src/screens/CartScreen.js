@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { useQueryClient } from 'react-query';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import { Button, Checkbox, List } from 'react-native-paper';
@@ -12,6 +13,7 @@ import state from '../stores/valtioStore';
 import axios from 'axios';
 
 const CartScreen = () => {
+	const queryClient = useQueryClient();
 	const navigation = useNavigation();
 	const { wallet, token, id } = useRecoilValue(AuthAtom);
 	const snap = useSnapshot(state);
@@ -22,21 +24,21 @@ const CartScreen = () => {
 			'Content-Type': 'application/json',
 		},
 	};
-	function handleOrder(order) {
-		if (wallet < order.total) {
-			alert('You do not have enough money in your wallet to make this order');
-			return;
-		} else {
-			const givenOrder = order;
-			// console.log(givenOrder);
-			const ingredients = givenOrder.ingredients.map((item) => {
-				return {
-					id: item.id,
-				};
-			});
-			// console.log(ingredients);
-			axios
-				.post(
+	async function handleOrder(order) {
+		try {
+			if (wallet < order.total) {
+				alert('You do not have enough money in your wallet to make this order');
+				return;
+			} else {
+				const givenOrder = order;
+				// console.log(givenOrder);
+				const ingredients = givenOrder.ingredients.map((item) => {
+					return {
+						id: item.id,
+					};
+				});
+				// console.log(ingredients);
+				const res = await axios.post(
 					'https://recipetohome-api.herokuapp.com/api/v1/order',
 					{
 						userId: id,
@@ -46,23 +48,22 @@ const CartScreen = () => {
 						ingredients: ingredients,
 					},
 					config
-				)
-				.then((res) => {
-					if (res.data.success === true) {
-						state.cartState.splice(state.cartState.indexOf(givenOrder), 1);
-
-						navigation.navigate('OrderConfirmation', {
-							order: res.data.transaction[1],
-						});
-					} else if (res.data.message === 'Insufficient wallet balance') {
-						alert(
-							'You do not have enough money in your wallet to make this order'
-						);
-					}
-				})
-				.catch(() => {
-					// console.log(err);
-				});
+				);
+				if (res.data.success === true) {
+					state.cartState.splice(state.cartState.indexOf(givenOrder), 1);
+					queryClient.invalidateQueries('pendingOrders');
+					navigation.navigate('OrderConfirmation', {
+						order: res.data.transaction[1],
+					});
+				} else if (res.data.message === 'Insufficient wallet balance') {
+					alert(
+						'You do not have enough money in your wallet to make this order'
+					);
+				}
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
 			setReload(!reload);
 		}
 	}

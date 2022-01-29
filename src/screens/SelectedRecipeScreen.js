@@ -15,7 +15,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
 import axios from 'axios';
 import { StatusBar } from 'expo-status-bar';
-import { useQuery } from 'react-query';
+import { useQuery, useQueryClient } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
 import { proxy } from 'valtio';
@@ -27,6 +27,7 @@ const ingredientList = proxy({
 	state: [],
 });
 const SelectedRecipeScreen = () => {
+	const queryClient = useQueryClient();
 	const [checkedIngredients, setCheckedIngredients] = useState([]);
 	const route = useRoute();
 	const { recipeId } = route.params;
@@ -111,10 +112,10 @@ const SelectedRecipeScreen = () => {
 		}
 	}
 
-	function handleLike() {
-		if (liked === false) {
-			axios
-				.post(
+	async function handleLike() {
+		try {
+			if (liked === false) {
+				const res = await axios.post(
 					`https://recipetohome-api.herokuapp.com/api/v1/recipes/` +
 						recipeId +
 						'/like',
@@ -126,29 +127,23 @@ const SelectedRecipeScreen = () => {
 							Authorization: `Bearer ${token}`,
 						},
 					}
-				)
-				.then((res) => {
-					// console.log(JSON.stringify(res));
-					if (res.data.like !== undefined) {
-						setLiked(true);
-					}
-				})
-				.catch((err) => console.log(err));
-		} else if (liked === true) {
-			axios
-				.patch(
+				);
+				// console.log(JSON.stringify(res));
+				res.data.like !== undefined && setLiked(true);
+			} else if (liked === true) {
+				const res = await axios.patch(
 					'https://recipetohome-api.herokuapp.com/api/v1/recipes/' +
 						recipeId +
 						'/like',
 					{ userId: parseInt(id) },
 					config
-				)
-				.then((res) => {
-					// console.log(JSON.stringify('delete request', res));
-					res.data.dislike !== undefined && setLiked(false);
-					// console.log(res);
-				})
-				.catch((err) => console.log(err));
+				);
+				res.data.dislike !== undefined && setLiked(false);
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			queryClient.invalidateQueries('fetch-favorite-recipes');
 		}
 	}
 	function replaceItemAtIndex(arr, index, newValue) {
