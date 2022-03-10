@@ -218,17 +218,22 @@ const SelectedRecipeScreen = () => {
 	}
 
 	async function handleReviewSubmit() {
-		const res = await axios.post(
-			`https://recipetohome-api.herokuapp.com/api/v1/reviews`,
-			{
-				userId: parseInt(id),
-				recipeId: recipeId,
-				review: review,
-				rating: rating,
-			},
-			apiConfig
-		);
-		res.data.success === true && setIsReviewed(true);
+		try {
+			const res = await axios.post(
+				`https://recipetohome-api.herokuapp.com/api/v1/reviews`,
+				{
+					userId: parseInt(id),
+					recipeId: recipeId,
+					review: review,
+					rating: rating,
+				},
+				apiConfig
+			);
+			res.data.success === true && setIsReviewed(true);
+		} catch (error) {
+		} finally {
+			queryClient.invalidateQueries('recipes');
+		}
 	}
 
 	async function handleReviewUpdate() {
@@ -244,6 +249,22 @@ const SelectedRecipeScreen = () => {
 			);
 			console.log(res.data);
 			res.data.success === true && setIsReviewed(true);
+			res.data.success === true && setIsEditing(false);
+		} catch (error) {
+		} finally {
+			queryClient.invalidateQueries('recipes');
+		}
+	}
+
+	async function handleReviewDelete() {
+		try {
+			const res = await axios.delete(
+				`https://recipetohome-api.herokuapp.com/api/v1/reviews/` +
+					yourReview.id,
+				apiConfig
+			);
+			console.log(res.data);
+			res.data.success === true && setIsReviewed(false);
 			res.data.success === true && setIsEditing(false);
 		} catch (error) {
 		} finally {
@@ -366,9 +387,17 @@ const SelectedRecipeScreen = () => {
 											padding: 10,
 										}}
 									/>
-									<Button onPress={() => setIsEditing(true)} mode='contained'>
-										Edit
-									</Button>
+									<View
+										style={{
+											flexDirection: 'row',
+											paddingLeft: 60,
+										}}
+									>
+										<Button onPress={() => setIsEditing(true)} mode='contained'>
+											Edit
+										</Button>
+										<Button onPress={handleReviewDelete}>Delete</Button>
+									</View>
 								</View>
 							)}
 						</View>
