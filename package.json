@@ -54,6 +54,7 @@
 		"react-native-web": "0.17.1",
 		"react-query": "^3.34.7",
 		"recoil": "^0.5.2",
+		"styled-components": "^5.3.3",
 		"uuid": "^8.3.2",
 		"valtio": "^1.2.7",
 		"zustand": "^3.6.8"
