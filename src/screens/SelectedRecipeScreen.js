@@ -1,5 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
+import StarRating, { StarRatingDisplay } from 'react-native-star-rating-widget';
 import {
 	Dimensions,
 	Image,
@@ -8,8 +9,9 @@ import {
 	StyleSheet,
 	Text,
 	View,
+	TextInput,
 } from 'react-native';
-import { ActivityIndicator, Checkbox } from 'react-native-paper';
+import { ActivityIndicator, Button, Checkbox } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import uuid from 'react-native-uuid';
@@ -21,6 +23,7 @@ import { AuthAtom, config } from '../stores/atoms';
 import { proxy } from 'valtio';
 import state from '../stores/valtioStore';
 import LottieView from 'lottie-react-native';
+
 const width = Dimensions.get('window').width;
 
 const ingredientList = proxy({
@@ -28,8 +31,15 @@ const ingredientList = proxy({
 });
 const SelectedRecipeScreen = () => {
 	const queryClient = useQueryClient();
+	const [yourReview, setYourReview] = useState(null);
+	const [yourReviewText, setYourReviewText] = useState('');
+	const [yourRating, setYourRating] = useState(0);
 	const [checkedIngredients, setCheckedIngredients] = useState([]);
+	const [isEditing, setIsEditing] = useState(false);
 	const route = useRoute();
+	const [review, setReview] = useState('');
+	const [rating, setRating] = useState(0);
+	const [isReviewed, setIsReviewed] = useState(false);
 	const apiConfig = useRecoilValue(config);
 	const { recipeId } = route.params;
 	useEffect(() => {
@@ -74,6 +84,16 @@ const SelectedRecipeScreen = () => {
 			},
 			onSettled: (data) => {
 				setLiked(data.likedBy.filter((user) => user.id === id).length > 0);
+				setIsReviewed(
+					data?.reviews.filter((review) => review.userId === id).length > 0
+				);
+				setYourReview(data.reviews.filter((review) => review.userId === id)[0]);
+				setYourReviewText(
+					data?.reviews.filter((review) => review.userId === id)[0]?.review
+				);
+				setYourRating(
+					data?.reviews.filter((review) => review.userId === id)[0]?.rating
+				);
 			},
 		}
 	);
@@ -178,6 +198,59 @@ const SelectedRecipeScreen = () => {
 		);
 	}
 
+	function renderReviews({ item }) {
+		return (
+			<View style={styles.reviewWrapper}>
+				<StarRatingDisplay rating={item.rating} />
+				<Text>By {item.user.name}</Text>
+				<Text>{item.id}</Text>
+				<Text>Review</Text>
+				<Text>{item.review}</Text>
+			</View>
+		);
+	}
+	function addReview() {
+		return (
+			<View>
+				<TextInput></TextInput>
+			</View>
+		);
+	}
+
+	async function handleReviewSubmit() {
+		const res = await axios.post(
+			`https://recipetohome-api.herokuapp.com/api/v1/reviews`,
+			{
+				userId: parseInt(id),
+				recipeId: recipeId,
+				review: review,
+				rating: rating,
+			},
+			apiConfig
+		);
+		res.data.success === true && setIsReviewed(true);
+	}
+
+	async function handleReviewUpdate() {
+		try {
+			const res = await axios.patch(
+				`https://recipetohome-api.herokuapp.com/api/v1/reviews/` +
+					yourReview.id,
+				{
+					review: yourReviewText,
+					rating: yourRating,
+				},
+				apiConfig
+			);
+			console.log(res.data);
+			res.data.success === true && setIsReviewed(true);
+			res.data.success === true && setIsEditing(false);
+		} catch (error) {
+		} finally {
+			queryClient.invalidateQueries('recipes');
+		}
+	}
+
 	function getKeyExtractor() {
 		return uuid.v4();
 	}
@@ -237,6 +310,12 @@ const SelectedRecipeScreen = () => {
 								renderItem: renderSteps,
 								keyExtractor: getKeyExtractor,
 							},
+							{
+								title: 'Reviews',
+								data: data.reviews,
+								renderItem: renderReviews,
+								keyExtractor: () => uuid.v4(),
+							},
 						]}
 						renderSectionHeader={({ section }) => {
 							return (
@@ -248,6 +327,71 @@ const SelectedRecipeScreen = () => {
 						showsVerticalScrollIndicator={false}
 						stickySectionHeadersEnabled={true}
 					/>
+					{isReviewed && (
+						<View style={styles.reviewWrapper}>
+							{isEditing && (
+								<View>
+									<StarRating
+										rating={yourRating}
+										onChange={setYourRating}
+										enableHalfStar={false}
+									/>
+									<TextInput
+										style={{
+											height: 40,
+											margin: 12,
+											borderWidth: 1,
+											padding: 10,
+										}}
+										value={yourReviewText}
+										onChangeText={(value) => setYourReviewText(value)}
+										numberOfLines={2}
+									/>
+									<Button mode='contained' onPress={handleReviewUpdate}>
+										Update Review
+									</Button>
+								</View>
+							)}
+							{!isEditing && (
+								<View>
+									<StarRatingDisplay rating={yourReview?.rating} />
+									<Text>Your Review</Text>
+									<TextInput
+										value={yourReview?.review}
+										editable={false}
+										style={{
+											height: 40,
+											margin: 12,
+											borderWidth: 1,
+											padding: 10,
+										}}
+									/>
+									<Button onPress={() => setIsEditing(true)} mode='contained'>
+										Edit
+									</Button>
+								</View>
+							)}
+						</View>
+					)}
+					{!isReviewed && (
+						<View>
+							<Text style={styles.universalText}>Add Your Review</Text>
+							<StarRating
+								rating={rating}
+								onChange={setRating}
+								enableHalfStar={false}
+							/>
+							<TextInput
+								style={{ height: 40, margin: 12, borderWidth: 1, padding: 10 }}
+								value={review}
+								onChangeText={(value) => setReview(value)}
+								numberOfLines={2}
+							/>
+							<Button mode='contained' onPress={handleReviewSubmit}>
+								Submit Review
+							</Button>
+						</View>
+					)}
 				</View>
 			)}
 		</SafeAreaView>
@@ -306,6 +450,12 @@ const styles = StyleSheet.create({
 	},
 	stepsText: {
 		fontFamily: 'Poppins_500Medium',
+	},
+	reviewWrapper: {
+		height: 'auto',
+		padding: 10,
+		borderRadius: 5,
+		marginBottom: 5,
 	},
 });
 
