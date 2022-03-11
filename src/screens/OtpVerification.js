@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import KeyboardAvoidingWrapper from '../components/KeyboardAvoidingWrapper';
@@ -22,18 +22,32 @@ import CodeInputField from '../components/CodeInputField';
 import ResendTimer from '../components/ResendTimer';
 // Verification Modal
 import VerificationModal from '../components/VerificationModal';
-const OtpVerification = () => {
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { useSetRecoilState } from 'recoil';
+import { AuthAtom } from '../stores/atoms';
+// For saving key in securestore
+async function save(key, value) {
+	try {
+		await SecureStore.setItemAsync(key, value);
+	} catch (e) {
+		console.log(e);
+	}
+}
+const OtpVerification = ({ route }) => {
+	const setAuth = useSetRecoilState(AuthAtom);
 	const [code, setCode] = useState('');
 	const [pinReady, setPinReady] = useState(false);
-
+	const [response, setResponse] = useState(null);
+	const { email } = route.params;
 	// Verification button
 	const [verifying, setVerifying] = useState(false);
-
 	const MAX_CODE_LENGTH = 4;
 
 	// Modal
 	const [modalVisible, setModalVisible] = useState(false);
-	const [verificationSuccessful, SetVerificationSuccessful] = useState(false);
+	const [verificationSuccessful, setVerificationSuccessful] = useState(false);
 	const [requestMessage, setRequestMessage] = useState('');
 	// Resend Code Timer
 	const [timeLeft, setTimeLeft] = useState(null);
@@ -63,7 +77,26 @@ const OtpVerification = () => {
 	};
 
 	// Persisting Login after verification
-	const persistLoginAfterOTPVerification = async () => {};
+	const persistLoginAfterOTPVerification = async () => {
+		try {
+			console.log('this is persist', response);
+			await save('token', response.data.token);
+			setAuth(() => ({
+				token: response.data.token,
+				email: response.data.email,
+				id: response.data.userId,
+				name: response.data.name,
+				isAdmin: response.data.isAdmin,
+				location: response.data.location,
+				phone: response.data.phone,
+				wallet: response.data.wallet,
+				verified: response.data.verified,
+			}));
+			console.log('saved');
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
 		triggerTimer();
@@ -72,9 +105,33 @@ const OtpVerification = () => {
 		};
 	}, []);
 
-	const resendEmail = async () => {};
+	const resendEmail = async () => {
+		try {
+		} catch (error) {}
+	};
 
-	const submitOTPVerification = () => {};
+	const submitOTPVerification = async () => {
+		try {
+			setVerifying(true);
+			const res = await axios.post(
+				'https://recipetohome-api.herokuapp.com/api/auth/token',
+				{ token: parseInt(code) }
+			);
+			setResponse(res);
+			if (res.data.success === false) {
+				setVerificationSuccessful(false);
+				setModalVisible(true);
+			} else if (res.data.success === true) {
+				setVerificationSuccessful(true);
+				setModalVisible(true);
+			}
+			console.log(response.data);
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setVerifying(false);
+		}
+	};
 
 	return (
 		<KeyboardAvoidingWrapper>
@@ -89,7 +146,7 @@ const OtpVerification = () => {
 					<PageTitle style={{ fontSize: 25 }}>Account Verification</PageTitle>
 					<InfoText>
 						Please enter the 4-digit code sent to
-						<EmphasizeText> testmail@gmail.com</EmphasizeText>
+						<EmphasizeText> {email}</EmphasizeText>
 					</InfoText>
 					<CodeInputField
 						setPinReady={setPinReady}
@@ -124,7 +181,7 @@ const OtpVerification = () => {
 							disabled={true}
 						>
 							<ButtonText style={{ color: gray }}>Verify </ButtonText>
-							<ActivityIndicator size={large} color={primary} />
+							<ActivityIndicator size='large' color={primary} />
 						</StyledButton>
 					)}
 

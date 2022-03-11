@@ -74,7 +74,7 @@ const FailContent = ({ errorMsg, buttonHandler }) => {
 				Failed!
 			</PageTitle>
 			<InfoText style={{ marginBottom: 15 }}>
-				{`Oops! Account verification failed. ${errorMsg}`}
+				{`Oops! Account verification failed.`}
 			</InfoText>
 			<StyledButton
 				style={{ backgroundColor: red, flexDirection: 'row' }}

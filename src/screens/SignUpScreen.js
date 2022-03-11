@@ -18,7 +18,7 @@ import { useSetRecoilState } from 'recoil';
 import { AuthAtom } from '../stores/atoms';
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height;
-
+import * as SecureStore from 'expo-secure-store';
 async function save(key, value) {
 	try {
 		await SecureStore.setItemAsync(key, value);
@@ -54,22 +54,22 @@ const SignUpScreen = ({ navigation }) => {
 		);
 	}
 
-	function onSignupPressed() {
-		if (!name) {
-			setMessage('Full name is required');
-		} else if (!email) {
-			setMessage('Email is required');
-		} else if (!password || !confirmPassword) {
-			setMessage('Password is required');
-		} else if (password !== confirmPassword) {
-			setMessage(`Passwords do not match`);
-		} else if (!isEmailValid(email)) {
-			setMessage('Invalid email');
-		} else {
-			setLoading(true);
-			setMessage('');
-			axios
-				.post(
+	const onSignupPressed = async () => {
+		try {
+			if (!name) {
+				setMessage('Full name is required');
+			} else if (!email) {
+				setMessage('Email is required');
+			} else if (!password || !confirmPassword) {
+				setMessage('Password is required');
+			} else if (password !== confirmPassword) {
+				setMessage(`Passwords do not match`);
+			} else if (!isEmailValid(email)) {
+				setMessage('Invalid email');
+			} else {
+				setLoading(true);
+				setMessage('');
+				const response = await axios.post(
 					'https://recipetohome-api.herokuapp.com/api/auth/register',
 					{
 						email: email,
@@ -78,31 +78,20 @@ const SignUpScreen = ({ navigation }) => {
 						isAdmin: false,
 					},
 					config
-				)
-				.then((res) => {
-					save('token', res.data.token)
-						.then(() => {
-							setAuth(() => ({
-								token: res.data.token,
-								name: res.data.name,
-								id: res.data.userId,
-								email: res.data.email,
-								isAdmin: res.data.isAdmin,
-								phone: res.data.phone,
-								location: res.data.location,
-								wallet: res.data.wallet,
-							}));
-							console.log('saved');
-						})
-						.catch((err) => {
-							console.log(err);
-						});
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+				);
+				if (
+					response.data.success === true &&
+					response.data.verified === false
+				) {
+					navigation.navigate('Verification', { email: email });
+				}
+			}
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setLoading(false);
 		}
-	}
+	};
 
 	return (
 		<KeyboardAwareScrollView enableOnAndroid={true} extraScrollHeight={140}>
