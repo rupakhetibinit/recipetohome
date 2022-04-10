@@ -107,7 +107,13 @@ const OtpVerification = ({ route }) => {
 
 	const resendEmail = async () => {
 		try {
-		} catch (error) {}
+			const res = await axios.post(
+				'https://recipetohome-api.herokuapp.com/api/auth/resend',
+				{ email: email }
+			);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const submitOTPVerification = async () => {
