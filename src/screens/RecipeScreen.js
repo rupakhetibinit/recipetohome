@@ -24,6 +24,7 @@ const width = Dimensions.get('window').width;
 import { useRefreshByUser } from '../hooks/useRefreshByUser';
 import { useRecoilValue } from 'recoil';
 import { AuthAtom, config, nameInitials } from '../stores/atoms';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 const RecipeScreen = ({ navigation }) => {
 	const [searchQuery, setSearchQuery] = useState('');
 	const { name } = useRecoilValue(AuthAtom);
@@ -45,7 +46,7 @@ const RecipeScreen = ({ navigation }) => {
 
 	function RecipeComponent(item) {
 		return (
-			<Pressable
+			<TouchableWithoutFeedback
 				onPress={() =>
 					navigation.navigate('SelectedRecipe', { recipeId: item.id })
 				}
@@ -59,7 +60,7 @@ const RecipeScreen = ({ navigation }) => {
 					/>
 					<Text style={styles.text}>{item.name}</Text>
 				</View>
-			</Pressable>
+			</TouchableWithoutFeedback>
 		);
 	}
 

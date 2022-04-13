@@ -166,6 +166,7 @@ const SelectedRecipeScreen = () => {
 			const newChecked = checkedIngredients.filter(
 				(ingredient) => ingredient !== item
 			);
+
 			setCheckedIngredients([...newChecked]);
 		}
 	}
@@ -177,12 +178,14 @@ const SelectedRecipeScreen = () => {
 					status={
 						checkedIngredients.indexOf(item) !== -1 ? 'checked' : 'unchecked'
 					}
-					onPress={() => handleChecked(item, setCheckedIngredients)}
+					onPress={() =>
+						requestAnimationFrame(() =>
+							handleChecked(item, setCheckedIngredients)
+						)
+					}
 					color='#5F2EEA'
 				/>
-				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
-					{item.amount} {item.measurement} {item.name}
-				</Text>
+				<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item.name}</Text>
 			</View>
 		);
 	}

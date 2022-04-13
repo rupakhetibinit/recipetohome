@@ -35,7 +35,13 @@ async function save(key, value) {
 		console.log(e);
 	}
 }
-const OtpVerification = ({ route }) => {
+const OtpVerification = ({ route, navigation }) => {
+	useEffect(() => {
+		navigation.addListener('beforeRemove', (e) => {
+			e.preventDefault();
+			alert('Please fill out the required fields');
+		});
+	}, []);
 	const setAuth = useSetRecoilState(AuthAtom);
 	const [code, setCode] = useState('');
 	const [pinReady, setPinReady] = useState(false);
@@ -121,7 +127,7 @@ const OtpVerification = ({ route }) => {
 			setVerifying(true);
 			const res = await axios.post(
 				'https://recipetohome-api.herokuapp.com/api/auth/token',
-				{ token: parseInt(code) }
+				{ token: parseInt(code), email }
 			);
 			setResponse(res);
 			if (res.data.success === false) {

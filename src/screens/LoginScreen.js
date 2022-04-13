@@ -56,7 +56,6 @@ const LoginScreen = ({ navigation }) => {
 							console.log(data.data.accessToken);
 							save('token', data.data.accessToken)
 								.then(() => {
-									console.log('saved');
 									setAuth(() => ({
 										token: data.data.accessToken,
 										email: data.data.email,
