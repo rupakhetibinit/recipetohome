@@ -178,11 +178,7 @@ const SelectedRecipeScreen = () => {
 					status={
 						checkedIngredients.indexOf(item) !== -1 ? 'checked' : 'unchecked'
 					}
-					onPress={() =>
-						requestAnimationFrame(() =>
-							handleChecked(item, setCheckedIngredients)
-						)
-					}
+					onPress={() => handleChecked(item, setCheckedIngredients)}
 					color='#5F2EEA'
 				/>
 				<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item.name}</Text>
