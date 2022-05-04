@@ -59,7 +59,7 @@ const SelectedRecipeScreen = () => {
 				animation.current?.play(20, 20);
 			}
 			isFirstRun.current = false;
-		} else if (liked === true) {
+		} else if (liked) {
 			animation.current?.play(20, 50);
 		} else {
 			animation.current?.play(0, 20);
@@ -271,10 +271,6 @@ const SelectedRecipeScreen = () => {
 		}
 	}
 
-	function getKeyExtractor() {
-		return uuid.v4();
-	}
-
 	return (
 		<SafeAreaView
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
@@ -322,19 +318,18 @@ const SelectedRecipeScreen = () => {
 								title: 'Ingredients',
 								data: data.ingredients,
 								renderItem: renderItem,
-								keyExtractor: () => uuid.v4(),
+								keyExtractor: (item) => item.id,
 							},
 							{
 								title: 'Steps',
 								data: data.steps,
 								renderItem: renderSteps,
-								keyExtractor: getKeyExtractor,
 							},
 							{
 								title: 'Reviews',
 								data: data.reviews,
 								renderItem: renderReviews,
-								keyExtractor: () => uuid.v4(),
+								keyExtractor: (item) => item.id,
 							},
 						]}
 						renderSectionHeader={({ section }) => {
