@@ -181,7 +181,9 @@ const SelectedRecipeScreen = () => {
 					onPress={() => handleChecked(item, setCheckedIngredients)}
 					color='#5F2EEA'
 				/>
-				<Text style={{ flex: 1, flexWrap: 'wrap' }}>{item.name}</Text>
+				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+					{item.amount} {item.measurement} {item.name}
+				</Text>
 			</View>
 		);
 	}
