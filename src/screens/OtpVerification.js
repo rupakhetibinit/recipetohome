@@ -139,7 +139,10 @@ const OtpVerification = ({ route, navigation }) => {
 			}
 			console.log(response.data);
 		} catch (error) {
-			console.log(error);
+			if (error.message.includes('403')) {
+				setVerificationSuccessful(false);
+				setModalVisible(true);
+			}
 		} finally {
 			setVerifying(false);
 		}

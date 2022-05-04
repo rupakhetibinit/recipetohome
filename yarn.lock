@@ -1118,7 +1118,7 @@
     xcode "^3.0.1"
     xml2js "0.4.23"
 
-"@expo/config-plugins@4.1.4", "@expo/config-plugins@^4.0.14", "@expo/config-plugins@^4.0.2":
+"@expo/config-plugins@4.1.4", "@expo/config-plugins@^4.0.2":
   version "4.1.4"
   resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.1.4.tgz#08e1a6314dc0f96cd165a748b5997b5ec75a84d0"
   integrity sha512-fkOjXnSieQfVSWVLKhst0DnCAyeHksvWky1CldFCQllhDB1HHBiP09Z8pamVB783n3qr/1HNZiSp6k2iUcaSoA==
@@ -2887,42 +2887,6 @@ expo-constants@~13.0.0, expo-constants@~13.0.1, expo-constants@~13.0.2:
     "@expo/config" "^6.0.6"
     uuid "^3.3.2"
 
-expo-dev-client@~0.9.3:
-  version "0.9.3"
-  resolved "https://registry.yarnpkg.com/expo-dev-client/-/expo-dev-client-0.9.3.tgz#a268e0ee4fba4e9d9b4d75dc6b122e9aaa9b4f6c"
-  integrity sha512-Vgpcdpreq3D1MP+RvxGilaw/dMDxyzBqkxCEJCiVMZVeOxPoM/cuaR62ia7hfivwpcdy4J2c1oSsYoJQvqLNaA==
-  dependencies:
-    "@expo/config-plugins" "^4.0.14"
-    expo-dev-launcher "0.11.3"
-    expo-dev-menu "0.10.4"
-    expo-dev-menu-interface "0.6.0"
-    expo-manifests "~0.3.0"
-    expo-updates-interface "~0.6.0"
-
-expo-dev-launcher@0.11.3:
-  version "0.11.3"
-  resolved "https://registry.yarnpkg.com/expo-dev-launcher/-/expo-dev-launcher-0.11.3.tgz#fe2d5e7963aa823521fbe00abd346ffef966f22d"
-  integrity sha512-Nt9cUbELkKmTWgWzCNJEbjKMPL71x+uB0lkKLEps3Ytcxw9AwMY8hR7GZNVPXM4dAUiMnh3SdH/bj2Q6/Jpniw==
-  dependencies:
-    "@expo/config-plugins" "^4.0.14"
-    expo-dev-menu "0.10.4"
-    resolve-from "^5.0.0"
-    semver "^7.3.5"
-
-expo-dev-menu-interface@0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu-interface/-/expo-dev-menu-interface-0.6.0.tgz#7721dc7e5bd3bbf3a570deb7c6464bc6fc5b5971"
-  integrity sha512-RRBDMhVVKR85zok1qUp5gUhIELwl1cnZXSRPsPT0qZBsk3pYz5ZlFqYewFfczPjnxXQsP8ISqqYjwwVCzr7Z+A==
-
-expo-dev-menu@0.10.4:
-  version "0.10.4"
-  resolved "https://registry.yarnpkg.com/expo-dev-menu/-/expo-dev-menu-0.10.4.tgz#e5a4918dab3e690f4e16bc95f49c76d6c8af09b2"
-  integrity sha512-eWRpIfSM/N+nDuLTuRgOMNRAqWWJB7iko8yQENXxozwuNbdWliY5fvGA9XCn1RQmfL4EH8Z/GAGK0S81MYh5wg==
-  dependencies:
-    "@expo/config-plugins" "^4.0.14"
-    expo-dev-menu-interface "0.6.0"
-    semver "^7.3.5"
-
 expo-error-recovery@~3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/expo-error-recovery/-/expo-error-recovery-3.0.5.tgz#1802b733e998606a8fcfb0abe6682c334319ef75"
@@ -2943,22 +2907,10 @@ expo-font@~10.0.4, expo-font@~10.0.5:
   dependencies:
     fontfaceobserver "^2.1.0"
 
-expo-json-utils@~0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/expo-json-utils/-/expo-json-utils-0.3.0.tgz#0c4a0195ee2bbde02cbb5f4d384d1cb63bea7493"
-  integrity sha512-ceo0pWFJqRAsNjZWX3rVDhy+NDzmrBNFOdvW+HE4EHqlt+OEUu9INIYKO8fU+g3ifI0VcKqHfvvj5wKsSpvPBw==
-
 expo-keep-awake@~10.0.2:
   version "10.0.2"
   resolved "https://registry.yarnpkg.com/expo-keep-awake/-/expo-keep-awake-10.0.2.tgz#706bda839782bb3e8ad4cbe43bde471a56368813"
   integrity sha512-Ro1lgyKldbFs4mxhWM+goX9sg0S2SRR8FiJJeOvaRzf8xNhrZfWA00Zpr+/3ocCoWQ3eEL+X9UF4PXXHf0KoOg==
-
-expo-manifests@~0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/expo-manifests/-/expo-manifests-0.3.0.tgz#724e85a4e726cb1ef775f9846c9ecb8d243a17d7"
-  integrity sha512-HegANp+KpZlMX0T2Zb8X7mAVkCThFDq1wjLIjkrSLHhKLczYI2xa/Z5Nk0Tm7qPdGT8NTInCDoOL/nUMtKdNyQ==
-  dependencies:
-    expo-json-utils "~0.3.0"
 
 expo-modules-autolinking@0.5.5, expo-modules-autolinking@~0.5.1:
   version "0.5.5"
@@ -3020,11 +2972,6 @@ expo-status-bar@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.2.0.tgz#16e73205da563f9536f562e439081e30e318a82e"
   integrity sha512-pVZZ/kDCXFK79E4dCtRecs3XLC8aiwlciutSd/fFmUPJSQZ1Txia6hlKajPt0GAYft8/YnT0V3URXzWZOBniYQ==
-
-expo-updates-interface@~0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/expo-updates-interface/-/expo-updates-interface-0.6.0.tgz#cef5250106e59572afdfcf245c534754c8c844ba"
-  integrity sha512-oQcGTsE8mSkSxENPlWjZPGoJpt3RFDNPuO5d8shBDxBb4ZNH/W2ojavSFQMaLbNMoS0bYQQhzbRNEIBd306QMg==
 
 expo@^44.0.0:
   version "44.0.6"
