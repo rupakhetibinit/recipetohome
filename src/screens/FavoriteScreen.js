@@ -109,7 +109,7 @@ const FavoriteScreen = () => {
 								</View>
 							</Pressable>
 						)}
-						key={(item) => item.id}
+						keyExtractor={(item) => item.id}
 					/>
 				)}
 

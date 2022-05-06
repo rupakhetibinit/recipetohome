@@ -172,11 +172,11 @@ const CartScreen = () => {
 											</Text>
 										</View>
 									)}
+									keyExtractor={(item) => item.id}
 								/>
 								<View
 									style={{
 										flex: 1,
-
 										justifyContent: 'center',
 									}}
 								>
@@ -205,6 +205,7 @@ const CartScreen = () => {
 							</List.Accordion>
 						);
 					}}
+					keyExtractor={(item) => item.id}
 				/>
 			)}
 		</SafeAreaView>
