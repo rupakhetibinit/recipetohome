@@ -53,6 +53,7 @@ const RecipeScreen = ({ navigation }) => {
 			>
 				<View style={styles.imageContainer}>
 					<Image
+						key={item.imageUrl}
 						style={styles.image}
 						source={{ uri: item.imageUrl }}
 						resizeMode='cover'
@@ -109,7 +110,7 @@ const RecipeScreen = ({ navigation }) => {
 					)}
 					extraData={data}
 					renderItem={({ item }) => RecipeComponent(item)}
-					key={(item) => item.id}
+					keyExtractor={(recipe) => recipe.id}
 				/>
 			)}
 		</SafeAreaView>
