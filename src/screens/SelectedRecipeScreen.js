@@ -171,7 +171,7 @@ const SelectedRecipeScreen = () => {
 		}
 	}
 
-	function renderItem({ item }) {
+	function renderOrderableIngredients({ item }) {
 		return (
 			<View style={styles.ingredientList}>
 				<Checkbox
@@ -182,7 +182,9 @@ const SelectedRecipeScreen = () => {
 					color='#5F2EEA'
 				/>
 				<Text style={{ flex: 1, flexWrap: 'wrap' }}>
-					{item.amount} {item.measurement} {item.name}
+					{!!item.amount && `${item.amount}` + ' '}
+					{!!item.measurement && `${item.measurement}` + ' '}
+					{item.name}
 				</Text>
 			</View>
 		);
@@ -203,17 +205,10 @@ const SelectedRecipeScreen = () => {
 		return (
 			<View style={styles.reviewWrapper}>
 				<StarRatingDisplay rating={item.rating} />
-				<Text>By {item.user.name}</Text>
-				<Text>{item.id}</Text>
-				<Text>Review</Text>
-				<Text>{item.review}</Text>
-			</View>
-		);
-	}
-	function addReview() {
-		return (
-			<View>
-				<TextInput></TextInput>
+				<View style={styles.stepsWrapper}>
+					<Text style={styles.stepsText}>{item.review}</Text>
+					<Text>Reviewed by {item.user.name}</Text>
+				</View>
 			</View>
 		);
 	}
@@ -273,10 +268,6 @@ const SelectedRecipeScreen = () => {
 		}
 	}
 
-	function getKeyExtractor() {
-		return uuid.v4();
-	}
-
 	return (
 		<SafeAreaView
 			style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
@@ -318,30 +309,39 @@ const SelectedRecipeScreen = () => {
 						</View>
 					</View>
 					<SectionList
+						initialNumToRender={15}
 						contentContainerStyle={styles.marginWrapper}
 						sections={[
 							{
-								title: 'Ingredients',
+								title: 'Required Ingredients',
 								data: data.ingredients,
-								renderItem: renderItem,
-								keyExtractor: () => uuid.v4(),
+								renderItem: ({ item }) => (
+									<Text style={{ marginLeft: 10 }}>{item.required}</Text>
+								),
+								keyExtractor: (item) => item.id,
+							},
+							{
+								title: 'Orderable Ingredients',
+								data: data.ingredients,
+								renderItem: renderOrderableIngredients,
+								keyExtractor: (item) => item.id,
 							},
 							{
 								title: 'Steps',
 								data: data.steps,
 								renderItem: renderSteps,
-								keyExtractor: getKeyExtractor,
+								keyExtractor: (_, index) => index,
 							},
 							{
 								title: 'Reviews',
 								data: data.reviews,
 								renderItem: renderReviews,
-								keyExtractor: () => uuid.v4(),
+								keyExtractor: (item) => item.id,
 							},
 						]}
 						renderSectionHeader={({ section }) => {
 							return (
-								<View style={{ backgroundColor: '#f2f2f2', marginBottom: 5 }}>
+								<View style={{ backgroundColor: '#f2f2f2' }}>
 									<Text style={styles.universalText}>{section.title}</Text>
 								</View>
 							);

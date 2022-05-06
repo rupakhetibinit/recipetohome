@@ -28,7 +28,16 @@ const OrderConfirmationScreen = () => {
 				</Text>
 				<Text style={iOSUIKit.body}>
 					{order.ingredients.map((item) => {
-						return item.name + '\n';
+						return (
+							// `${!!item.amount && `${item.amount}` + ' '}${
+							// 	!!item.measurement && `${item.measurement}` + ' '
+							// }${item.name} - ${item.price}` + '\n'
+							<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+								{!!item.amount && `${item.amount}` + ' '}
+								{!!item.measurement && `${item.measurement}` + ' '}
+								{item.name} {'\n'}
+							</Text>
+						);
 					})}
 				</Text>
 			</View>

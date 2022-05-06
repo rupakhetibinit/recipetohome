@@ -96,6 +96,7 @@ const RecipeScreen = ({ navigation }) => {
 			)}
 			{data && (
 				<FlatList
+					initialNumToRender={10}
 					showsVerticalScrollIndicator={false}
 					refreshControl={
 						<RefreshControl
