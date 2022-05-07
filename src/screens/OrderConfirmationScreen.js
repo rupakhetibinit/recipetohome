@@ -1,6 +1,6 @@
 import { useNavigation, useRoute } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import { Dimensions, StyleSheet, Text, View } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, FlatList } from 'react-native';
 import { Button } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { material, iOSUIKit } from 'react-native-typography';
@@ -19,27 +19,29 @@ const OrderConfirmationScreen = () => {
 				</Text>
 			</View>
 			<View style={{ alignItems: 'flex-start', marginHorizontal: 10 }}>
-				<Text style={material.body2}>
+				<Text style={material.subheading}>
 					Your order number is: {order.id.split('-')[0].toUpperCase()}
 				</Text>
-				<Text style={material.body2}>Your order total is: {order.total}</Text>
+				<Text style={material.subheading}>
+					Your order total is: {order.total}
+				</Text>
 				<Text style={iOSUIKit.title3Emphasized}>
 					Your ordered ingredients are:
 				</Text>
-				<Text style={iOSUIKit.body}>
-					{order.ingredients.map((item) => {
-						return (
-							// `${!!item.amount && `${item.amount}` + ' '}${
-							// 	!!item.measurement && `${item.measurement}` + ' '
-							// }${item.name} - ${item.price}` + '\n'
-							<Text style={{ flex: 1, flexWrap: 'wrap' }}>
+				<FlatList
+					data={order.ingredients}
+					keyExtractor={(item) => item.id}
+					renderItem={({ item }) => (
+						<Text style={iOSUIKit.bodyEmphasized}>
+							<Text style={{ flex: 1 }}>
+								{!!item.quantity && `${item.quantity}` + ' X '}
 								{!!item.amount && `${item.amount}` + ' '}
 								{!!item.measurement && `${item.measurement}` + ' '}
-								{item.name} {'\n'}
+								{item.name} Total Rs. {item.grandTotal} {'\n'}
 							</Text>
-						);
-					})}
-				</Text>
+						</Text>
+					)}
+				/>
 			</View>
 			<LottieView
 				style={{ width: width }}

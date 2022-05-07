@@ -2,8 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { useQueryClient } from 'react-query';
-import { StyleSheet, Text, View } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, FlatList, Pressable } from 'react-native';
 import { Button, Checkbox, List } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRecoilValue } from 'recoil';
@@ -30,10 +29,25 @@ const CartScreen = () => {
 				// console.log(givenOrder);
 				const ingredients = givenOrder.ingredients.map((item) => {
 					return {
-						id: item.id,
+						amount: item.amount,
+						grandTotal: item.grandTotal,
+						measurement: item.measurement,
+						name: item.name,
+						price: item.price,
+						required: item.required,
+						quantity: item.quantity,
 					};
 				});
 				// console.log(ingredients);
+				// console.log(
+				// 	JSON.stringify({
+				// 		userId: id,
+				// 		total: order.total,
+				// 		recipeId: order.recipeId,
+				// 		id: order.id,
+				// 		ingredients: ingredients,
+				// 	})
+				// );
 				const res = await axios.post(
 					'https://recipetohome-api.herokuapp.com/api/v1/order',
 					{
@@ -64,6 +78,75 @@ const CartScreen = () => {
 		}
 	}
 
+	function increaseQuantity(orderId, ingredientId) {
+		const newCart = [...snap.cartState];
+		const index = newCart.findIndex((item) => item.id === orderId);
+		// console.log(newCart[index]);
+		const ingredientIndex = newCart[index].ingredients.findIndex(
+			(item) => item.id === ingredientId
+		);
+		// console.log(ingredientIndex);
+		let ingredients = [...newCart[index].ingredients];
+		let ingredient = { ...newCart[index].ingredients[ingredientIndex] };
+		const oldTotal = ingredient.grandTotal;
+		// console.log(ingredient);
+		let newQuantity = ingredient.quantity;
+		newQuantity += 1;
+		// console.log(newQuantity);
+		ingredient.grandTotal = ingredient.price * newQuantity;
+		ingredients.splice(ingredientIndex, 1, {
+			...ingredient,
+			quantity: newQuantity,
+		});
+		// console.log(ingredients);
+
+		const newTotal = newCart[index].total - oldTotal + ingredient.grandTotal;
+		console.log(newTotal);
+		state.cartState.splice(index, 1, {
+			...newCart[index],
+			ingredients: ingredients,
+			total: newTotal,
+		});
+		// newCart.splice(index, 1, {
+		// 	...newCart[index],
+		// 	ingredients: ingredients,
+		// 	total: newTotal,
+		// });
+
+		// console.log(newCart);
+	}
+
+	function decreaseQuantity(orderId, ingredientId) {
+		const newCart = [...snap.cartState];
+		const index = newCart.findIndex((item) => item.id === orderId);
+		// console.log(newCart[index]);
+		const ingredientIndex = newCart[index].ingredients.findIndex(
+			(item) => item.id === ingredientId
+		);
+		console.log(ingredientIndex);
+		let ingredients = [...newCart[index].ingredients];
+		let ingredient = { ...newCart[index].ingredients[ingredientIndex] };
+		const oldTotal = ingredient.grandTotal;
+		// console.log(ingredient);
+		let newQuantity = ingredient.quantity;
+		newQuantity -= 1;
+		// console.log(newQuantity);
+		ingredient.grandTotal = ingredient.price * newQuantity;
+		ingredients.splice(ingredientIndex, 1, {
+			...ingredient,
+			quantity: newQuantity,
+		});
+		// console.log(ingredients);
+
+		const newTotal = newCart[index].total - oldTotal + ingredient.grandTotal;
+		// console.log(newTotal);
+		state.cartState.splice(index, 1, {
+			...newCart[index],
+			ingredients: ingredients,
+			total: newTotal,
+		});
+	}
+
 	function handleUnchecked(orderId, ingredientId) {
 		// Make a copy of the cart
 		const newCart = [...snap.cartState];
@@ -76,7 +159,8 @@ const CartScreen = () => {
 		// Calculate the reduced total
 		let newTotal =
 			newCart[index].total -
-			newCart[index].ingredients.find((item) => item.id === ingredientId).price;
+			newCart[index].ingredients.find((item) => item.id === ingredientId)
+				.grandTotal;
 		// Remove the item from the array if it is the last ingredient
 		ingredients.length === 0 && state.cartState.splice(index, 1);
 		ingredients.length > 0 &&
@@ -153,23 +237,70 @@ const CartScreen = () => {
 									key={item.ingredients.id}
 									data={item.ingredients}
 									renderItem={({ item }) => (
-										<View
-											style={{
-												flex: 1,
-												flexDirection: 'row',
-												alignItems: 'center',
-												marginLeft: 30,
-											}}
-										>
-											<Checkbox
-												status='checked'
-												onPress={() => handleUnchecked(parentData.id, item.id)}
-												color='#694fad'
-											/>
-											<Text style={{ fontSize: 14 }}>
-												{item.amount} {item.measurement} {item.name} Rs.
-												{item.price}
-											</Text>
+										<View>
+											<View
+												style={{
+													flex: 1,
+													flexDirection: 'row',
+													alignItems: 'center',
+													marginLeft: 30,
+												}}
+											>
+												<Checkbox
+													status='checked'
+													onPress={() =>
+														handleUnchecked(parentData.id, item.id)
+													}
+													color='#694fad'
+												/>
+												<Text style={{ fontSize: 14 }}>
+													{item.amount} {item.measurement} {item.name} Rs.
+													{item.price}
+												</Text>
+											</View>
+											<View
+												style={{
+													flex: 1,
+													flexDirection: 'row',
+													alignItems: 'center',
+													alignContent: 'center',
+													marginLeft: 30,
+												}}
+											>
+												<Button
+													disabled={item?.quantity === 1}
+													mode='contained'
+													style={{ color: '#694fad' }}
+													onPress={() =>
+														decreaseQuantity(parentData.id, item.id)
+													}
+												>
+													<Text>-</Text>
+												</Button>
+												<Text style={{ fontSize: 14, fontWeight: 'bold' }}>
+													Quantity : {item.quantity}
+												</Text>
+												<Button
+													mode='contained'
+													style={{ color: '#694fad' }}
+													onPress={() =>
+														increaseQuantity(parentData.id, item.id)
+													}
+												>
+													<Text>+</Text>
+												</Button>
+												<Text
+													style={{
+														fontSize: 14,
+														fontWeight: 'bold',
+														right: 0,
+														marginRight: 30,
+														position: 'absolute',
+													}}
+												>
+													Total {item.grandTotal}
+												</Text>
+											</View>
 										</View>
 									)}
 									keyExtractor={(item) => item.id}
@@ -199,7 +330,7 @@ const CartScreen = () => {
 										>
 											<Text>Order now </Text>
 										</Button>
-										<Text>Total Rs.{parentData.total}</Text>
+										<Text>Grand Total Rs.{parentData.total}</Text>
 									</View>
 								</View>
 							</List.Accordion>

@@ -27,9 +27,9 @@ const PendingOrders = () => {
 			onSettled: (data) => console.log(data),
 		}
 	);
-	{
-		data && console.log(data);
-	}
+	// {
+	// 	data && console.log(data);
+	// }
 	const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 
 	return (
@@ -74,8 +74,10 @@ const PendingOrders = () => {
 											style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}
 										>
 											<Text style={{ fontSize: 14 }}>
-												{item.amount} {item.measurement} {item.name} Rs.
-												{item.price}
+												{!!item.quantity && `${item.quantity}` + ' X '}
+												{!!item.amount && `${item.amount}` + ' '}
+												{!!item.measurement && `${item.measurement}` + ' '}
+												{item.name} Total Rs. {item.grandTotal} {'\n'}
 											</Text>
 										</View>
 									)}

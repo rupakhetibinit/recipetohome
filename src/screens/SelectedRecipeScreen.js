@@ -47,6 +47,10 @@ const SelectedRecipeScreen = () => {
 			ingredientList.state = [];
 		};
 	}, [recipeId]);
+
+	useEffect(() => {
+		console.log(checkedIngredients);
+	}, [checkedIngredients]);
 	const navigation = useNavigation();
 	const animation = React.useRef(null);
 	const isFirstRun = React.useRef(true);
@@ -103,9 +107,20 @@ const SelectedRecipeScreen = () => {
 			alert('Please select at least one ingredient');
 			return;
 		} else {
+			// Object.keys(checkedIngredients).forEach((ingredient,index)=>{
+			// 	checkedIngredients[] = ingredient[index]
+			// })
+			checkedIngredients.forEach(
+				(ingredient) =>
+					(ingredient.grandTotal = ingredient.quantity * ingredient.price)
+			);
+			console.log(checkedIngredients);
+
 			const newTotal = checkedIngredients.reduce((acc, ingredient) => {
-				return acc + ingredient.price;
+				return acc + ingredient.grandTotal;
 			}, 0);
+			console.log(newTotal);
+			// checkedIngredients.map(element=>element.)
 			const newCart = {
 				id: uuid.v4(),
 				recipeId: recipeId,
@@ -309,7 +324,7 @@ const SelectedRecipeScreen = () => {
 						</View>
 					</View>
 					<SectionList
-						initialNumToRender={15}
+						initialNumToRender={20}
 						contentContainerStyle={styles.marginWrapper}
 						sections={[
 							{
