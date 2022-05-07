@@ -60,6 +60,22 @@ const PendingOrders = () => {
 							<List.Accordion
 								title={`Order ${item.id.split('-')[0].toUpperCase()}`}
 							>
+								<FlatList
+									data={item.ingredients}
+									extradata={item.ingredients}
+									initialNumToRender={10}
+									renderItem={({ item }) => (
+										<View
+											style={{ flexDirection: 'row', flex: 1, marginLeft: 10 }}
+										>
+											<Text style={{ fontSize: 14 }}>
+												{item.amount} {item.measurement} {item.name} Rs.
+												{item.price}
+											</Text>
+										</View>
+									)}
+									keyExtractor={(item) => item.id}
+								/>
 								<List.Item title='Total' description={`Rs. ${item.total}`} />
 							</List.Accordion>
 						)}
